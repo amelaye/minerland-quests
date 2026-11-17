@@ -1,0 +1,36 @@
+# Identifiants construits dynamiquement, vérifiés à la lecture du code (Partie I). Format : id<TAB>source<TAB>remarque
+default:chest	minetest_game/mods/default/chests.lua:313,276	default.chest.register_chest
+default:chest_locked	minetest_game/mods/default/chests.lua:329,276	default.chest.register_chest
+doors:door_wood	minetest_game/mods/doors/init.lua:482	objet porte (craft)
+doors:door_wood_a	minetest_game/mods/doors/init.lua:465,327	nœud posé ; on_place exécute registered_on_placenodes (l.196)
+doors:door_wood_b	minetest_game/mods/doors/init.lua:468,325	nœud posé (variante miroir)
+doors:door_glass	minetest_game/mods/doors/init.lua:514	objet porte vitrée
+doors:trapdoor	minetest_game/mods/doors/init.lua:738	trappe
+beds:bed	minetest_game/mods/beds/beds.lua:59	objet lit (alias vers beds:bed_bottom) ; pose via set_node SANS callback -> craft uniquement
+beds:bed_bottom	minetest_game/mods/beds/api.lua:47	nœud bas du lit
+beds:fancy_bed_bottom	minetest_game/mods/beds/api.lua:47 + beds.lua:8	lit décoré
+default:fence_wood	minetest_game/mods/default/nodes.lua:2692	default.register_fence
+default:sign_wall_wood	minetest_game/mods/default/nodes.lua:2580,2637	register_sign
+moreores:mineral_silver	moreores/init.lua:138,577	add_ore(oredefs.silver)
+moreores:mineral_mithril	moreores/init.lua:138,577	add_ore(oredefs.mithril)
+moreores:silver_lump	moreores/init.lua:110	add_ore
+moreores:silver_ingot	moreores/init.lua:109	add_ore
+moreores:mithril_lump	moreores/init.lua:110	add_ore
+moreores:mithril_ingot	moreores/init.lua:109	add_ore
+glooptest:mineral_ruby	glooptest/ore_api.lua:36 + ore.lua:477	ore.makes=true, généré dans default:stone
+glooptest:mineral_sapphire	glooptest/ore_api.lua:36 + ore.lua:527	idem
+glooptest:mineral_emerald	glooptest/ore_api.lua:36 + ore.lua:577	idem
+glooptest:mineral_topaz	glooptest/ore_api.lua:36 + ore.lua:627	idem
+glooptest:mineral_amethyst	glooptest/ore_api.lua:36 + ore.lua:677	idem
+farming:hoe_wood	farming/hoes.lua:125	farming.register_hoe ; labour via set_node (hoes.lua:78) SANS callback
+farming:hoe_stone	farming/hoes.lua:138	idem
+farming:hoe_steel	farming/hoes.lua:145	idem
+goops_rings:celestial_ring1	rings/items.lua:76,87	register_ring(model,level) ; armor_ring=1 ; vol
+goops_rings:celestial_ring2	rings/items.lua:76,87	idem niveau 2 (or)
+goops_rings:celestial_ring3	rings/items.lua:76,87	idem niveau 3 (mithril)
+goops_rings:celestial_ring4	rings/items.lua:76,87	idem niveau 4 (suprême, diamant)
+goops_rings:infernal_ring1	rings/items.lua:76,87	résistance au feu
+goops_rings:abyssal_ring1	rings/items.lua:76,87	respiration
+goops_rings:enlightning_ring1	rings/items.lua:76,87	brillance
+goops_rings:hardening_ring1	rings/items.lua:76,87	poing de fer
+goops_rings:random_ring1	rings/items.lua:143	anneau aléatoire

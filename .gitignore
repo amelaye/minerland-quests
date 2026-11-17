@@ -1,0 +1,6 @@
+.audit_src/
+dist/
+*.pyc
+__pycache__/
+tests/_tmp/
+.tools/

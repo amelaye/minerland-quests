@@ -1,0 +1,14 @@
+# Donner le Grand Livre aux nouveaux joueurs à leur première connexion.
+minerland_quests.give_book_on_join (Donner le livre aux nouveaux joueurs) bool true
+
+# Instance de TEST uniquement : autorise /mlq_reset et /mlq_simulate. Laisser à false en production.
+minerland_quests.allow_reset (Autoriser la réinitialisation de quêtes - test seulement) bool false
+
+# Les joueurs ayant le privilège creative progressent-ils dans les quêtes ?
+minerland_quests.count_creative (Compter les actions des joueurs en créatif) bool true
+
+# Nombre maximal de positions de blocs posés par des joueurs mémorisées pour l'anti-triche des quêtes de minage.
+minerland_quests.placed_cap (Mémoire anti-triche des blocs posés) int 20000 1000 200000
+
+# Annoncer la réussite d'une quête dans le chat du joueur (en plus de la notification à l'écran).
+minerland_quests.notify_chat (Message de chat à la réussite) bool true
