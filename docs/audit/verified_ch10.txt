@@ -1,0 +1,50 @@
+# Chapitre 10 « Sur les chapeaux de roues ! » — identifiants non littéraux ou absents de l'index, vérifiés à la lecture du code.
+# Format : id<TAB>source<TAB>remarque. Sources : .audit_src/ (branche principale, nov. 2026) — la version serveur peut différer.
+# --- vehicles (D00Med) : objets « spawner » construits par vehicles.register_spawner(vehicle) -> vehicle.."_spawner" (api.lua:673)
+vehicles:masda_spawner	vehicles/api.lua:673 + init.lua:983	recette crafting.lua:121 ; entité vehicles:masda (init.lua:942)
+vehicles:masda2_spawner	vehicles/api.lua:673 + init.lua:1026	recette crafting.lua:130 ; entité vehicles:masda2
+vehicles:ute_spawner	vehicles/api.lua:673 + init.lua:638	recette crafting.lua:139 ; passager possible (init.lua:586)
+vehicles:ute2_spawner	vehicles/api.lua:673 + init.lua:687	recette crafting.lua:148
+vehicles:nizzan_spawner	vehicles/api.lua:673 + init.lua:792	recette crafting.lua:166
+vehicles:nizzan2_spawner	vehicles/api.lua:673 + init.lua:854	recette crafting.lua:157
+vehicles:astonmaaton_spawner	vehicles/api.lua:673 + init.lua:730	recette crafting.lua:175
+vehicles:pooshe_spawner	vehicles/api.lua:673 + init.lua:1348	recette crafting.lua:184
+vehicles:pooshe2_spawner	vehicles/api.lua:673 + init.lua:1391	recette crafting.lua:193
+vehicles:lambogoni_spawner	vehicles/api.lua:673 + init.lua:897	recette crafting.lua:202
+vehicles:lambogoni2_spawner	vehicles/api.lua:673 + init.lua:940	recette crafting.lua:211
+vehicles:fewawi_spawner	vehicles/api.lua:673 + init.lua:1251	recette crafting.lua:220
+vehicles:fewawi2_spawner	vehicles/api.lua:673 + init.lua:1305	recette crafting.lua:229
+vehicles:musting_spawner	vehicles/api.lua:673 + init.lua:1112	recette crafting.lua:247
+vehicles:musting2_spawner	vehicles/api.lua:673 + init.lua:1155	recette crafting.lua:256
+vehicles:policecar_spawner	vehicles/api.lua:673 + init.lua:1069	recette crafting.lua:265
+vehicles:tractor_spawner	vehicles/api.lua:673 + init.lua:440	recette crafting.lua:238 (farming:hoe_steel)
+vehicles:geep_spawner	vehicles/api.lua:673 + init.lua:509	recette crafting.lua:370 ; passager (init.lua:457)
+vehicles:ambulance_spawner	vehicles/api.lua:673 + init.lua:569	recette crafting.lua:379 ; passager (init.lua:525)
+vehicles:firetruck_spawner	vehicles/api.lua:673 + init.lua:406	recette crafting.lua:361
+vehicles:lightcycle_spawner	vehicles/api.lua:673 + init.lua:1430	recette crafting.lua:336 ; pose des nœuds light_barrier
+vehicles:lightcycle2_spawner	vehicles/api.lua:673 + init.lua:1469	recette crafting.lua:344
+vehicles:fourd_spawner	vehicles/api.lua:673 + init.lua:1197	AUCUNE recette -> non obtenable par un joueur (I)
+# --- minetest_game : teintures et laines construites en boucle (ingrédients des recettes citées)
+dye:magenta	minetest_game/mods/dye/init.lua:24,36	boucle dye.dyes -> "dye:"..name (recette vehicles:masda_spawner)
+dye:red	minetest_game/mods/dye/init.lua:23,36	boucle dye.dyes (bike:painter, automobiles_lib:painter, pooshe)
+dye:green	minetest_game/mods/dye/init.lua:19,36	boucle dye.dyes
+dye:blue	minetest_game/mods/dye/init.lua:16,36	boucle dye.dyes
+wool:white	minetest_game/mods/wool/init.lua:8,13	boucle sur dye.dyes -> "wool:"..name (automobiles_beetle:beetle_conv)
+wool:black	minetest_game/mods/wool/init.lua:8,13	idem
+# --- carburants cités par automobiles_lib.fuel (automobiles_lib/init.lua:24-26) mais ABSENTS si le mod biofuel (Lokrates) est chargé :
+# biofuel:biofuel  = alias créé par airutils/airutils_biofuel.lua:61, fichier chargé seulement si biofuel n'est PAS installé (airutils/init.lua:92-100)
+# airutils:biofuel = airutils/airutils_biofuel.lua:50, même condition -> ne pas utiliser comme cible de quête sur Minerland
+# --- noms d'ENTITÉS (pas des objets ; pour la table « nom d'entité -> famille » de integrations/rides.lua)
+# bike:bike	bike/init.lua:698	conducteur attaché directement (init.lua:325)
+# automobiles_lib:pivot_mesh	automobiles_pck/automobiles_lib/entities.lua:1	SIÈGE intermédiaire : remonter au parent (init.lua:194,220)
+# automobiles_beetle:beetle / :beetle_conv / :rc_beetle	automobiles_beetle/entities.lua:475,489,501
+# automobiles_buggy:buggy	automobiles_buggy/buggy_entities.lua:169
+# automobiles_catrelle:catrelle / :catrelle_4f	automobiles_catrelle/entities.lua:318,331
+# automobiles_coupe:coupe	automobiles_coupe/coupe_entities.lua:198
+# automobiles_delorean:delorean	automobiles_delorean/entities.lua:332	(aussi la « time machine », _car_type=1)
+# automobiles_roadster:roadster	automobiles_roadster/roadster_entities.lua:190
+# automobiles_trans_am:trans_am	automobiles_trans_am/entities.lua:255
+# automobiles_motorcycle:motorcycle	automobiles_motorcycle/motorcycle_entities.lua:99	conducteur attaché directement (motorcycle_player.lua:41)
+# automobiles_vespa:vespa	automobiles_vespa/vespa_entities.lua:99	conducteur attaché directement (vespa_player.lua:39)
+# vehicles:<nom> (masda, ute, geep, tractor…)	vehicles/init.lua:216-1666	conducteur via vehicles.object_attach (api.lua:48)
+# Parasites : vehicles:missile (init.lua:96-97 attache le joueur au clic droit), vehicles:parachute (init.lua:1714), vehicles:wing_glider (init.lua:1802)

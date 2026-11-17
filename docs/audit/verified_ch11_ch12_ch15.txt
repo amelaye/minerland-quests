@@ -1,0 +1,78 @@
+# Identifiants non littéraux (boucles/concaténations/API d'enregistrement), vérifiés à la lecture du code.
+# Chapitres 11, 12, 15. Format : id<TAB>source<TAB>remarque. Sources : .audit_src (branches principales, nov. 2026) ;
+# les versions serveur peuvent différer -> revérifier via core.registered_items à l'exécution.
+#
+# --- advtrains (modpack) : rails (advtrains.register_tracks, track_reg_helper.lua:502 placer = prefix.."_placer", :638 nœud = prefix.."_"..variante..rotation)
+advtrains:dtrack_placer	advtrains/advtrains_train_track/init.lua:184-203 + advtrains/advtrains/track_reg_helper.lua:502	craftitem placeur de rails ; recette 6 acier + 3 bâtons -> 50 ; on_place custom (track_builder requis, pose par swap_node)
+advtrains:dtrack_st	advtrains/advtrains_train_track/init.lua:184 + track_reg_helper.lua:638	rail droit posé (aussi _30/_45/_60, _cr, _swlst, _swlcr, _swrst, _swrcr) ; jamais via item_place_node
+advtrains:dtrack_sy_placer	advtrains/advtrains_train_track/init.lua:265,275	aiguillage en Y (3 placeurs -> 2)
+advtrains:dtrack_s3_placer	advtrains/advtrains_train_track/init.lua:284,294	aiguillage 3 voies
+advtrains:dtrack_slopeplacer	advtrains/advtrains_train_track/init.lua:574,585 + track_reg_helper.lua:664	rampe ; pose par minetest.set_node (track_reg_helper.lua:731)
+advtrains:dtrack_bumper_placer	advtrains/advtrains_train_track/init.lua:597,636	heurtoir
+advtrains:dtrack_xing_placer	advtrains/advtrains_train_track/init.lua:334,347	croisement perpendiculaire
+advtrains:dtrack_atc_placer	advtrains/advtrains_train_track/init.lua:649,660	rail ATC (microcontrôleur mesecons)
+advtrains_line_automation:dtrack_stop_placer	advtrains/advtrains_line_automation/stoprail.lua:407-425	rail d'arrêt de gare (charbon + 2 placeurs -> 2) ; enregistré si advtrains_train_track présent
+advtrains:dtrack_tieless_placer	tieless_tracks/init.lua:10,19	rail sans traverses (6 acier -> 50)
+advtrains_horntrack:horn_track_placer	advtrains_horntrack/tracks.lua:84,95,141	placeur + noteblock mesecons (ou farming:string) shapeless ; existe si advtrains:dtrack_st existe
+linetrack:roadtrack_placer	linetrack/src/roadline.lua:11 + track_reg_helper.lua:502	ligne de bus ; AUCUNE recette dans linetrack (créatif/admin seulement)
+linetrack:watertrack_placer	linetrack/src/waterline.lua:18 + track_reg_helper.lua:502	ligne de bateau ; aucune recette
+# --- advtrains : signaux (boucles signals.lua:46-49, 186-188)
+advtrains:signal_off	advtrains/advtrains/signals.lua:115 + crafting.lua:15	signal (marqué deprecated) ; nœud normal, pose item_place_node
+advtrains:retrosignal_off	advtrains/advtrains/signals.lua:52 + crafting.lua:7	signal sans lampe (deprecated)
+advtrains:signal_wall_l_off	advtrains/advtrains/signals.lua:188 + crafting.lua:24	signal mural gauche (aussi _r_off, _t_off)
+advtrains_signals_ks:hs_danger_0	advtrains/advtrains_signals_ks/init.lua:244 + :617	signal principal Ks (rot "0") ; mod advtrains_signals_ks (dépend d'interlocking)
+advtrains_signals_ks:mast_mast_0	advtrains/advtrains_signals_ks/init.lua:575 + :609	mât Ks (x10)
+# --- advtrains : quais (advtrains.register_platform, misc_nodes.lua:6-121 ; nom = prefix..":platform_<low|high|45|45_low>_"..partie après ':')
+advtrains:platform_low_stonebrick	advtrains/advtrains/misc_nodes.lua:18,105,125	quai bas ; shapeless dye:yellow + default:stonebrick -> 4
+advtrains:platform_high_stonebrick	advtrains/advtrains/misc_nodes.lua:35,98,125	quai haut ; dye:yellow + 2 stonebrick -> 4
+advtrains:platform_low_sandstonebrick	advtrains/advtrains/misc_nodes.lua:18,126	quai bas grès
+advtrains_platform:platform_low_stone	advtrains_platform/init.lua:174-177 (list_default) + misc_nodes.lua:18,105	dye:yellow + default:stone -> 4
+advtrains_platform:platform_high_stone	advtrains_platform/init.lua:174-177 + misc_nodes.lua:35,98	dye:yellow + 2 default:stone -> 4
+advtrains_platform:platform_high_cobble	advtrains_platform/init.lua:174-177 + misc_nodes.lua:35,98	idem pavé
+advtrains_platform:stonebrickpath_track_1010	advtrains_platform/init.lua:391,396,486	passage à niveau (on_place = minetest.rotate_node -> item_place_node) ; recette rend le placeur
+# --- wagons (advtrains.register_wagon : nom = "advtrains:"..nom si pas de ':' ; entité ET craftitem du même nom, wagons.lua:1398-1404,1422)
+advtrains:engine_japan	basic_trains/advtrains_train_japan/init.lua:26,181	loco ; places dstand+pass
+advtrains:wagon_japan	basic_trains/advtrains_train_japan/init.lua:103,190	voiture voyageurs (pass)
+advtrains:subway_wagon	basic_trains/advtrains_train_subway/init.lua:3,148	rame de métro (pass+dstand) ; 8 blocs d'acier + dye:yellow
+advtrains:newlocomotive	basic_trains/advtrains_train_steam/init.lua:6,229	loco vapeur (dstand seulement)
+advtrains:detailed_steam_engine	basic_trains/advtrains_train_steam/init.lua:77,238	loco vapeur détaillée
+advtrains:wagon_default	basic_trains/advtrains_train_steam/init.lua:161,247	voiture voyageurs (pass)
+advtrains:wagon_box	basic_trains/advtrains_train_steam/init.lua:209,255	wagon couvert (inventaire)
+advtrains:engine_industrial	basic_trains/advtrains_train_industrial/init.lua:3,121	loco industrielle
+advtrains:moretrains_silberling	moretrains/moretrains_basic/init.lua:77,343	voiture voyageurs
+advtrains:moretrains_draisine	moretrains/moretrains_vintage/init.lua:10,160	draisine (dstand+pass)
+advtrains:moretrains_wagon_gondola	moretrains/moretrains_gondola/init.lua:58,179	wagon tombereau
+advtrains:moretrains_nightline_seat_car	moretrains/moretrains_nightline/init.lua:83,140	voiture de nuit (pass)
+advtrains:engine_zugspitzbahn	advtrains_train_zugspitzbahn/init.lua:9	loco ; AUCUNE recette ; places dstand uniquement
+advtrains:wagon_zugspitzbahn	advtrains_train_zugspitzbahn/init.lua:44	voiture panoramique (pass) ; aucune recette
+advtrains:engine_electronic	advtrains_train_orient_express/init.lua:64	loco Orient-Express ; aucune recette
+advtrains:wagon_compartment	advtrains_train_orient_express/init.lua:134	voiture à compartiments (pass) ; aucune recette
+advtrains:wagon_sleep	advtrains_train_orient_express/init.lua:217	voiture-lits ; aucune recette
+advtrains_train_jpntlr600:front_unit	advtrains_train_jpntlr600/init.lua:33,466,669	tram TLR0600 avant (nom avec ':' -> pas de préfixe advtrains)
+advtrains_train_jpntlr600:back_unit	advtrains_train_jpntlr600/init.lua:34,472,677	tram TLR0600 arrière
+advtrains_train_jpntlr600:TLR0600_cabin	advtrains_train_jpntlr600/init.lua:653-667	pièce de craft (cabine)
+advtrains:under_s7dm	tfl_s7_stock_modpack/init.lua:209	rame S7 (Londres) ; aucune recette
+advtrains:under_s7ndm	tfl_s7_stock_modpack/init.lua:287	rame S7 remorque ; aucune recette
+minitram_konstal_105:minitram_konstal_105_normal	doxy_mini_tram/minitram_konstal_105/init.lua:192-193 + minitram_crafting_recipes/init.lua:263	tramway Konstal 105 (entité + objet)
+advtrains:bus	linetrack/src/roadline_bus.lua:10 + common.lua:26	bus linetrack : entité nommée advtrains:bus (pas linetrack:bus) ; aucune recette
+advtrains:boat	linetrack/src/waterline_boat.lua:28 + common.lua:26	bateau linetrack ; aucune recette
+# --- Ch12 : signalétique
+trainblocks:line1	trainblocks/init.lua:58-59 + craft.lua:47-56	boucle count=1..10 (line1..line10) ; recette dye + verre -> 4
+trainblocks:platformsign1	trainblocks/init.lua:88-89 + craft.lua:68	boucle 0..10 (platformsign0..10)
+minitram_crafting_recipes:minitram_template	doxy_mini_tram/minitram_crafting_recipes/init.lua:142-157	gabarit (papier, mese, engrenage, teintures)
+minitram_crafting_recipes:minitram_bogie	doxy_mini_tram/minitram_crafting_recipes/init.lua:245-262	bogie
+# --- Ch15
+celevator:callbutton_both	celevator/callbuttons.lua:99-104,184-203 + crafts.lua:147	bouton d'appel (états _upon/_downon = variantes allumées)
+celevator:callbutton_up	celevator/callbuttons.lua:99-104,192 + crafts.lua:156	bouton palier bas
+celevator:callbutton_down	celevator/callbuttons.lua:99-104,192 + crafts.lua:165	bouton palier haut
+elevator:elevator_off	elevator/components.lua:218-219,249 + crafts.lua (branche technic+basic_materials)	cabine inactive (objet craftable, drop)
+elevator:elevator_on	elevator/components.lua:218-219,249	cabine active (non créative, obtenue par connexion au moteur)
+travelnet:travelnet	travelnet/travelnet.lua:5,23 + register_travelnet.lua:25,116	boîte travelnet jaune (recette verre/acier/mese, config.lua:26)
+travelnet:travelnet_red	travelnet/travelnet.lua:6	variante couleur (shapeless group:travelnet + dye) ; idem _blue, _green…
+carts:rail	minetest_game/mods/carts/rails.lua:6 + functions.lua:204	rail de wagonnet MTG, posé par la génération de tsm_railcorridors (gameconfig.lua:8)
+# --- Entités (détection « monter à bord », pas des objets d'inventaire)
+chair_lift:seat	chair_lift/chair_lift_entity.lua:258 (entité) / :260 (objet, littéral)	joueur attaché directement à l'entité (l.73)
+celevator:player_holder	celevator/drive_entity.lua:246	entité pivot : joueur -> player_holder -> celevator:car_moving (l.412-414) pendant la course
+celevator:car_moving	celevator/drive_entity.lua:236	corps mobile de la cabine (parent du pivot)
+elevator:box	elevator/init.lua:350	joueur attaché directement (init.lua:40)
+carts:cart	minetest_game/mods/carts/cart_entity.lua:385	joueur attaché directement (functions.lua:21)

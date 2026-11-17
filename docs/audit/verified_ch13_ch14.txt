@@ -1,0 +1,27 @@
+# Identifiants non littéraux ou absents de l'index, vérifiés en lisant le code (chapitres 13 et 14).
+# Format : id<TAB>source<TAB>remarque. Sources : .audit_src @ airutils 5c21c92, ju52 b1f5df9, pa28 6c11335,
+# supercub 490e586, hidroplane 1452b1d, hangglider 17419f7, motorboat ae36510, fishing_boat e18fc13,
+# nautilus df4fa14, linetrack 2ae4e15, advtrains 2b59ab8, biofuel 959aa0d, minetest_game (wool/dye).
+# Les versions installées sur le serveur peuvent différer : revérifier avec core.registered_items à l'exécution.
+#
+# --- Objets d'inventaire construits dynamiquement
+wool:white	minetest_game/mods/wool/init.lua:8,13 + mods/dye/init.lua:11	boucle sur dye.dyes ; ingrédient des ailes supercub et de la manche à air
+advtrains:boat	advtrains/advtrains/wagons.lua:1400-1404,1422 + linetrack/src/waterline_boat.lua:28	register_wagon("boat") préfixe "advtrains:" ; objet ET entité ; AUCUNE recette (pose : privilège train_operator, wagons.lua:1453)
+#
+# --- Objets conditionnels ABSENTS sur le serveur (Biofuel installé) : NE PAS UTILISER
+airutils:biofuel	airutils/airutils_biofuel.lua:49-50	chargé seulement si biofuel absent ou airutils.force_enable_biofuel (init.lua:93-100) ; le mod biofuel définit biomass.convertible_groups (biofuel/refinery.lua:47-48)
+airutils:biofuel_distiller	airutils/airutils_biofuel.lua:85	idem, non chargé
+biofuel:biofuel	airutils/init.lua:51 (table de carburant)	ancien identifiant ; non enregistré par biofuel@959aa0d ; alias seulement via airutils_biofuel.lua:61 (non chargé)
+#
+# --- Noms d'entités (pour l'adaptateur rides, §2 bis) : ce ne sont pas des objets
+ju52:ju52	ju52/entities.lua:212	entité avion ; joueur attaché à airutils:seat_base (ju52/walk_map.lua:10, 207)
+pa28:pa28	pa28/entities.lua:88	entité avion ; pilote attaché à airutils:seat_base (airutils/lib_planes/utilities.lua:107)
+supercub:supercub	supercub/entities.lua:36	idem pa28
+hidroplane:hidro	hidroplane/entities.lua:41	idem pa28 (propriétés copiées de supercub, hidroplane/init.lua:84)
+airutils:seat_base	airutils/common_entities.lua:4	siège intermédiaire PARTAGÉ par tous les avions airutils : ne jamais le mapper seul, remonter au parent
+fishing_boat:boat	fishing_boat/entities.lua:56	entité bateau ; joueur attaché à fishing_boat:stand_base (fishing_boat/utilities.lua:78)
+fishing_boat:stand_base	fishing_boat/entities.lua:10	siège intermédiaire
+motorboat:boat	motorboat/init.lua:404	entité bateau ; joueur attaché à motorboat:seat_base (motorboat/init.lua:138, 192)
+motorboat:seat_base	motorboat/init.lua:359	siège intermédiaire
+nautilus:boat	nautilus/init.lua:364	entité sous-marin ; pilote attaché DIRECTEMENT (nautilus/init.lua:313) ; toutes les variantes posent cette entité (init.lua:968)
+hangglider:glider	hangglider/init.lua:294	entité attachée AU joueur (init.lua:250) : invisible pour player:get_attach()

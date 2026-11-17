@@ -1,0 +1,53 @@
+# Identifiants construits dynamiquement (ou absents de l'index), vérifiés à la lecture du code — chapitres 16-17 (Technic).
+# Sources : .audit_src/technic @ 856ee6a, pipeworks @ 15794da, basic_materials @ f626da0, power_generators @ 2f58b45,
+# factory_bridges @ 51fc786. Les versions serveur peuvent différer : revérifier à l'exécution (core.registered_items).
+# Format : identifiant<TAB>fichier:ligne<TAB>remarque
+technic:lv_cable	technic/technic/machines/register/cables.lua:180 + LV/cables.lua:13	register_cable("LV") ; pas d'on_place -> item_place_node ; recette LV/cables.lua:4
+technic:mv_cable	technic/technic/machines/register/cables.lua:180 + MV/cables.lua:13	register_cable("MV") ; recette MV/cables.lua:4 (caoutchouc)
+technic:hv_cable	technic/technic/machines/register/cables.lua:180 + HV/cables.lua:11	register_cable("HV") ; recette HV/cables.lua:2 (homedecor:plastic_sheeting = alias basic_materials)
+technic:lv_cable_plate_1	technic/technic/machines/register/cables.lua:294	plaque de câble ; on_place -> minetest.item_place (callbacks OK) mais pose plate_1..6 : NE PAS cibler
+technic:lv_generator	technic/technic/machines/register/generator.lua:117 + LV/generator.lua:17	register_generator({tier="LV"}) ; recette LV/generator.lua:8
+technic:lv_generator_active	technic/technic/machines/register/generator.lua:159	variante active (swap_node), drop = lv_generator, jamais posée
+technic:mv_generator	technic/technic/machines/register/generator.lua:117 + MV/generator.lua:12	recette MV/generator.lua:3 (inox) ; after_place_node = pipeworks.after_place
+technic:hv_generator	technic/technic/machines/register/generator.lua:117 + HV/generator.lua:12	recette HV/generator.lua:3
+technic:lv_battery_box0	technic/technic/machines/register/battery_box.lua:268,291 + LV/battery_box.lua:12	boucle i=0..8 ; objet fabriqué/posé = box0 ; recette LV/battery_box.lua:3
+technic:lv_battery_box8	technic/technic/machines/register/battery_box.lua:268,291	états de charge 1..8 (swap_node, not_in_creative), drop = box0
+technic:mv_battery_box0	technic/technic/machines/register/battery_box.lua:268,291 + MV/battery_box.lua:12	recette MV/battery_box.lua:3 (4 box LV + transfo MV)
+technic:hv_battery_box0	technic/technic/machines/register/battery_box.lua:268,291 + HV/battery_box.lua:12	recette HV/battery_box.lua:3
+technic:lv_alloy_furnace	technic/technic/machines/register/machine_base.lua:163-164 + register/alloy_furnace.lua:42 + LV/alloy_furnace.lua:13	recette LV/alloy_furnace.lua:4
+technic:lv_alloy_furnace_active	technic/technic/machines/register/machine_base.lua:235	variante active
+technic:mv_alloy_furnace	technic/technic/machines/register/machine_base.lua:163-164 + MV/alloy_furnace.lua:13	recette MV/alloy_furnace.lua:3
+technic:lv_electric_furnace	technic/technic/machines/register/machine_base.lua:163-164 + register/electric_furnace.lua:6 + LV/electric_furnace.lua:14	nœud réel posé
+technic:lv_electric_furnace_active	technic/technic/machines/register/machine_base.lua:235	variante active
+technic:electric_furnace	technic/technic/legacy.lua:16,32-33	ALIAS -> technic:lv_electric_furnace ; c'est la SORTIE de la recette LV/electric_furnace.lua:6
+technic:mv_electric_furnace	technic/technic/machines/register/machine_base.lua:163-164 + MV/electric_furnace.lua:17	recette MV/electric_furnace.lua:8
+technic:lv_grinder	technic/technic/machines/register/machine_base.lua:163-164 + register/grinder.lua:6 + LV/grinder.lua:32	recette LV/grinder.lua:3 (diamant + granite)
+technic:lv_grinder_active	technic/technic/machines/register/machine_base.lua:235	variante active
+technic:mv_grinder	technic/technic/machines/register/machine_base.lua:163-164 + MV/grinder.lua:12	recette MV/grinder.lua:3
+technic:lv_extractor	technic/technic/machines/register/machine_base.lua:163-164 + LV/extractor.lua:13	recette LV/extractor.lua:4
+technic:mv_extractor	technic/technic/machines/register/machine_base.lua:163-164 + MV/extractor.lua:12	recette MV/extractor.lua:3
+technic:lv_compressor	technic/technic/machines/register/machine_base.lua:163-164 + LV/compressor.lua:17	recette LV/compressor.lua:4 (pistons mesecons)
+technic:mv_compressor	technic/technic/machines/register/machine_base.lua:163-164 + MV/compressor.lua:12	recette MV/compressor.lua:3
+technic:mv_centrifuge	technic/technic/machines/register/machine_base.lua:163-164 + MV/centrifuge.lua:10	recette MV/centrifuge.lua:1 (tête de forage diamant)
+technic:mv_freezer	technic/technic/machines/register/machine_base.lua:163-164 + MV/freezer.lua:12	recette MV/freezer.lua:3 (technic:motor = alias basic_materials:motor)
+technic:solar_array_lv	technic/technic/machines/register/solar_array.lua:43 + LV/solar_array.lua:17	recette LV/solar_array.lua:8
+technic:solar_array_mv	technic/technic/machines/register/solar_array.lua:43 + MV/solar_array.lua:11	recette MV/solar_array.lua:2
+technic:coal_dust	technic/technic/machines/register/grinder_recipes.lua:112,135,174	register_dust("Coal") ; produit par le broyeur (non craft)
+technic:iron_chest	technic/technic_chests/register.lua:393-394 + iron_chest.lua:35	chests:register("Iron") ; pas d'on_place ; recette iron_chest.lua:8
+technic:iron_locked_chest	technic/technic_chests/register.lua:393-394 + iron_chest.lua:45	locked=true ; after_place_node renseigne owner
+technic:copper_chest	technic/technic_chests/register.lua:393-394 + copper_chest.lua:28	recette copper_chest.lua:1 (coffre en fer + 8 cuivre)
+technic:copper_locked_chest	technic/technic_chests/register.lua:393-394 + copper_chest.lua:38	verrouillé
+technic:silver_chest	technic/technic_chests/register.lua:393-394 + silver_chest.lua:30	recette seulement si moreores (silver_chest.lua:1)
+technic:gold_chest	technic/technic_chests/register.lua:393-394 + gold_chest.lua:39	recette si moreores (gold_chest.lua:3) ; color=true -> 15 variantes gold_chest<couleur> non créatives
+technic:mithril_chest	technic/technic_chests/register.lua:393-394 + mithril_chest.lua:30	recette si moreores
+pipeworks:tube_1	pipeworks/tubes/registration.lua:87,215 + tubes/routing.lua:3	tube 6d index 1 (objet en inventaire)
+pipeworks:pipe_1_empty	pipeworks/pipes.lua:62	boucle sur index ; tuyau vide (ingrédient du congélateur MV)
+pipeworks:filter	pipeworks/filter-injector.lua:372,522	"pipeworks:"..data.name
+pipeworks:mese_filter	pipeworks/filter-injector.lua:377,522	ingrédient de la centrifugeuse MV
+factory_bridges:a01	factory_bridges/nodes.lua:3 + init.lua:2	FB.NAME .. ":a01" (garde-corps) ; recette crafts.lua:28
+factory_bridges:b00	factory_bridges/nodes.lua:164	dalle d'acier ; recette crafts.lua:21
+factory_bridges:c00	factory_bridges/nodes.lua:292	escalier d'acier ; recette crafts.lua:336
+factory_bridges:i00	factory_bridges/items.lua:3	tige (rebar), craftitem
+power_generators:emergency_generator	power_generators/generators/emergency_generator.lua:11-14	appliances.appliance:new(node_name_inactive) ; recette crafting.lua:189 ; réseau propre (tubelib2), PAS technic
+technic:solar_array_hv	technic/technic/machines/register/solar_array.lua:43 + HV/solar_array.lua:13	recette HV/solar_array.lua:4
+# technic:network_powered = clé custom proposée (adaptateur), pas un objet.

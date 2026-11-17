@@ -1,0 +1,60 @@
+# Identifiants non littéraux ou absents de l index, vérifiés à la lecture du code (ch06 + ch09). Format : id<TAB>source<TAB>remarque
+# Œufs : mobs:register_egg enregistre ":"..mob (mobs/api.lua:4071) et, sauf type monster, ":"..mob.."_set" (mobs/api.lua:4128).
+mobs_animal:cow	mobs_animal/cow.lua:212 + mobs/api.lua:4071	oeuf d apparition = nom de l entite ; pose via core.add_entity (pas de place)
+mobs_animal:cow_set	mobs_animal/cow.lua:212 + mobs/api.lua:4128	animal capture (non empilable, donnees en meta)
+mobs_animal:chicken	mobs_animal/chicken.lua:145 + mobs/api.lua:4071	oeuf d apparition = nom de l entite ; pose via core.add_entity (pas de place)
+mobs_animal:chicken_set	mobs_animal/chicken.lua:145 + mobs/api.lua:4128	animal capture (non empilable, donnees en meta)
+mobs_animal:bunny	mobs_animal/bunny.lua:176 + mobs/api.lua:4071	oeuf d apparition = nom de l entite ; pose via core.add_entity (pas de place)
+mobs_animal:bunny_set	mobs_animal/bunny.lua:176 + mobs/api.lua:4128	animal capture (non empilable, donnees en meta)
+mobs_animal:kitten	mobs_animal/kitten.lua:190 + mobs/api.lua:4071	oeuf d apparition = nom de l entite ; pose via core.add_entity (pas de place)
+mobs_animal:kitten_set	mobs_animal/kitten.lua:190 + mobs/api.lua:4128	animal capture (non empilable, donnees en meta)
+mobs_animal:rat	mobs_animal/rat.lua:108 + mobs/api.lua:4071	oeuf d apparition = nom de l entite ; pose via core.add_entity (pas de place)
+mobs_animal:rat_set	mobs_animal/rat.lua:108 + mobs/api.lua:4128	animal capture (non empilable, donnees en meta)
+mobs_animal:pumba	mobs_animal/warthog.lua:108 + mobs/api.lua:4071	oeuf d apparition = nom de l entite ; pose via core.add_entity (pas de place)
+mobs_animal:pumba_set	mobs_animal/warthog.lua:108 + mobs/api.lua:4128	animal capture (non empilable, donnees en meta)
+mobs_animal:panda	mobs_animal/panda.lua:109 + mobs/api.lua:4071	oeuf d apparition = nom de l entite ; pose via core.add_entity (pas de place)
+mobs_animal:panda_set	mobs_animal/panda.lua:109 + mobs/api.lua:4128	animal capture (non empilable, donnees en meta)
+mobs_animal:penguin	mobs_animal/penguin.lua:132 + mobs/api.lua:4071	oeuf d apparition = nom de l entite ; pose via core.add_entity (pas de place)
+mobs_animal:penguin_set	mobs_animal/penguin.lua:132 + mobs/api.lua:4128	animal capture (non empilable, donnees en meta)
+mobs_animal:bee	mobs_animal/bee.lua:84 + mobs/api.lua:4071	oeuf ; objet obtenu en capturant une abeille (replacewith, bee.lua:56) ; ingredient de mobs:beehive
+mobs:bee	mobs_animal/bee.lua:88 + mobs/api.lua:4465	alias -> mobs_animal:bee (recette ruche bee.lua:170)
+mobs_animal:sheep_black	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_black_set
+mobs_animal:sheep_blue	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_blue_set
+mobs_animal:sheep_brown	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_brown_set
+mobs_animal:sheep_cyan	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_cyan_set
+mobs_animal:sheep_dark_green	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_dark_green_set
+mobs_animal:sheep_dark_grey	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_dark_grey_set
+mobs_animal:sheep_green	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_green_set
+mobs_animal:sheep_grey	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_grey_set
+mobs_animal:sheep_magenta	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_magenta_set
+mobs_animal:sheep_orange	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_orange_set
+mobs_animal:sheep_pink	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_pink_set
+mobs_animal:sheep_red	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_red_set
+mobs_animal:sheep_violet	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_violet_set
+mobs_animal:sheep_white	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_white_set
+mobs_animal:sheep_yellow	mobs_animal/sheep.lua:24-38,88,391	entite + oeuf (boucle all_colours) ; _set capture : mobs_animal:sheep_yellow_set
+mobs_animal:sheep_white_set	mobs_animal/sheep.lua:391 + mobs/api.lua:4128	mouton blanc capture
+mob_horse:horse	mob_horse/init.lua:59,286	entite (monture, set_attach mobs/mount.lua:151) et oeuf
+mob_horse:horse_set	mob_horse/init.lua:286 + mobs/api.lua:4128	cheval capture (lasso 100%, init.lua:247)
+mobs:fence_wood	mobs/crafts.lua:251	default.register_fence, seulement si default ; noeud standard
+animalworld:yak	animalworld/yak.lua:4,187	entite + oeuf ; traite -> animalworld:bucket_milk
+animalworld:bear	animalworld/bear.lua:87	oeuf ; type monster : pas de _set
+farming:oat	farming/crops/rye_oat.lua:33 + farming/init.lua:566	farming.register_plant (recolte)
+farming:rye	farming/crops/rye_oat.lua:8 + farming/init.lua:566	farming.register_plant (recolte)
+mesecons:wire_00000000_off	mesecons/mesecons_wires/init.lua:198,221,241	fil mesecons (alias mesecons:mesecon) ; ingredient atm
+smartshop:shop	smartshop/nodes/shop.lua:59-72,78	register_shop_variant ; variantes drop smartshop:shop, hors creatif
+smartshop:shop_full	smartshop/nodes/shop.lua:59-72,80	register_shop_variant ; variantes drop smartshop:shop, hors creatif
+smartshop:shop_empty	smartshop/nodes/shop.lua:59-72,84	register_shop_variant ; variantes drop smartshop:shop, hors creatif
+smartshop:shop_used	smartshop/nodes/shop.lua:59-72,88	register_shop_variant ; variantes drop smartshop:shop, hors creatif
+smartshop:shop_admin	smartshop/nodes/shop.lua:59-72,92	register_shop_variant ; variantes drop smartshop:shop, hors creatif
+smartshop:storage	smartshop/nodes/storage.lua:36-55	register_storage_variant (+ _lacks_refill l.57, _has_send)
+smartshop:wifistorage	smartshop/aliases.lua:1	alias -> smartshop:storage
+moremachines:cashregister	moremachines/money_machines.lua:15 + handlers/registration.lua:35	moremachines.register ; sans recette (creatif), chargement douteux (depends homedecor)
+moremachines:change_machine	moremachines/money_machines.lua:51 + handlers/registration.lua:35	moremachines.register ; sans recette (creatif), chargement douteux (depends homedecor)
+moremachines:atm_machine	moremachines/money_machines.lua:93 + handlers/registration.lua:35	moremachines.register ; sans recette (creatif), chargement douteux (depends homedecor)
+moremachines:locker	moremachines/money_machines.lua:126 + handlers/registration.lua:35	moremachines.register ; sans recette (creatif), chargement douteux (depends homedecor)
+leads:knot	leads/knots.lua:166	ENTITE (noeud de laisse), pas un objet
+mobs_npc:npc	mobs_npc/npc.lua:32,171	entite + oeuf ; A EXCLURE des quetes
+mobs_npc:igor	mobs_npc/igor.lua:32,154	entite + oeuf ; A EXCLURE
+mobs_npc:trader	mobs_npc/trader.lua:62,180	entite + oeuf ; A EXCLURE
+# homedecor:coin cite comme ABSENT volontairement (moremachines/money_machines.lua:81, objet inexistant dans homedecor_modpack audite)

@@ -1,0 +1,104 @@
+# Identifiants construits dynamiquement (boucles, concaténations, préfixes ajoutés par une API), vérifiés à la lecture
+# du code — chapitres 7 et 8. Format : id<TAB>source<TAB>remarque. Sources : .audit_src (novembre 2026), versions serveur
+# possiblement différentes : revérifier à l'exécution (core.registered_items).
+#
+# --- canned_food (aucun mod.conf : nom = dossier) — boucle init.lua:298-430, nœud = "canned_food:"..product (l.335/361)
+canned_food:apple_jam	canned_food/init.lua:33,335,423	3 default:apple + vessels:glass_bottle (shapeless) ; item_eat -> rend la bouteille (l.324-326)
+canned_food:wild_blueberry_jam	canned_food/init.lua:41,335,423	6 default:blueberries + bouteille
+canned_food:dandelion_jam	canned_food/init.lua:49,335,423	5 flowers:dandelion_yellow + bouteille
+canned_food:rose_jam	canned_food/init.lua:57,335,423	5 flowers:rose + bouteille
+canned_food:canned_mushrooms	canned_food/init.lua:65,361,423	5 flowers:mushroom_brown + bouteille ; a une variante _plus
+canned_food:canned_mushrooms_plus	canned_food/init.lua:72,349-367	« Salted mushrooms » : set_node par minuteur (cave sombre + bois), aucun joueur en cause
+canned_food:canned_tomato	canned_food/init.lua:184,361,423	3 farming:tomato + bouteille
+canned_food:canned_tomato_plus	canned_food/init.lua:191,367	« Marinated tomatoes » (transformation passive, 10 % / 180 s)
+canned_food:canned_carrot	canned_food/init.lua:155,361,423	3 farming:carrot + bouteille
+canned_food:canned_cucumber	canned_food/init.lua:174,361,423	3 farming:cucumber + bouteille ; _plus = « Pickles »
+canned_food:canned_cucumber_plus	canned_food/init.lua:181,367	cornichons (transformation passive)
+canned_food:strawberry_jam	canned_food/init.lua:90,335,423	5 ethereal:strawberry + farming:sugar + bouteille
+canned_food:honey_jar	canned_food/init.lua:242,335,423	4 mobs:honey + bouteille (mobs_animal requis)
+canned_food:canned_corn	canned_food/init.lua:193,335,423	3 farming:corn + bouteille
+canned_food:grape_jam	canned_food/init.lua:131,335,423	4 farming:grapes + farming:sugar + bouteille
+canned_food:canned_peas	canned_food/init.lua:276,335,423	8 farming:peas (alias -> farming:pea_pod, farming/crops/peas.lua:23) + bouteille
+#
+# --- wine (TenPlus1) — wine:add_drink(name) init.lua:94-169 : ":wine:glass_"..name (l.97), ":wine:bottle_"..name (l.136)
+wine:glass_wine	wine/drinks.lua:3 + init.lua:97	verre ; on_use -> core.do_item_eat (init.lua:125) ; fût : farming:grapes (drinks.lua:96)
+wine:bottle_wine	wine/drinks.lua:3 + init.lua:136,155	9 verres -> 1 bouteille (grille) ; bouteille = décor, non consommable
+wine:glass_beer	wine/drinks.lua:4 + init.lua:97	fût : farming:barley (drinks.lua:97)
+wine:glass_wheat_beer	wine/drinks.lua:7 + init.lua:97	fût : farming:wheat (drinks.lua:82)
+wine:glass_cider	wine/drinks.lua:12 + init.lua:97	fût : default:apple (drinks.lua:58)
+wine:glass_mead	wine/drinks.lua:13 + init.lua:97	fût : mobs:honey / xdecor:honey (drinks.lua:66,74)
+wine:glass_mint	wine/drinks.lua:14,87-93 + init.lua:97	SEULE boisson alcoolisée en grille standard (3 farming:mint_leaf + wine:glass_bourbon + farming:sugar)
+wine:glass_brandy	wine/drinks.lua:15,26-31	cuisson (four) de wine:glass_wine
+wine:glass_margarita	wine/drinks.lua:19,138-144	grille standard (cointreau + tequila + ethereal:lemon)
+wine:glass_sparkling_apple_juice	wine/drinks.lua:22,103-104	sans alcool ; fût : pomme + farming:sugar + vessels:drinking_glass
+wine:glass_kefir	wine/drinks.lua:20,75	sans alcool ; fût : mobs:glass_milk + farming:wheat
+#
+# --- drinks — boucle drinks2.lua:3-60 (thirsty absent) : 'drinks:jcu_'..desc, 'drinks:jbo_'..desc, 'drinks:jbu_'..desc
+drinks:jcu_apple	drinks/init.lua:81 + drinks2.lua:29	verre de jus de pomme (pressoir) ; on_use -> core.item_eat(1, verre) (drinks2.lua:31-35)
+drinks:jbo_apple	drinks/init.lua:81 + drinks2.lua:39	bouteille de jus ; item_eat
+drinks:jcu_carrot	drinks/init.lua:149 + drinks2.lua:29	cible de l'alias forcé farming:carrot_juice (init.lua:160)
+drinks:jcu_pineapple	drinks/init.lua:156 + drinks2.lua:29	cible de l'alias forcé farming:pineapple_juice (init.lua:161)
+drinks:jcu_grapes	drinks/init.lua:151 + drinks2.lua:29	jus de raisin (pressoir)
+#
+# --- food (rubenwardy, modpack : mods food + food_basic) — préfixe ":food:" dans food.module(...)
+food:apple_juice	food/food_basic/init.lua:138-155	boucle juices ; grille : group:food_apple + group:food_cup (vessels:drinking_glass, support.lua:16) ; food.item_eat -> core.item_eat
+food:orange_juice	food/food_basic/init.lua:138-155	group:food_orange (ethereal:orange, support.lua:19-22)
+food:soup_tomato	food/food_basic/init.lua:107-131	soupe crue en grille puis CUISSON -> food:soup_tomato (non détectable en craft)
+food:soup_tomato_raw	food/food_basic/init.lua:114,124	grille standard (2 seaux d'eau + tomate + group:food_bowl)
+#
+# --- waffles — MODNAME = core.get_current_modname() = "waffles" (mod.conf)
+waffles:waffle_maker	waffles/maker.lua:199,208-215	nœud gaufrier ; recette tin/steel/copper (les réglages ont une coquille de nom, maker.lua:203-205)
+waffles:waffle_maker_open	waffles/maker.lua:200	état ouvert (swap_node) — ne jamais cibler
+waffles:waffle_batter	waffles/waffle.lua:91,111-115	pâte ; 2 farming:flour + bucket:bucket_water (shapeless, réglable)
+waffles:waffle	waffles/waffle.lua:12	gaufre (nœud) ; item_eat(8) ; obtenue en FRAPPANT le gaufrier (maker.lua:94-110, inv:add_item)
+waffles:waffle_quarter	waffles/waffle.lua:30,36-40	quart de gaufre (grille, shapeless) ; item_eat(2)
+waffles:waffle_stack	waffles/waffle.lua:43,66-70	pile de 8 gaufres (grille) ; décor posable (rotate_and_place)
+#
+# --- jelys_pizzaria — jpizza.register_pizza(name) functions.lua:15-53
+jelys_pizzaria:dough_rolled	jelys_pizzaria/nodes.lua:53 + functions.lua:53	pâte étalée : set_node via on_dig au rouleau (nodes.lua:23-27), aucun callback
+jelys_pizzaria:cheese_pizza	jelys_pizzaria/nodes.lua:118 + functions.lua:53	pizza cuite au four (minuteur) puis découpée à la roulette (on_punch, add_item)
+#
+# --- homedecor_modpack — homedecor.register(name) => core.register_node(":homedecor:"..name) (homedecor_common/registration.lua:119)
+homedecor:oil_lamp	homedecor_lighting/init.lua:1093 + recette 1585	lampe à huile ; pose standard
+homedecor:oil_lamp_tabletop	homedecor_lighting/init.lua:1115 + recette 1594	lampe à huile de table ; pose standard (pas d'expand)
+homedecor:candle	homedecor_lighting/init.lua:990 + recette 1549	bougie (farming:string + 2 basic_materials:paraffin)
+homedecor:table_lamp_11	homedecor_lighting/init.lua:212,717	boucle brightness 0..14 ; c'est le nœud posé depuis l'objet « table_lamp_hi »
+homedecor:table_lamp_hi	homedecor_lighting/init.lua:28,1466-1481	ALIAS -> homedecor:table_lamp_11 (hi = 11) ; recette 1905 (wool:white, torch, stick, slab)
+homedecor:kitchen_chair_wood	homedecor_seating/misc.lua:144 + recette 303	chaise ; after_place_node unifieddyes (n'empêche pas le callback de pose)
+homedecor:armchair	homedecor_seating/armchairs.lua:41 + recette 101	fauteuil
+homedecor:curtain_open	homedecor_windows_and_treatments/init.lua:140 + recette 413	rideau ouvert (3 laines blanches -> 4)
+homedecor:curtain_closed	homedecor_windows_and_treatments/init.lua:115	rideau fermé ; clic droit = set_node vers curtain_open
+homedecor:window_quartered	homedecor_windows_and_treatments/init.lua:9 + recette 483	fenêtre à croisillons
+homedecor:rug_small	homedecor_misc/init.lua:46,71 + recette 758	boucle rug_types ; 4 laines (shapeless) -> 8
+homedecor:rug_persian	homedecor_misc/init.lua:48,71 + recette 768	tapis persan
+homedecor:rug_large	homedecor_misc/init.lua:47,71 + recette 808	grand tapis
+#
+# --- xdecor (variante X-Decor-libre) — xdecor.register(name) => register_node("xdecor:"..name) (handlers/registration.lua:101,149)
+xdecor:workbench	xdecor/src/workbench.lua:377 + recette 606-612	établi (4 group:wood) ; la DÉCOUPE passe par l'inventaire du nœud, pas par register_on_craft
+xdecor:lantern	xdecor/src/nodes.lua:505 + recipes.lua:143-150	on_place perso appelant core.item_place_node (nodes.lua:561) -> callback de pose OK
+xdecor:lantern_hanging	xdecor/src/nodes.lua:580	posé à la place de xdecor:lantern quand on vise un plafond (nodes.lua:550-559)
+xdecor:chair	xdecor/src/nodes.lua:201 + recipes.lua:49-56	chaise ; s'asseoir = set_pos + player_attached, PAS de set_attach
+xdecor:table	xdecor/src/nodes.lua:824 + recipes.lua:234-241	table (3 stairs:slab_wood + 2 bâtons)
+xdecor:cushion	xdecor/src/nodes.lua:322	coussin ; on_place = rotate_node (item_place_node)
+xdecor:candle	xdecor/src/nodes.lua:169 + recipes.lua:19-24	bougie (1 torche)
+xdecor:woodframed_glass	xdecor/src/nodes.lua:896 + recipes.lua:268	verre encadré de bois
+xdecor:curtain_red	xdecor/src/nodes.lua:238-240,259 + recette 314	seule couleur définie ; 2 wool:red -> 4
+xdecor:painting_1	xdecor/src/nodes.lua:690 + recipes.lua:177-182	objet fabriqué ; la pose choisit au hasard painting_1..4 (nodes.lua:724-726)
+xdecor:painting_2	xdecor/src/nodes.lua:745	posé au hasard
+xdecor:painting_3	xdecor/src/nodes.lua:745	posé au hasard
+xdecor:painting_4	xdecor/src/nodes.lua:745	posé au hasard
+#
+# --- moreblocks / stairsplus — register_node(":"..modname..":"..category.."_"..subname..alternate) (stairsplus/common.lua:190)
+moreblocks:stair_wood	moreblocks/stairsplus/registrations.lua:29,74 + common.lua:190	escalier ; recette grille recipes.lua:349 ; pose via core.item_place (common.lua:121)
+moreblocks:slab_wood	moreblocks/stairsplus/registrations.lua:29,74 + common.lua:190	dalle
+moreblocks:micro_wood	moreblocks/stairsplus/registrations.lua:29,74 + common.lua:190	microbloc (scie ou grille recipes.lua:13-44)
+stairs:slab_wood	minetest_game/mods/stairs/init.lua:174,460	ALIAS FORCÉ -> moreblocks:slab_wood (moreblocks/stairsplus/registrations.lua:78)
+stairs:stair_wood	minetest_game/mods/stairs/init.lua:460	ALIAS FORCÉ -> moreblocks:stair_wood (registrations.lua:75)
+#
+# --- minetest_game (ingrédients)
+wool:red	minetest_game/mods/wool/init.lua:8,13 + dye/init.lua:23	laine rouge
+flowers:rose	minetest_game/mods/flowers/init.lua:43,65	fleur (ingrédient confiture)
+flowers:dandelion_yellow	minetest_game/mods/flowers/init.lua:43,77	fleur (ingrédient confiture)
+#
+# --- identifiants à NE PAS utiliser (sortie de recette jamais enregistrée)
+# bbq:garlic, bbq:garlic_clove, bbq:garlic_braid : bbq/cooking.lua:415-436 (aucun register_* correspondant)

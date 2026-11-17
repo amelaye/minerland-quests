@@ -1,0 +1,25 @@
+# Identifiants construits dynamiquement ou absents de l'index, vérifiés à la lecture du code (chapitre 18, Techage).
+# Source : .audit_src/techage_modpack @ de4c1a5. Format : id<TAB>source<TAB>remarque
+# Règle de construction des machines « consumer » : techage/basic_machines/consumer.lua:127-130
+#   name_pas = "techage:ta"..stage.."_"..base_name.."_pas" (stage 2..5), enregistré seulement si validStates[stage]
+#   (défaut {true,true,true,true} -> stages 2,3,4 ; validStates[5] est nil). Le nœud « _act » est diggable=false, drop="" (l.286-287).
+techage:ta2_grinder_pas	techage/basic_machines/grinder.lua:223-224 + consumer.lua:128,256	broyeur TA2 (axe) ; craft grille grinder.lua:336 (mese, hammer_steel, tubeS, iron_ingot)
+techage:ta3_grinder_pas	techage/basic_machines/grinder.lua:223-224 + consumer.lua:128	broyeur TA3 ; craft grinder.lua:345 (ta2 + vacuum_tube)
+techage:ta4_grinder_pas	techage/basic_machines/grinder.lua:223-224 + consumer.lua:128	broyeur TA4 ; craft grinder.lua:354 (ta3 + ta4_wlanchip)
+techage:ta2_grinder_act	techage/basic_machines/consumer.lua:129,300	état actif (swap), non creusable : jamais cible
+techage:ta2_quarry_pas	techage/basic_machines/quarry.lua:466 + consumer.lua:128	carrière TA2 ; craft quarry.lua:492 ; creuse via techage.dig_like_player (faux joueur)
+techage:ta2_gravelsieve_pas	techage/basic_machines/gravelsieve.lua:200 + consumer.lua:128	tamis TA2 ; craft gravelsieve.lua:239 (contient techage:sieve)
+techage:ta2_autocrafter_pas	techage/basic_machines/autocrafter.lua:504,528	validStates {false,true,true,true} = TA2/TA3/TA4 ; craft autocrafter.lua:530
+techage:ta2_electronic_fab_pas	techage/basic_machines/electronic_fab.lua:246,268	TA2/TA3/TA4 ; fabrique vacuum_tube (recette machine, pas de craft grille)
+techage:ta3_electronic_fab_pas	techage/basic_machines/electronic_fab.lua:246,268	fabrique ta4_wlanchip (items/electronic.lua:64)
+techage:ta2_pusher_pas	techage/basic_machines/pusher.lua:369 + consumer.lua:128	poussoir TA2
+techage:ta3_pusher_pas	techage/basic_machines/pusher.lua:369 + consumer.lua:128	ingrédient du pumpjack (oil/pumpjack.lua:260)
+techage:ta3_drillbox_pas	techage/oil/drillbox.lua:283,318	validStates {false,false,true,false} = TA3 seulement
+techage:ta3_pumpjack_pas	techage/oil/pumpjack.lua:222,254	TA3 seulement ; craft pumpjack.lua:257
+techage:ta1_board1_apple	techage/ta1_watermill/millboard.lua:18-19,81	register_board1(output) ; craft l.38 (3 x stairs:slab_wood)
+techage:ta1_board2_apple	techage/ta1_watermill/millboard.lua:48-49,87	planche de bief ; craft l.71
+techage:flame1	techage/iron_age/coalburner.lua:112-114	"techage:flame"..idx, idx 1..7 (flammes du four à charbon, pas une cible)
+# Ids littéraux déjà dans l'index mais au comportement à retenir :
+techage:ta1_watermill_inv	techage/ta1_watermill/watermill.lua:193,224-235	objet posé ; after_place_node le remplace par techage:ta1_watermill (swap) ou le RETIRE si place insuffisante -> place émis quand même
+techage:charcoal	techage/iron_age/charcoalpile.lua:116-127,197	produit par swap_node à la fin du meiler (jamais par placenode) ; drop = lui-même
+signs_bot:box	techage_modpack/signs_bot/basis.lua:411,432-436,503	pose : after_place_node retire le bloc si placer n'est pas un joueur ; craft avec techage:ta4_wlanchip si techage présent

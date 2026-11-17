@@ -25,12 +25,35 @@ glooptest:mineral_amethyst	glooptest/ore_api.lua:36 + ore.lua:677	idem
 farming:hoe_wood	farming/hoes.lua:125	farming.register_hoe ; labour via set_node (hoes.lua:78) SANS callback
 farming:hoe_stone	farming/hoes.lua:138	idem
 farming:hoe_steel	farming/hoes.lua:145	idem
-goops_rings:celestial_ring1	rings/items.lua:76,87	register_ring(model,level) ; armor_ring=1 ; vol
-goops_rings:celestial_ring2	rings/items.lua:76,87	idem niveau 2 (or)
-goops_rings:celestial_ring3	rings/items.lua:76,87	idem niveau 3 (mithril)
-goops_rings:celestial_ring4	rings/items.lua:76,87	idem niveau 4 (suprême, diamant)
-goops_rings:infernal_ring1	rings/items.lua:76,87	résistance au feu
-goops_rings:abyssal_ring1	rings/items.lua:76,87	respiration
-goops_rings:enlightning_ring1	rings/items.lua:76,87	brillance
-goops_rings:hardening_ring1	rings/items.lua:76,87	poing de fer
-goops_rings:random_ring1	rings/items.lua:143	anneau aléatoire
+doors:door_steel	minetest_game/mods/doors/init.lua:259,496	objet porte (doors.register -> craftitem :name)
+doors:door_steel_a	minetest_game/mods/doors/init.lua:465	nœud posé (variante)
+doors:door_steel_b	minetest_game/mods/doors/init.lua:468	nœud posé (variante miroir)
+doors:door_glass_a	minetest_game/mods/doors/init.lua:465,514	nœud posé (variante)
+doors:door_glass_b	minetest_game/mods/doors/init.lua:468,514	nœud posé (variante miroir)
+beds:fancy_bed	minetest_game/mods/beds/api.lua:203 + beds.lua:8	alias vers beds:fancy_bed_bottom (ItemStack résout l'alias) ; pose par set_node (api.lua:115-116) : AUCUN callback de pose -> quête de craft
+goops_rings:activation_ring	rings/activation.lua:312,323	littéral ; recette 4 pépites d'or + 5 gemmes distinctes
+goops_rings:mismatched_gems	rings/items.lua:126-135	5 gemmes quelconques (group:glooptest_gem) -> 5 gemmes dépareillées
+goops_rings:celestial_ring1	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 1
+goops_rings:celestial_ring2	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 2
+goops_rings:celestial_ring3	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 3
+goops_rings:celestial_ring4	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 4
+goops_rings:infernal_ring1	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 1
+goops_rings:infernal_ring2	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 2
+goops_rings:infernal_ring3	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 3
+goops_rings:infernal_ring4	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 4
+goops_rings:abyssal_ring1	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 1
+goops_rings:abyssal_ring2	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 2
+goops_rings:abyssal_ring3	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 3
+goops_rings:abyssal_ring4	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 4
+goops_rings:enlightning_ring1	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 1
+goops_rings:enlightning_ring2	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 2
+goops_rings:enlightning_ring3	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 3
+goops_rings:enlightning_ring4	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 4
+goops_rings:hardening_ring1	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 1
+goops_rings:hardening_ring2	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 2
+goops_rings:hardening_ring3	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 3
+goops_rings:hardening_ring4	rings/items.lua:75-87 (register_ring), recette :95-125	niveau 4
+goops_rings:random_ring1	rings/items.lua:148-160	anneau aléatoire niveau 1
+goops_rings:random_ring2	rings/items.lua:148-160	anneau aléatoire niveau 2
+goops_rings:random_ring3	rings/items.lua:148-160	anneau aléatoire niveau 3
+goops_rings:random_ring4	rings/items.lua:148-160	anneau aléatoire niveau 4

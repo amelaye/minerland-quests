@@ -89,3 +89,17 @@ signs_lib https://github.com/mt-mods/signs_lib
 locks https://github.com/Sokomine/locks
 amethyst_new https://gitlab.com/alerikaisattera/amethyst_new
 drawers https://github.com/minetest-mods/drawers
+creatura https://github.com/ElCeejo/creatura
+mob_core https://github.com/mt-mods/mob_core
+mobs_npc https://codeberg.org/tenplus1/mobs_npc
+appliances https://github.com/sfence/appliances
+ltc4000e https://cheapiesystems.com/git/ltc4000e
+leads https://codeberg.org/SilverSandstone/leads
+jelys_pizzaria https://github.com/Extex101/jelys_pizzaria
+waffles https://github.com/GreenXenith/waffles
+futil https://github.com/fluxionary/minetest-futil
+fmod https://github.com/fluxionary/minetest-fmod
+farebox https://github.com/gpcf/farebox
+trainblocks https://github.com/Montandalar/trainblocks
+tfl_s7_stock_modpack https://codeberg.org/advtrains_supplemental/tfl_s7_stock_modpack
+nether_hybriddog https://codeberg.org/HybridDog/nether-pack

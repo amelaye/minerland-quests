@@ -70,6 +70,6 @@ Q.register_quest({
 	hint = "Ces recettes demandent des ustensiles de farming (planche à découper, presse-agrumes, casserole, bol).",
 	trigger = { type = "craft", items = { "farming:salad", "farming:carrot_juice", "farming:potato_salad",
 		"farming:popcorn" } },
-	requires = { "ch03.varieties", "ch03.bread" }, mods = { "farming" },
+	requires = { "ch03.varieties", "ch03.flour" }, mods = { "farming" },
 	reward = { items = { "default:gold_ingot 1" }, title = "Main verte" },
 })

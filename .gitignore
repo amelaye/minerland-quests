@@ -4,3 +4,4 @@ dist/
 __pycache__/
 tests/_tmp/
 .tools/
+.wiki_cache/

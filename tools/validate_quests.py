@@ -13,7 +13,7 @@ Contrôles :
 Usage : python3 tools/validate_quests.py [--json dump.json] [--strict]
 Code de sortie 1 s'il y a des ERREURS (les AVERTISSEMENTS ne bloquent pas, sauf --strict).
 """
-import argparse, glob, json, os, subprocess, sys
+import argparse, glob, json, os, re, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -39,8 +39,8 @@ def load_dump(path):
     return json.loads(r.stdout)
 
 
-def load_known_items():
-    idx = json.load(open(os.path.join(ROOT, "docs/audit/item_index.json"), encoding="utf-8"))
+def load_known_items(index_path=None):
+    idx = json.load(open(index_path or os.path.join(ROOT, "docs/audit/item_index.json"), encoding="utf-8"))
     items = dict(idx["items"])
     aliases = {k: v["target"] for k, v in idx["aliases"].items()}
     verified = {}
@@ -52,16 +52,17 @@ def load_known_items():
                 verified[parts[0]] = parts[1] if len(parts) > 1 else os.path.basename(f)
     # objets du mod lui-même
     own = {"minerland_quests:book": "ui/items.lua", "minerland_quests:city_charter": "ui/items.lua"}
-    return items, aliases, verified, own
+    return items, aliases, verified, own, set(idx["mods"])
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--json")
     ap.add_argument("--strict", action="store_true")
+    ap.add_argument("--index", help="index JSON produit par tools/audit_mods.py (ex. sur le serveur réel)")
     args = ap.parse_args()
     data = load_dump(args.json)
-    items, aliases, verified, own = load_known_items()
+    items, aliases, verified, own, known_mods = load_known_items(args.index)
     errors, warnings = [], []
     E = errors.append
     W = warnings.append
@@ -118,6 +119,9 @@ def main():
             known(s, "récompense", qid)
         if q.get("icon"):
             known(q["icon"], "icône", qid)
+        for m in q.get("mods") or []:
+            if m not in known_mods:
+                E(f"{qid} : mod requis « {m} » inconnu (nom mod.conf attendu, pas le nom du dossier)")
         if not q.get("reward_items") and not q.get("reward_title"):
             W(f"{qid} : aucune récompense")
         # ne pas récompenser par l'objet exact visé
@@ -187,6 +191,13 @@ def main():
             E(f"économie : {totals[name]} × {name} distribués (plafond {cap})")
     if money > CURRENCY_CAP:
         E(f"économie : {money} Minegeld distribués au total (plafond {CURRENCY_CAP})")
+
+    # optional_depends du mod.conf : noms réels attendus
+    conf = open(os.path.join(ROOT, "minerland_quests/mod.conf"), encoding="utf-8").read()
+    m = re.search(r"^optional_depends\s*=\s*(.*)$", conf, re.M)
+    for dep in [d.strip() for d in (m.group(1).split(",") if m else []) if d.strip()]:
+        if dep not in known_mods:
+            W(f"mod.conf : optional_depends « {dep} » ne correspond à aucun mod audité")
 
     for p in data.get("graph_problems") or []:
         E("graphe : " + p)

@@ -34,7 +34,7 @@ ch("ch04", "fundamentals", "Les trésors de la terre", "default:pick_steel",
 	.. "certaines richesses ne demandent qu'à être découvertes.")
 ch("ch05", "fundamentals", "Les anneaux du ciel", "goops_rings:celestial_ring1",
 	"Goops a forgé des anneaux merveilleux : voler, résister au feu, respirer sous l'eau, briller… Un anneau se "
-	.. "porte comme une armure, et c'est l'Anneau d'activation, gardé dans ton inventaire, qui le réveille.")
+	.. "porte comme une armure ; c'est l'Anneau d'activation, tenu en main, qui le réveille pour un temps limité.")
 
 -- PARTIE II
 ch("ch06", "daily_life", "La ferme aux animaux", "mobs:lasso",
