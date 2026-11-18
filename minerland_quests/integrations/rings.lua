@@ -22,26 +22,19 @@ if core.get_modpath("3d_armor") and armor and armor.register_on_equip then
 end
 
 local last = {}   -- [nom] = nom de l'effet actif lors du dernier passage (évite les répétitions)
-local timer = 0
-core.register_globalstep(function(dtime)
-	timer = timer + dtime
-	if timer < 2 then return end
-	timer = 0
+Q.compat.register_poll("rings", 2, function(_, name)
 	if type(rings) ~= "table" or type(rings.users) ~= "table" then return end
-	for _, player in ipairs(core.get_connected_players()) do
-		local name = player:get_player_name()
-		local p = rings.users[name]
-		local fx = p and p.flags and p.flags.status == 1 and p.fx and p.fx.name or nil
-		if fx and last[name] ~= fx then
-			Q.events.emit(name, "custom", "rings:activate", 1)
-			if fx == "Flight Privilege" then
-				Q.events.emit(name, "custom", "rings:flight", 1)
-			else
-				Q.events.emit(name, "custom", "rings:activate_other", 1)
-			end
+	local p = rings.users[name]
+	local fx = p and p.flags and p.flags.status == 1 and p.fx and p.fx.name or nil
+	if fx and last[name] ~= fx then
+		Q.events.emit(name, "custom", "rings:activate", 1)
+		if fx == "Flight Privilege" then
+			Q.events.emit(name, "custom", "rings:flight", 1)
+		else
+			Q.events.emit(name, "custom", "rings:activate_other", 1)
 		end
-		last[name] = fx
 	end
+	last[name] = fx
 end)
 
 core.register_on_leaveplayer(function(player)

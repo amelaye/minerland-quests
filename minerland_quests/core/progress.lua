@@ -124,8 +124,14 @@ function P.handle_event(name, etype, key, count, ctx)
 	count = math.max(1, math.floor(tonumber(count) or 1))
 	local rec = Q.storage.get(name)
 	local changed = 0
+	-- États figés AVANT l'événement : une action ne compte pas pour une quête qu'elle vient de débloquer
+	-- (ex. creuser un tronc termine « premier tronc » sans avancer aussitôt la quête suivante du même type).
+	local eligible = {}
 	for _, q in ipairs(candidates) do
-		if P.state(name, q) == "available" then
+		eligible[q] = P.state(name, q) == "available"
+	end
+	for _, q in ipairs(candidates) do
+		if eligible[q] and not rec.done[q.id] then
 			local t = q.trigger
 			local inc = count
 			if t.type == "place" and t.distinct then

@@ -18,6 +18,85 @@ function C.mod_present(modname)
 	return core.get_modpath(modname) ~= nil
 end
 
+---------------------------------------------------------------------------
+-- API des intégrations (voir docs/ARCHITECTURE.md §6)
+---------------------------------------------------------------------------
+
+-- Enveloppe un callback de DÉFINITION d'un objet (on_use, on_place, on_rightclick, on_punch,
+-- on_metadata_inventory_take, on_receive_fields…) sans en changer le comportement :
+--   * l'original est appelé EN PREMIER, avec les mêmes arguments ; toutes ses valeurs de retour sont renvoyées ;
+--   * before(...) (facultatif) capture un état avant l'appel ; after(state, res, ...) observe le résultat
+--     (res = valeurs de retour de l'original, res.n = leur nombre ; ne pas modifier) ;
+--   * before/after sont protégés par pcall : une erreur de l'intégration ne casse jamais le mod tiers.
+-- Si l'objet n'a pas de callback pour ce champ, `fallback` (ex. core.item_place) est utilisé s'il est fourni,
+-- sinon rien n'est enveloppé. Retourne true si l'enveloppe est posée. Un même champ n'est enveloppé qu'une fois.
+local wrapped = {}
+local function pack(...)
+	return { n = select("#", ...), ... }
+end
+
+function C.wrap_callback(itemname, field, hooks, fallback)
+	local def = core.registered_items[itemname]
+	if not def then return false end
+	local key = itemname .. "\0" .. field
+	if wrapped[key] then return false end
+	local orig = def[field]
+	if type(orig) ~= "function" then
+		if type(fallback) ~= "function" then return false end
+		orig = fallback
+	end
+	local label = ("intégration %s/%s"):format(itemname, field)
+	core.override_item(itemname, {
+		[field] = function(...)
+			local state
+			if hooks.before then
+				local ok, s = pcall(hooks.before, ...)
+				if ok then state = s else U.log("error", label .. " (avant) : " .. tostring(s)) end
+			end
+			local res = pack(orig(...))
+			if hooks.after then
+				local ok, err = pcall(hooks.after, state, res, ...)
+				if not ok then U.log("error", label .. " (après) : " .. tostring(err)) end
+			end
+			return unpack(res, 1, res.n)
+		end,
+	})
+	wrapped[key] = true
+	return true
+end
+
+-- Lecture lente d'un état public : un seul globalstep partagé, une passe sur les joueurs connectés par intervalle.
+--   fn(player, name) est appelée pour chaque joueur connecté toutes les `interval` secondes (≥ 1).
+-- Coût : O(joueurs connectés × sondes) par intervalle ; aucune sonde ne doit scanner la carte ni les inventaires.
+local polls = {}
+function C.register_poll(id, interval, fn)
+	assert(type(id) == "string" and type(fn) == "function")
+	polls[#polls + 1] = { id = id, interval = math.max(1, tonumber(interval) or 2), fn = fn, timer = 0 }
+end
+
+core.register_globalstep(function(dtime)
+	if #polls == 0 then return end
+	local players
+	for _, p in ipairs(polls) do
+		p.timer = p.timer + dtime
+		if p.timer >= p.interval then
+			p.timer = 0
+			players = players or core.get_connected_players()
+			for _, player in ipairs(players) do
+				local ok, err = pcall(p.fn, player, player:get_player_name())
+				if not ok then U.log("error", ("sonde %s : %s"):format(p.id, tostring(err))) end
+			end
+		end
+	end
+end)
+
+-- Pour les tests : force un passage de toutes les sondes.
+function C._run_polls()
+	for _, p in ipairs(polls) do
+		for _, player in ipairs(core.get_connected_players()) do p.fn(player, player:get_player_name()) end
+	end
+end
+
 -- Liste des objets enregistrés appartenant à un groupe (calculée une seule fois par groupe).
 local group_cache = {}
 function C.items_in_group(group)

@@ -22,6 +22,14 @@ T.state_color = {
 	unavailable = T.color.brick,
 }
 
+-- Teintes de TEXTE lisibles sur le papier clair (contraste ≥ 4,5:1) ; les couleurs d'état servent aux cadres.
+T.state_text_color = {
+	available = "#94640f",
+	done = "#2e7a32",
+	locked = "#6b6b6b",
+	unavailable = "#a0523d",
+}
+
 T.state_label = {
 	available = "Disponible",
 	done = "Terminée",
@@ -108,8 +116,19 @@ function T.progress_bar(x, y, w, h, done, total, color)
 	return table.concat(out)
 end
 
+-- Filet étiré sur toute la largeur + fleuron central aux proportions fixes (jamais déformé).
 function T.ornament(x, y, w)
-	return T.image(x, y, w, 0.18, "mlq_ornament.png")
+	local out = T.image(x, y, w, 0.18, "mlq_ornament.png")
+	if w >= 2 then
+		out = out .. T.image(x + w / 2 - 0.36, y - 0.05, 0.72, 0.28, "mlq_ornament_center.png")
+	end
+	return out
+end
+
+-- Case encastrée pour les item_image_button (au lieu du bouton gris par défaut).
+function T.slot_style(name)
+	return ("style[%s;border=false;bgimg=mlq_slot.png;bgimg_hovered=mlq_slot.png;bgimg_pressed=mlq_slot.png;"
+		.. "bgimg_middle=3]"):format(name)
 end
 
 -- Panneau parchemin à bordure bronze (9-slice).

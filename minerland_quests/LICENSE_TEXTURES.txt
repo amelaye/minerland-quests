@@ -1,0 +1,6 @@
+Textures du mod minerland_quests (fichiers textures/mlq_*.png)
+Créées pour le Grand Livre des Quêtes de Minerland et générées par tools/gen_textures.py
+(procédural, original, sans image externe).
+
+Licence : Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+https://creativecommons.org/licenses/by-sa/4.0/

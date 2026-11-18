@@ -280,7 +280,7 @@ local function view_detail(fs, name, q, r)
 	fs[#fs + 1] = quest_icon(x + 0.25, y + 0.25, 0.9, q)
 	if st == "done" then fs[#fs + 1] = T.image(x + 0.95, y - 0.1, 0.55, 0.55, "mlq_badge_done.png") end
 	fs[#fs + 1] = T.label(x + 1.6, y + 0.25, T.truncate(q.title, 34))
-	fs[#fs + 1] = T.label(x + 1.6, y + 0.65, T.state_label[st], T.state_color[st])
+	fs[#fs + 1] = T.label(x + 1.6, y + 0.65, T.state_label[st], T.state_text_color[st])
 	fs[#fs + 1] = T.label(x + 1.6, y + 1.05, "Difficulté :", T.color.ink_soft)
 	for i = 1, 5 do
 		fs[#fs + 1] = T.image(x + 3.0 + (i - 1) * 0.32, y + 0.92, 0.28, 0.28,
@@ -320,7 +320,8 @@ local function view_detail(fs, name, q, r)
 		lines[#lines + 1] = ""
 		lines[#lines + 1] = "Accomplie le " .. U.format_date(rec.done[q.id]) .. "."
 	end
-	local text_h = math.max(1.6, r.h - (y - r.y) - 2.55)
+	-- place réservée sous le texte : progression, récompense, cases d'objets et marge basse du panneau
+	local text_h = math.max(1.6, r.h - (y - r.y) - 2.85)
 	fs[#fs + 1] = T.textarea(x, y, w, text_h, table.concat(lines, "\n"))
 	y = y + text_h + 0.1
 
@@ -345,6 +346,7 @@ local function view_detail(fs, name, q, r)
 		or status == "delivered" and T.color.green or T.color.ink)
 	local ix = x + 0.1
 	y = y + 0.6
+	fs[#fs + 1] = T.slot_style("mlq_noop")
 	for _, s in ipairs(q.reward_items or {}) do
 		local stack = ItemStack(s)
 		if ix + 0.8 > x + w then break end
@@ -435,11 +437,12 @@ local function view_chapter(fs, name, r, opts)
 	for _, st in ipairs({ "available", "done", "locked", "unavailable" }) do
 		fs[#fs + 1] = T.image(lx, ly, 0.45, 0.45, "mlq_badge_" .. st .. ".png")
 		fs[#fs + 1] = T.label(lx + 0.5, ly + 0.22, T.state_label[st], T.color.ink_soft)
-		lx = lx + (narrow and 2.3 or 2.4)
-		if narrow and lx > r.x + tw - 2 then break end
+		lx = lx + (narrow and 2.3 or 2.15)
+		-- la légende s'arrête avant les boutons « / » (largeur réservée : 1,8)
+		if lx > r.x + tw - 1.8 - 2.15 then break end
 	end
-	if prev then fs[#fs + 1] = T.button(r.x + tw - 2.3, ly - 0.02, 1.1, 0.5, "mlq_prev", "«") end
-	if nxt then fs[#fs + 1] = T.button(r.x + tw - 1.1, ly - 0.02, 1.1, 0.5, "mlq_next", "»") end
+	if prev then fs[#fs + 1] = T.button(r.x + tw - 1.7, ly - 0.02, 0.8, 0.5, "mlq_prev", "«") end
+	if nxt then fs[#fs + 1] = T.button(r.x + tw - 0.85, ly - 0.02, 0.8, 0.5, "mlq_next", "»") end
 	if prev then fs[#fs + 1] = T.tooltip("mlq_prev", "Chapitre précédent : " .. prev.title) end
 	if nxt then fs[#fs + 1] = T.tooltip("mlq_next", "Chapitre suivant : " .. nxt.title) end
 

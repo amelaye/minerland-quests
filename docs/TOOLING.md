@@ -40,7 +40,7 @@ L'agent principal coordonne : il découpe le travail, relit les résultats et ga
 | `make lint` | `tools/lint.sh` : luacheck (`.luacheckrc`) s'il est installé, sinon syntaxe LuaJIT + détection des globales accidentelles |
 | `make test` | `luajit tests/run.lua` : tests simulés (`luajit tests/run.lua engine` pour un seul fichier) |
 | `make validate` | `tools/validate_quests.py` : ids, prérequis, cycles, accessibilité, objets audités, économie, taille des arbres |
-| `make textures` | `tools/gen_textures.py` : génération procédurale des PNG (*à écrire pendant la phase interface*) |
+| `make textures` | `tools/gen_textures.py` : génération procédurale et déterministe des 51 PNG (`--only NOM`, `--list`, `--preview planche.png` pour une planche agrandie sans toucher au mod) |
 | `make check-textures` | `tools/check_textures.py` : présence, validité PNG, dimensions, textures orphelines |
 | `make docs` | `tools/gen_docs.py` : génère `docs/QUESTS.md` |
 | `make audit-index` | reconstruit `docs/audit/item_index.json` depuis `.audit_src/` |
@@ -56,6 +56,7 @@ L'agent principal coordonne : il découpe le travail, relit les résultats et ga
 | `dump_quests.lua` | Charge le vrai mod dans le mock et exporte le catalogue en JSON (base de `validate_quests.py` et `gen_docs.py`). |
 | `validate_quests.py` | Voir `make validate`. Code 1 en cas d'erreur ; `--strict` rend les avertissements bloquants. |
 | `check_textures.py`, `pngkit.py` | Contrôle des PNG ; lecture et écriture PNG en Python pur (Pillow n'est pas requis). |
+| `gen_textures.py` | Textures originales (CC-BY-SA-4.0, `minerland_quests/LICENSE_TEXTURES.txt`) : petite bibliothèque de dessin (formes, polygones, bruit, tramage ordonné, sprites au pixel, police 5×7, dorure en relief) et une fonction par texture. Règles 9-slice : détails dans les coins, bords et centre lisses (Luanti étire bords et centre). |
 | `gen_docs.py` | Catalogue Markdown des quêtes. |
 | `lint.sh` | Voir `make lint`. |
 | `fetch_sources.sh`, `audit_sources.txt` | Récupération des sources publiques des mods. |

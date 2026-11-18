@@ -20,7 +20,9 @@ function B.formspec(name)
 		"style_type[textarea;textcolor=" .. T.color.ink .. "]",
 		"listcolors[#00000000;#00000000]",
 		V.build(name, { x = 0.9, y = 0.65, w = B.W - 1.8, h = B.H - 1.3 }, { book = true }),
-		("image_button_exit[%s,0.15;0.5,0.5;mlq_close.png;mlq_close;]"):format(T.n(B.W - 0.7)),
+		-- sans bordure de bouton standard (drawborder=false), état enfoncé dédié
+		("image_button_exit[%s,0.15;0.5,0.5;mlq_close.png;mlq_close;;false;false;mlq_close_press.png]")
+			:format(T.n(B.W - 0.7)),
 		T.tooltip("mlq_close", "Fermer le livre"),
 	})
 end

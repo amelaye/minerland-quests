@@ -17,7 +17,8 @@ TEX = os.path.join(MOD, "textures")
 
 # Dimensions imposées (largeur, hauteur) pour les textures dont l'interface dépend.
 EXPECTED = {
-    "mlq_book.png": (16, 16), "mlq_charter.png": (16, 16), "mlq_ui_button.png": (32, 32),
+    # bouton Unified Inventory : 128 px lisse, comme les icônes d'Unified Inventory (ui_*_icon.png)
+    "mlq_book.png": (16, 16), "mlq_charter.png": (16, 16), "mlq_ui_button.png": (128, 128),
     "mlq_badge_done.png": (16, 16), "mlq_badge_locked.png": (16, 16), "mlq_badge_available.png": (16, 16),
     "mlq_badge_unavailable.png": (16, 16),
     "mlq_frame_done.png": (32, 32), "mlq_frame_locked.png": (32, 32), "mlq_frame_available.png": (32, 32),
