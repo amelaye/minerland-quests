@@ -1,0 +1,52 @@
+# Identifiants construits dynamiquement ou absents de l'index, vérifiés à la lecture du code (chapitres 20 et 21).
+# Sources : .audit_src/{nether@5480dba, nether_hybriddog@79ea36d, xnether@2071814, caverealms_lite@6af99e8,
+#   amethyst_new@87ed79d, lootchests_modpack@9b09d4b, shipwrecks@16b3ca0}. Format : id<TAB>source<TAB>remarque
+# --- nether (minetest-mods) ---
+nether:portal	nether/nodes.lua:26 + portal_api.lua:2034-2041	vortex de portail (register_wormhole_node -> core.register_node) ; non obtenable ; même nom chez HybridDog (items.lua:635)
+nether:portal_alt	nether/nodes.lua:50	vortex des portails d'exemple (désactivés par défaut, settingtypes.txt)
+nether:fence_nether_brick	nether/nodes.lua:337	default.register_fence ; craft nether/crafts.lua:31 (6 nether:brick -> 6)
+nether:fence_rail_nether_brick	nether/nodes.lua:347	default.register_fence_rail
+nether:book_of_portals	nether/portal_api.lua:1682 (item_name) + 1808	livre ; butin de donjon seulement (portal_api.lua:1699-1709), possession -> I
+# --- xnether (boucles grass.lua:22-77 : Color in {Purple, Blue}) ---
+xnether:grass_purple_1	xnether/grass.lua:26	i = 1..3 ; chaque herbe donne _1 quand on la creuse (grass.lua:38)
+xnether:grass_purple_2	xnether/grass.lua:26	idem
+xnether:grass_purple_3	xnether/grass.lua:26	idem
+xnether:grass_blue_1	xnether/grass.lua:26	idem
+xnether:grass_blue_2	xnether/grass.lua:26	idem
+xnether:grass_blue_3	xnether/grass.lua:26	idem
+xnether:flower_purple_1	xnether/grass.lua:53	i = 1..2 ; damage_per_second = 1
+xnether:flower_purple_2	xnether/grass.lua:53	idem
+xnether:flower_blue_1	xnether/grass.lua:53	idem
+xnether:flower_blue_2	xnether/grass.lua:53	idem
+xnether:fence_purple	xnether/trees.lua:293	default.register_fence (recette auto, minetest_game default/functions.lua:385)
+xnether:fence_blue	xnether/trees.lua:307	idem
+xnether:purple_fence_rail	xnether/trees.lua:322	default.register_fence_rail
+xnether:blue_fence_rail	xnether/trees.lua:336	idem
+xnether:purple_mese_post_light	xnether/trees.lua:351	default.register_mesepost ; recette verre + 3 mese_crystal + planche (functions.lua:508-515)
+xnether:blue_mese_post_light	xnether/trees.lua:359	idem
+# --- lootchests_modpack (api.lua:66 et :74 : register_node(def.name .. "_marker") / register_node(def.name)) ---
+lootchests_default:ocean_chest	lootchests_default/chests.lua:4 + lootchests/api.lua:74	sable ou pierre, y 5 à -512 ; aussi dans les épaves (shipwrecks/schematics/*.mts)
+lootchests_default:basket	lootchests_default/chests.lua:19 + api.lua:74	sur la pierre, y 0 à -256
+lootchests_default:urn	lootchests_default/chests.lua:37 + api.lua:74	sur la pierre, y 0 à -256
+lootchests_default:barrel	lootchests_default/chests.lua:55 + api.lua:74	dans le sable, y 5 à -32 ; aussi dans les épaves
+lootchests_default:stone_chest	lootchests_default/chests.lua:73 + api.lua:74	« Ancient Chest », dans et sur la pierre, y -128 à -4096
+lootchests_default:stone_chest_marker	lootchests/api.lua:66	marqueur invisible remplacé par LBM (api.lua:107-113) ; idem <nom>_marker pour les 4 autres coffres
+lootchests_magic_materials:rune_chest	lootchests_magic_materials/chests.lua:4 + api.lua:74	dépend de magic_materials, absent du relevé serveur -> probablement pas chargé
+# --- amethyst_new (doors.register ajoute le préfixe "doors:", minetest_game doors/init.lua:220-221,259) ---
+doors:door_bronze	amethyst_new/nodes.lua:143	si doors est présent ; recette 6 default:bronze_ingot (nodes.lua:154-158)
+doors:door_amethyst_bronze	amethyst_new/nodes.lua:161	si doors est présent ; recette bronze + améthyste (nodes.lua:172-176)
+amethyst_new:trapdoor_bronze	amethyst_new/nodes.lua:179	doors.register_trapdoor ; craft crafting.lua:84
+amethyst_new:trapdoor_amethyst_bronze	amethyst_new/nodes.lua:194	doors.register_trapdoor ; craft crafting.lua:92
+# --- caverealms_lite : alias et noms conditionnels ---
+caverealms:mushroom_cap	caverealms_lite/plants.lua:45	ALIAS -> ethereal:mushroom si ethereal est présent (cas du serveur) ; sinon nœud plants.lua:57
+caverealms:mushroom_stem	caverealms_lite/plants.lua:46	ALIAS -> ethereal:mushroom_trunk si ethereal est présent
+caverealms:mushroom_sapling	caverealms_lite/plants.lua:72	enregistré SEULEMENT sans ethereal -> absent sur le serveur
+caverealms:hanging_thin_ice	caverealms_lite/nodes.lua:507	ALIAS -> caverealms:thin_ice
+caverealms:glow_bait	caverealms_lite/crafting.lua:82	enregistré seulement si ethereal est présent (crafting.lua:63)
+caverealms:angler_rod	caverealms_lite/crafting.lua:66	idem (crafting.lua:63)
+lootchests_default:ocean_chest_marker	lootchests/api.lua:66 + lootchests_default/chests.lua:4	marqueur présent dans les schémas d'épaves (shipwrecks/schematics/*.mts, lu avec strings), avec barrel_marker
+# --- noms d'entités (pas des objets ; cités pour documenter les actions I) ---
+livingnether:razorback	livingnether/razorback.lua:3	mobs:register_mob ; apparaît sur nether:rack (razorback.lua:73)
+livingnether:tardigrade	livingnether/tardigrade.lua:3	mobs:register_mob
+livingnether:noodlemaster	livingnether/noodlemaster.lua:3	mobs:register_mob ; apparaît sur nether:rack_deep (noodlemaster.lua:78)
+ethereal:mushroom_trunk	ethereal/wood.lua:299 (add_trunk, wood.lua:28)	nom "ethereal:" .. name ; cible de l'alias caverealms:mushroom_stem

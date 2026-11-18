@@ -660,14 +660,6 @@
    "source": "draconis/craftitems.lua:1039",
    "target": "draconis:libri_draconis"
   },
-  "draconis:dracolily_fire": {
-   "source": "draconis/init.lua:162",
-   "target": "air"
-  },
-  "draconis:dracolily_ice": {
-   "source": "draconis/init.lua:163",
-   "target": "air"
-  },
   "draconis:draconic_steel_forge_fire": {
    "source": "draconis/nodes.lua:1103",
    "target": "draconis:draconic_forge_fire"
@@ -4662,13 +4654,11 @@
   "power_generators:block_of_6magnets": "power_generators/crafting.lua:352",
   "power_generators:charger": "power_generators/crafting.lua:39",
   "power_generators:combustion_engine_6c": "power_generators/crafting.lua:254",
-  "power_generators:combustion_engine_8c": "power_generators/crafting.lua:265",
   "power_generators:combustion_engine_alternator": "power_generators/crafting.lua:172",
   "power_generators:combustion_engine_body_2": "power_generators/crafting.lua:88",
   "power_generators:combustion_engine_body_2_controlled": "power_generators/crafting.lua:97",
   "power_generators:combustion_engine_body_4": "power_generators/crafting.lua:106",
   "power_generators:combustion_engine_body_6": "power_generators/crafting.lua:115",
-  "power_generators:combustion_engine_body_8": "power_generators/crafting.lua:126",
   "power_generators:combustion_engine_crankshaft": "power_generators/crafting.lua:70",
   "power_generators:combustion_engine_cylinder_body": "power_generators/crafting.lua:61",
   "power_generators:combustion_engine_fuel_tank": "power_generators/crafting.lua:181",
@@ -4768,7 +4758,6 @@
   "streets:asphalt": "streets/streets_roadsurface/init.lua:16",
   "streets:asphalt_blue": "streets/streets_roadsurface/init.lua:59",
   "streets:asphalt_red": "streets/streets_roadsurface/init.lua:31",
-  "streets:asphalt_yellow": "streets/streets_roadsurface/init.lua:44",
   "streets:beacon_hybrid_off": "streets/streets_trafficlight/init.lua:1388",
   "streets:beacon_off": "streets/streets_trafficlight/init.lua:1379",
   "streets:bigpole": "streets/streets_poles/init.lua:49",
@@ -5003,7 +4992,6 @@
   "techage:ta3_flipflop_off": "techage_modpack/techage/logic/flipflop.lua:125",
   "techage:ta3_junctionpipe25": "techage_modpack/techage/liquids/liquid_pipe.lua:185",
   "techage:ta3_lightdetector_off": "techage_modpack/techage/logic/light_detector.lua:148",
-  "techage:ta3_logic": "techage_modpack/techage/logic/lua_logic.lua:225",
   "techage:ta3_logic2": "techage_modpack/techage/logic/logic_block.lua:377",
   "techage:ta3_mesecons_converter": "techage_modpack/techage/logic/mesecons_converter.lua:174",
   "techage:ta3_monitor": "techage_modpack/techage/displays/monitor.lua:128",
@@ -5459,7 +5447,7 @@
   "3d_armor:helmet_mithril": "3d_armor/armor_mithril/init.lua:28 (armor)",
   "3d_armor:helmet_nether": "3d_armor/armor_nether/init.lua:30 (armor)",
   "3d_armor:helmet_steel": "3d_armor/armor_steel/init.lua:32 (armor)",
-  "3d_armor:helmet_wood": "3d_armor/3d_armor/api.lua:201 (armor)",
+  "3d_armor:helmet_wood": "3d_armor/armor_wood/init.lua:31 (armor)",
   "3d_armor:leggings_admin": "3d_armor/armor_admin/init.lua:60 (armor)",
   "3d_armor:leggings_bronze": "3d_armor/armor_bronze/init.lua:77 (armor)",
   "3d_armor:leggings_cactus": "3d_armor/armor_cactus/init.lua:70 (armor)",
@@ -5471,7 +5459,6 @@
   "3d_armor:leggings_steel": "3d_armor/armor_steel/init.lua:78 (armor)",
   "3d_armor:leggings_wood": "3d_armor/armor_wood/init.lua:73 (armor)",
   "3d_armor_stand:top": "3d_armor/3d_armor_stand/init.lua:132 (node)",
-  "ac:wmg": "nether_hybriddog/nether/weird_mapgen_noise.lua:63 (node)",
   "advtrains:across_off": "advtrains/advtrains/signals.lua:252 (node)",
   "advtrains:across_on": "advtrains/advtrains/signals.lua:289 (node)",
   "advtrains:boiler": "advtrains/advtrains/craft_items.lua:5 (craftitem)",
@@ -6116,7 +6103,7 @@
   "cottages:threshing_floor": "cottages/nodes_straw.lua:164 (node)",
   "cottages:tub": "cottages/nodes_barrel.lua:188 (node)",
   "cottages:wagon_load": "cottages/nodes_historic.lua:106 (node)",
-  "cottages:wagon_wheel": "cottages/nodes_historic.lua:16 (node)",
+  "cottages:wagon_wheel": "cottages/nodes_historic.lua:46 (node)",
   "cottages:wagon_wheel_road": "cottages/nodes_historic.lua:76 (node)",
   "cottages:washing": "cottages/nodes_furniture.lua:324 (node)",
   "cottages:water_gen": "cottages/nodes_water.lua:113 (node)",
@@ -6183,7 +6170,6 @@
   "darkage:rhyolitic_tuff": "darkage/nodes.lua:396 (node)",
   "darkage:rhyolitic_tuff_bricks": "darkage/nodes.lua:422 (node)",
   "darkage:rhyolitic_tuff_rubble": "darkage/nodes.lua:442 (node)",
-  "darkage:rosace": "darkage/furniture.lua:109 (node)",
   "darkage:schist": "darkage/nodes.lua:257 (node)",
   "darkage:serpentine": "darkage/nodes.lua:241 (node)",
   "darkage:shale": "darkage/nodes.lua:249 (node)",
@@ -7667,7 +7653,6 @@
   "power_generators:block_of_3magnets": "power_generators/shaft/craftitems.lua:14 (craftitem)",
   "power_generators:block_of_6coils": "power_generators/shaft/craftitems.lua:24 (craftitem)",
   "power_generators:block_of_6magnets": "power_generators/shaft/craftitems.lua:29 (craftitem)",
-  "power_generators:combustion_engine_": "power_generators/generators/craftitems.lua:72 (craftitem)",
   "power_generators:combustion_engine_alternator": "power_generators/generators/craftitems.lua:61 (craftitem)",
   "power_generators:combustion_engine_body_2": "power_generators/generators/craftitems.lua:24 (craftitem)",
   "power_generators:combustion_engine_body_2_controlled": "power_generators/generators/craftitems.lua:28 (craftitem)",
@@ -8576,7 +8561,7 @@
   "3d_armor": {
    "depends": "player_api",
    "dir": "3d_armor/3d_armor",
-   "items": 1,
+   "items": 0,
    "optional_depends": "default, player_monoids, armor_monoid, pova, moreores"
   },
   "3d_armor_ip": {
@@ -9026,7 +9011,7 @@
   "darkage": {
    "depends": "default, farming",
    "dir": "darkage",
-   "items": 64,
+   "items": 63,
    "optional_depends": "moreblocks, stairs, unifieddyes"
   },
   "default": {
@@ -9944,7 +9929,7 @@
   "nether": {
    "depends": "default,glow,riesenpilz",
    "dir": "nether_hybriddog/nether",
-   "items": 68,
+   "items": 67,
    "optional_depends": "creative,fence_registration,function_delayer,stairs,watershed"
   },
   "networks": {
@@ -9986,7 +9971,7 @@
   "power_generators": {
    "depends": "appliances, tubelib2, basic_materials, adaptation_lib, adaptation_minetest_game, adaptation_hades_revisited, adaptation_mineclone, adaptation_farlands_reloaded, adaptation_biofuel, adaptation_basic_materials, adaptation_technic, adaptation_elepower, adaptation_techage, adaptation_mesecons, adaptation_pipeworks, adaptation_rubber, adaptation_farming_redo",
    "dir": "power_generators",
-   "items": 36,
+   "items": 35,
    "optional_depends": "screw_driver, default, biofuel, farming, hades_core, hades_sounds, hades_biofuel, sounds, mesecons_materials, elepower, techage, technic, hades_technic"
   },
   "protector": {

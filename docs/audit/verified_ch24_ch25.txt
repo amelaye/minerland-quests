@@ -1,0 +1,83 @@
+# Identifiants construits dynamiquement (boucles, concaténations, préfixes ajoutés par une API), vérifiés à la lecture
+# du code — chapitres 24 et 25. Format : id<TAB>source<TAB>remarque. Sources : .audit_src (novembre 2026), versions
+# serveur possiblement différentes : revérifier à l'exécution (core.registered_items).
+#
+# --- MTG (compléments)
+dye:white	minetest_game/mods/dye/init.lua:11,30,36	boucle dye.dyes -> "dye:"..name
+default:sign_wall_steel	minetest_game/mods/default/nodes.lua:2579-2580 + signs_lib/standard_signs.lua:24	register_sign("steel") ; ré-enregistré par signs_lib ; recette default/crafting.lua:59-66
+#
+# --- mydoors / my_door_wood — add_door(color) -> "my_door_wood:wood_"..color (init.lua:38, liste :1-9, boucle :58)
+my_door_wood:wood_red	mydoors/my_door_wood/init.lua:2,38,58	1 default:wood + 1 dye:red (recette :48-55)
+my_door_wood:wood_grey	mydoors/my_door_wood/init.lua:3,38,58	+ dye:grey
+my_door_wood:wood_dark_grey	mydoors/my_door_wood/init.lua:4,38,58	+ dye:dark_grey
+my_door_wood:wood_brown	mydoors/my_door_wood/init.lua:5,38,58	+ dye:brown
+my_door_wood:wood_white	mydoors/my_door_wood/init.lua:6,38,58	+ dye:white
+my_door_wood:wood_yellow	mydoors/my_door_wood/init.lua:7,38,58	+ dye:yellow (« Clear Stained »)
+my_door_wood:wood_black	mydoors/my_door_wood/init.lua:8,38,58	+ dye:black
+#
+# --- my_castle_doors — doors.register_door("my_castle_doors:"..img) (unlocked.lua:18, liste :1-15) ; _locked (locked.lua:18)
+# doors.register_door -> doors.register (minetest_game/mods/doors/init.lua:549,219) : objet <nom> (craftitem :259),
+# nœuds <nom>_a/_b/_c/_d (:465-474) ; la pose appelle registered_on_placenodes avec get_node(pos) (:193-215,323-327,344)
+# => clé « place » = <nom>_a ou <nom>_b ; clé « craft » = <nom>.
+my_castle_doors:door1	mydoors/my_castle_doors/unlocked.lua:2,18,27	recette :34-41 (2 acier, verre, 3 bois gris foncé)
+my_castle_doors:door2	mydoors/my_castle_doors/unlocked.lua:3,18,27	recette :43-50
+my_castle_doors:door3	mydoors/my_castle_doors/unlocked.lua:4,18,27	recette :51-58
+my_castle_doors:door4	mydoors/my_castle_doors/unlocked.lua:5,18,27	recette :59-66
+my_castle_doors:door5	mydoors/my_castle_doors/unlocked.lua:6,18,27	recette :67-74
+my_castle_doors:door6	mydoors/my_castle_doors/unlocked.lua:7,18,27	recette :75-82
+my_castle_doors:door7	mydoors/my_castle_doors/unlocked.lua:8,18,27	recette :83-90
+my_castle_doors:door8	mydoors/my_castle_doors/unlocked.lua:9,18,27	recette :91-98 (4 acier)
+my_castle_doors:door9	mydoors/my_castle_doors/unlocked.lua:10,18,27	recette :99-106
+my_castle_doors:door10	mydoors/my_castle_doors/unlocked.lua:11,18,27	recette :107-114
+my_castle_doors:door11	mydoors/my_castle_doors/unlocked.lua:12,18,27	recette :115-122
+my_castle_doors:door12	mydoors/my_castle_doors/unlocked.lua:13,18,27	recette :123-130
+my_castle_doors:door13	mydoors/my_castle_doors/unlocked.lua:14,18,27	recette :131-138
+my_castle_doors:door1_a	minetest_game/mods/doors/init.lua:465 + my_castle_doors/unlocked.lua:18	nœud posé (moitié a) — idem door2_a … door13_a
+my_castle_doors:door1_b	minetest_game/mods/doors/init.lua:468 + my_castle_doors/unlocked.lua:18	nœud posé (moitié b, porte en miroir) — idem door2_b … door13_b
+my_castle_doors:door1_locked	mydoors/my_castle_doors/locked.lua:2,18,28	porte verrouillée (protected = true) ; nœuds door<N>_locked_a/_b ; recette locked.lua:34-41
+#
+# --- my_hidden_doors — doors.register_door("my_hidden_doors:hidden_door"..img) (init.lua:15, liste :1-11)
+my_hidden_doors:hidden_door_grey	mydoors/my_hidden_doors/init.lua:29	porte grise ; recette :112-119 (6 my_door_wood:wood_dark_grey) ; pose : nœuds _a/_b
+my_hidden_doors:hidden_doorbookshelf	mydoors/my_hidden_doors/init.lua:10,15,25	recette :96-103 (hidden_door_grey + default:bookshelf)
+my_hidden_doors:hidden_doorstone	mydoors/my_hidden_doors/init.lua:3,15,25	recette :48-55 (hidden_door_grey + default:stone)
+#
+# --- autres portes mydoors citées dans le rapport (non retenues en tableau)
+my_saloon_doors:door1a_white	mydoors/my_saloon_doors/init.lua:4,14,129	on_place -> minetest.item_place (:44-68) ; idem _red,_black,_brown,_grey,_dark_grey,_yellow (:5-10)
+my_future_doors:door1a_white	mydoors/my_future_doors/framed.lua:2,5,212	on_place -> item_place (:41-64) ; idem _red, _black
+my_future_doors:door2a	mydoors/my_future_doors/sliding.lua:4	pose par set_node (:64-68) => place I ; craft F (recette sliding.lua:245-248, sortie ×2)
+my_misc_doors:door2a	mydoors/my_misc_doors/bars.lua:14	grille ; pose par set_node (:38-80) => place I ; recette :206-213
+#
+# --- facade — "facade:"..subname.."_"..forme (shapes.lua), matériaux materials.lua:3-8 (default) et :38-48 (darkage)
+facade:stone_column	facade/shapes.lua:135-136 + materials.lua:4	pas d'on_place => place F ; produit uniquement par facade:shaper
+facade:marble_column	facade/shapes.lua:135-136 + materials.lua:42	seulement si darkage présent
+facade:sandstone_column	facade/shapes.lua:135-136 + materials.lua:6
+facade:stone_columnia_mid	facade/shapes.lua:598-599,770 + materials.lua:4	on_place = minetest.rotate_node (:608) ; enregistré car columnia absent
+facade:marble_columnia_mid	facade/shapes.lua:598-599,770 + materials.lua:42	idem, si darkage
+facade:stone_bannerstone	facade/shapes.lua:10-11 + materials.lua:4	exemple de forme simple
+#
+# --- darkage
+darkage:reinforced_wood	darkage/building.lua:31-38,161	modname..":reinforced_"..tname ; recette :40-47 (4 group:stick + 4 default:wood)
+darkage:stone_brick_wall	darkage/walls.lua:13,18,45	base_node.."_wall" ; recette :32-40 (6 darkage:stone_brick -> 6)
+# ATTENTION : darkage:rosace est listé par l'index mais sa définition est COMMENTÉE (darkage/furniture.lua:109-115, fin du bloc commenté) : ABSENT.
+#
+# --- streets — surfaces enregistrées par l'API : register_node(":streets:"..name) (api_register_all.lua:9, boucle :342)
+streets:asphalt	streets/api_register_all.lua:9 + streets_roadsurface/init.lua:8-21	recette = CUISSON de default:gravel (craft I) ; pose F
+streets:asphalt_red	streets/api_register_all.lua:9 + streets_roadsurface/init.lua:23-35	shapeless asphalte + dye:red (craft F)
+streets:asphalt_blue	streets/api_register_all.lua:9 + streets_roadsurface/init.lua:51-63	shapeless asphalte + dye:blue (craft F)
+streets:asphalt_manhole	streets/streets_installations/init.lua:7-8,70-77	":streets:"..("streets:asphalt"):sub(2):split(":")[2].."_manhole" ; 8 asphaltes + 1 acier -> 4
+streets:workshop	streets/streets_workshop/init.lua:642,685-692,694	enregistré par ts_workshop.register_workshop (SANS SOURCE) : nom à confirmer à l'exécution ; alias streets:asphalt_workshop
+streets:trafficlight_top_off	streets/streets_trafficlight/init.lua:1101-1102	boucle {"","_left","_right"} ; recette :1326-1332 ; sous-mod chargé seulement si digilines (init.lua:44-48)
+streets:trafficlight_top_left_off	streets/streets_trafficlight/init.lua:1101-1102	recette :1335-1342
+streets:sign_shop	streets/api_register_all.lua:163 + streets_signs/init.lua:155-167	panneau routier : production à l'atelier uniquement (craft I) ; pose F
+# streets:tool_* / streets:mark_* (api_register_all.lua:195,248,283) : marquage par set_node => I ; non cités en quête.
+#
+# --- street_signs — signs_lib.register_sign(name) -> register_node(":"..name) (signs_lib/api.lua:1017,1076), sans on_place
+street_signs:sign_basic	street_signs/signs_class_d.lua:39	recettes crafting.lua:3-19 (default:sign_wall_steel + 2 dye:green + dye:white + 2 acier)
+street_signs:sign_basic_top_only	street_signs/signs_class_d.lua:76	recettes crafting.lua:21-36
+street_signs:sign_highway_small_green	street_signs/signs_misc_generic.lua:122-135 + init.lua:22-27	"street_signs:sign_highway_"..size.."_"..color ; recettes crafting.lua:46-68
+street_signs:sign_highway_medium_green	street_signs/signs_misc_generic.lua:122-135	recette crafting.lua:70-76 (2 petits)
+#
+# --- minerland_quests (ce mod)
+minerland_quests:city_charter	minerland_quests/ui/items.lua:53	nœud signlike mural, stack_max 1, pas d'on_place => place F ; recette :79-87 (craft F)
+minerland_quests:book	minerland_quests/ui/items.lua:11	ingrédient de la charte, rendu par replacements (:86)
+my_default_doors:door4	mydoors/my_default_doors/unlocked.lua:5,14	porte en diamant (2 default:diamond + doors:door_steel), cher : à éviter

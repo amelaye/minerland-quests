@@ -42,7 +42,7 @@ Plusieurs objets possibles : `items = {...}` (OU). Groupes : `groups = {"wood"}`
 6. **Indépendance** : seuls les chapitres 1-2 forment le tronc commun. Les autres chapitres commencent par
    une quête racine sans prérequis hors chapitre (sauf justification).
 7. **Fin de chapitre** : une quête « finale » (`final = true`) dépend des branches principales ; elle peut porter un titre honorifique.
-8. **Taille** : 3 à 6 quêtes par chapitre, profondeur ≤ 5 colonnes, ≤ 4 lignes (lisibilité de l'arbre).
+8. **Taille** : 4 à 10 quêtes par chapitre (cible : 80–120 au total), arbre ≤ 6 colonnes × 4 lignes (seuil `MAX_COLS`/`MAX_ROWS` de `tools/validate_quests.py`).
 9. **Ton** : français vivant, léger, clin d'œil roleplay ; 1 à 2 phrases de description ; titre ≤ 32 caractères.
 
 ## Détection des objectifs impossibles

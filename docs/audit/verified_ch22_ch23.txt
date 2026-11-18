@@ -1,0 +1,64 @@
+# Chapitres 22 « Dragons et autres bestioles » et 23 « Les mystères du passé » — identifiants non littéraux ou absents
+# de l'index, vérifiés à la lecture du code. Format : id<TAB>source<TAB>remarque.
+# Sources : .audit_src/draconis @ 5ad66e4, creatura @ 4eb507c, mob_core @ 1835b85, paleotest @ 7f3c5fa (nov. 2026).
+# La version serveur peut différer ; minerland_fix_draconis (local, sans source) peut modifier tout ce qui suit.
+#
+# --- draconis : nœuds enregistrés par le wrapper local register_node(name, def, stair) (nodes.lua:43-44), invisible pour l'index
+draconis:log_scorched	draconis/nodes.lua:52	bûche calcinée ; produite par le souffle de feu (api.lua:143, set_node) ; on_place = rotate_node
+draconis:log_frozen	draconis/nodes.lua:62	bûche gelée ; souffle de glace
+draconis:stone_scorched	draconis/nodes.lua:74	cracky=1 level=3 (pioche mese/diamant) ; générée dans les nids (mapgen.lua:23,158) et par le souffle (api.lua:137)
+draconis:stone_frozen	draconis/nodes.lua:84	idem côté glace (mapgen.lua:24,283)
+draconis:soil_scorched	draconis/nodes.lua:96	sol calciné (mapgen.lua:25,175)
+draconis:soil_frozen	draconis/nodes.lua:103	sol gelé (mapgen.lua:26,300)
+draconis:wood_planks_scorched	draconis/nodes.lua:112	craft craftitems.lua:1106 (1 log_scorched)
+draconis:wood_planks_frozen	draconis/nodes.lua:120	craft craftitems.lua:1099
+draconis:dragonstone_bricks_fire	draconis/nodes.lua:130	craft craftitems.lua:1153 (4 dragonstone_block_fire)
+draconis:dragonstone_block_fire	draconis/nodes.lua:140	aucune recette ni génération : souffle de dragon sur une pile >= 99 pierres au sol (api.lua:711-722)
+draconis:dragonstone_bricks_ice	draconis/nodes.lua:150	craft craftitems.lua:1161
+draconis:dragonstone_block_ice	draconis/nodes.lua:160	idem fire (api.lua:719)
+draconis:stone_bricks_scorched	draconis/nodes.lua:170	craft craftitems.lua:1177 (4 stone_scorched -> 4)
+draconis:stone_bricks_frozen	draconis/nodes.lua:180	craft craftitems.lua:1169 (4 stone_frozen -> 4)
+draconis:bone_pile_scorched	draconis/nodes.lua:228	cracky=3 level=1 ; généré dans les nids/cavernes de feu (mapgen.lua:27,188,417) ; socle d'éclosion (craftitems.lua:175)
+draconis:bone_pile_frozen	draconis/nodes.lua:240	idem glace (mapgen.lua:28,313,509 ; craftitems.lua:322)
+# --- draconis : boucles sur draconis.colors_fire = {black, bronze, gold, green, red} (init.lua:41-47)
+#     et draconis.colors_ice = {light_blue, sapphire, silver, slate, white} (init.lua:49-55)
+draconis:scales_fire_dragon_red	draconis/craftitems.lua:76-77	+ _black/_bronze/_gold/_green ; butin d'un dragon MORT uniquement (api.lua:1096-1127)
+draconis:scales_ice_dragon_sapphire	draconis/craftitems.lua:85-86	+ _light_blue/_silver/_slate/_white ; idem
+draconis:egg_fire_red	draconis/craftitems.lua:131-132	nœud (pose par défaut) + autres couleurs ; butin 1/6 d'un dragon sauvage adulte mort (api.lua:1119-1125)
+draconis:egg_ice_sapphire	draconis/craftitems.lua:278-279	idem glace
+draconis:dragonhide_block_fire_red	draconis/nodes.lua:194-195	+ autres couleurs ; craft craftitems.lua:1130-1138 (écailles + os)
+draconis:dragonhide_block_ice_sapphire	draconis/nodes.lua:210-211	craft craftitems.lua:1141-1149
+draconis:pick_dragonhide_fire_red	draconis/craftitems.lua:647-649	+ shovel_/axe_/sword_ (673/697/721) et autres couleurs ; craft craftitems.lua:1291-1314
+draconis:pick_dragonhide_ice_sapphire	draconis/craftitems.lua:747-749	idem glace (773/797/821) ; craft craftitems.lua:1317-1340
+# --- draconis : boucle elements = {"ice","fire"} (craftitems.lua:936-1033)
+draconis:pick_fire_draconic_steel	draconis/craftitems.lua:942	+ shovel_ (968), axe_ (990), sword_ (1012) ; craft craftitems.lua:1345-1367 (lingot forgé + os)
+draconis:pick_ice_draconic_steel	draconis/craftitems.lua:942	idem ; craft craftitems.lua:1371-1393
+# --- draconis : entités (creatura.register_mob -> minetest.register_entity, creatura/mob_meta.lua:1247)
+draconis:fire_dragon	draconis/mobs/fire_dragon.lua:20	entité (monture) : cavalier attaché par set_attach (api/mount.lua:169)
+draconis:ice_dragon	draconis/mobs/ice_dragon.lua:20	entité (monture), idem
+draconis:jungle_wyvern	draconis/mobs/jungle_wyvern.lua:9	entité (monture) : attach_player (api/api.lua:2250 -> mount.lua:169)
+draconis:mounted_player_visual	draconis/api/mount.lua:16	entité décorative attachée AU dragon (mount.lua:96/98) : parasite, jamais parent d'un joueur
+draconis:dragon_ice	draconis/api/api.lua:497	bloc de glace : la VICTIME (joueur possible) y est attachée (api.lua:621) -> exclure de rides
+draconis:dragon_fire	draconis/api/api.lua:533	flamme attachée à la victime (api.lua:655) : sans effet sur get_attach du joueur
+draconis:egg_fire_dragon_red	draconis/craftitems.lua:191	entité œuf en incubation (+ couleurs) ; même nom qu'un alias d'objet (init.lua:175), espaces distincts
+draconis:egg_ice_dragon_sapphire	draconis/craftitems.lua:338	idem glace (alias init.lua:171)
+# --- paleotest : objets construits par paleotest.register_egg / register_syringe / register_embryo_sac
+paleotest:egg_triceratops	paleotest/api/register.lua:347 + craftitems.lua:256	sortie du cultivateur (dna_cultivator.lua:275) ; on_place -> add_entity (register.lua:351-359)
+paleotest:egg_tyrannosaurus	paleotest/api/register.lua:347 + craftitems.lua:258	dna_cultivator.lua:278 ; aussi brachiosaurus, carnotaurus, pteranodon, quetzalcoatlus, sarcosuchus, spinosaurus, stegosaurus, velociraptor (craftitems.lua:242-260)
+paleotest:egg_quetzalcoatlus	paleotest/api/register.lua:347 + craftitems.lua:248	dna_cultivator.lua:263
+paleotest:egg_triceratops_ent	paleotest/api/register.lua:362	entité œuf (éclot près d'un nœud light_source >= 12, ex. default:torch, en 100 s : register.lua:397-413)
+paleotest:syringe_mammoth	paleotest/api/register.lua:265 + craftitems.lua:270	+ dire_wolf, elasmotherium, procoptodon, smilodon, thylacoleo (craftitems.lua:266-276)
+paleotest:sac_mosasaurus	paleotest/api/register.lua:217 + craftitems.lua:284	+ dunkleosteus, plesiosaurus (craftitems.lua:282-286)
+# --- paleotest : autres noms construits
+paleotest:feeder_carnivore	paleotest/feeders.lua:47,155	craft crafting.lua:11
+paleotest:feeder_piscivore	paleotest/feeders.lua:47,168	craft crafting.lua:20
+paleotest:feeder_herbivore	paleotest/feeders.lua:47,181	craft crafting.lua:29
+paleotest:fence_metasequoia	paleotest/nodes.lua:519	default.register_fence ; craft auto minetest_game default/functions.lua:385 (sortie 4)
+paleotest:electric_fence_wires	paleotest/nodes.lua:595	default.register_fence_rail ; craft auto default/functions.lua:457 (steelblock, sortie 16) ; inflige 9 PV/s
+# --- paleotest : entités montables (minetest.register_entity littéral ; montée via mob_core.mount -> mob_core.attach)
+paleotest:triceratops	paleotest/mobs/triceratops.lua:135	montée avec paleotest:whip (triceratops.lua:232-233), adulte seulement (mob_core/api.lua:1189)
+paleotest:tyrannosaurus	paleotest/mobs/tyrannosaurus.lua:145	montée au fouet (tyrannosaurus.lua:249-250) ; carnivore territorial
+paleotest:quetzalcoatlus	paleotest/mobs/quetzalcoatlus.lua:154	montée au fouet (quetzalcoatlus.lua:255-256) ; vol (api/hq_lq.lua:599 ré-attache)
+# --- ingrédients minetest_game enregistrés par fonction (cités dans les recettes ci-dessus)
+bucket:bucket_water	minetest_game/mods/bucket/init.lua:65,197-200	bucket.register_liquid ; ingrédient de paleotest:dna_cultivator (crafting.lua:78)
+dye:black	minetest_game/mods/dye/init.lua:14,30-36	boucle dye.dyes ; ingrédient de mob_core:nametag (craftitems.lua:33)

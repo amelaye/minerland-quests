@@ -64,13 +64,57 @@ def lua_files(path):
                 yield os.path.join(dirpath, fn)
 
 
+LONG_OPEN_RE = re.compile(r"\[(=*)\[")
+
+
+def strip_lua_comments(text):
+    """Remplace les commentaires Lua (--…, --[[…]], --[==[…]==]) par des espaces, en conservant les sauts de ligne
+    (numéros de ligne inchangés) et le contenu des chaînes ('…', "…", [[…]]). Évite d'indexer du code désactivé."""
+    out, i, n = [], 0, len(text)
+
+    def blank(s):
+        return "".join("\n" if c == "\n" else " " for c in s)
+
+    while i < n:
+        c = text[i]
+        if c == "-" and text.startswith("--", i):
+            m = LONG_OPEN_RE.match(text, i + 2)
+            if m:
+                close = "]" + m.group(1) + "]"
+                j = text.find(close, m.end())
+                j = n if j < 0 else j + len(close)
+            else:
+                j = text.find("\n", i)
+                j = n if j < 0 else j
+            out.append(blank(text[i:j]))
+            i = j
+        elif c in "'\"":
+            j = i + 1
+            while j < n and text[j] != c and text[j] != "\n":
+                j += 2 if text[j] == "\\" else 1
+            j = min(j + 1, n)
+            out.append(text[i:j])
+            i = j
+        elif c == "[" and LONG_OPEN_RE.match(text, i):
+            m = LONG_OPEN_RE.match(text, i)
+            close = "]" + m.group(1) + "]"
+            j = text.find(close, m.end())
+            j = n if j < 0 else j + len(close)
+            out.append(text[i:j])
+            i = j
+        else:
+            out.append(c)
+            i += 1
+    return "".join(out)
+
+
 def scan(path, root):
     items, crafts, aliases = {}, {}, {}
     for fp in lua_files(path):
         rel = os.path.relpath(fp, root)
         try:
             with open(fp, encoding="utf-8", errors="replace") as f:
-                lines = f.readlines()
+                lines = strip_lua_comments(f.read()).split("\n")
         except OSError:
             continue
         for no, line in enumerate(lines, 1):

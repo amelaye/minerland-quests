@@ -1,0 +1,28 @@
+# Identifiants construits dynamiquement ou absents de l'index, vérifiés à la lecture du code (chapitre 19).
+# Sources : .audit_src/mesecons @ aca87db, digilines @ 3f6e553, digistuff @ 0dcdf51, digtron @ 9ae31a6, pipeworks @ 15794da,
+#   basic_materials @ f626da0. Format : id<TAB>source<TAB>remarque
+# Règle mesecons : mesecon.register_node(name, common, off, on) enregistre name.."_off" et name.."_on" (mesecons/mesecons/util.lua:299-311).
+mesecons_switch:mesecon_switch_off	mesecons/mesecons_switch/init.lua:5 + mesecons/mesecons/util.lua:310	interrupteur ; craft init.lua:33 (donne 2) ; on_rightclick :10 sans contrôle de protection
+mesecons_walllever:wall_lever_off	mesecons/mesecons_walllever/init.lua:6 + mesecons/mesecons/util.lua:310	levier mural ; craft init.lua:60 (donne 2) ; on_rightclick :21
+mesecons_luacontroller:luacontroller0000	mesecons/mesecons_luacontroller/init.lua:33,837-842,896	BASENAME..d..c..b..a (16 noms 0000..1111) ; drop toujours 0000 (:911) ; craft :995-1002 (4 silicium + 5 conducteurs, donne 2) ; on_receive_fields :819
+mesecons_luacontroller:luacontroller_burnt	mesecons/mesecons_luacontroller/init.lua:958	état brûlé (surchauffe), drop 0000 : jamais cible
+mesecons_microcontroller:microcontroller0000	mesecons/mesecons_microcontroller/init.lua:12,61	boucle d..c..b..a ; avec luacontroller présent : échange shapeless seulement (:158-168)
+mesecons_solarpanel:solar_panel_off	mesecons/mesecons_solarpanel/init.lua:4 + util.lua:310	panneau solaire ; craft :37 (4 silicium)
+mesecons_blinkyplant:blinky_plant_off	mesecons/mesecons_blinkyplant/init.lua:24 + util.lua:310	plante clignotante ; craft :56
+mesecons_pressureplates:pressure_plate_wood_off	mesecons/mesecons_pressureplates/init.lua:94,102,129-131,135	register_pressure_plate(basename) -> basename.."_off" ; timer 0,1 s par plaque (:111-113)
+mesecons_pressureplates:pressure_plate_stone_off	mesecons/mesecons_pressureplates/init.lua:94,102,129-131,146	idem, pavé
+mesecons_gates:and_off	mesecons/mesecons_gates/init.lua:87-88,146,157	"mesecons_gates:"..name puis _off ; craft :157-161 (silicium)
+mesecons_gates:not_off	mesecons/mesecons_gates/init.lua:87-88,146,153	porte NON ; craft avec torche mese
+mesecons_delayer:delayer_off_1	mesecons/mesecons_delayer/init.lua:28,105	for i = 1,4 ; craft :154 (2 torches mese, conducteur, 3 pavés)
+mesecons_lightstone:lightstone_green_off	mesecons/mesecons_lightstone/init.lua:19,23,65	lightstone_add("green") ; craft :53-60 ; ingrédient de digilines:lcd (digilines/lcd.lua:356)
+mesecons_fpga:fpga0000	mesecons/mesecons_fpga/init.lua:13-19,56,63	"mesecons_fpga:fpga"..d..c..b..a ; craft :458 (silicium, donne 2)
+mesecons_movestones:movestone	mesecons/mesecons_movestones/init.lua:44,118,123	register_movestone(name) ; craft :194 (cité dans le texte seulement)
+digilines:wire_std_00000000	digilines/wire_std.lua:22-34,86	8 boucles imbriquées -> 256 variantes ; seule 00000000 est un objet d'inventaire ; craft digilines/init.lua:86-93
+digistuff:light_0	digistuff/light.lua:6,14	for i=0,14 "digistuff:light_"..i ; drop light_0 ; craft :80
+digistuff:controller_entity	digistuff/controller.lua:286	entité de la manette, joueur attaché par set_attach (:119,130) : à exclure de rides.lua
+pipeworks:mese_tube_000000	pipeworks/tubes/sorting.lua:28,37 + tubes/registration.lua:87,176-206	no_facedir=true -> enregistrement ancien (64 noms xm..xp..ym..yp..zm..zp), drop _000000 ; crafts pipeworks/crafts.lua:205,215 ; réglage pipeworks_enable_mese_tube
+pipeworks:digiline_filter	pipeworks/filter-injector.lua:382,522	"pipeworks:"..data.name, enregistré même sans digilines ; craft crafts.lua:110-118 seulement si digilines
+pipeworks:lua_tube000000	pipeworks/tubes/lua.lua:31,833-841,914	BASENAME..white..black..green..yellow..blue..red ; craft :1097-1101 ; chargé si pipeworks_enable_lua_tube et mesecons (init.lua:77-78)
+pipeworks:teleport_tube_1	pipeworks/tubes/teleport.lua:346 + tubes/registration.lua:87,216-219	tube 6d index 1 ; recette remplacée par technic (technic/technic/crafts.lua:33-46, control_logic_unit)
+# Alias piège : mesecons_materials:silicon n'est PAS une cible valide.
+mesecons_materials:silicon	basic_materials/aliases.lua:32	register_alias_force -> basic_materials:silicon (basic_materials/craftitems.lua:39) ; mesecons_materials/init.lua:31 est écrasé ; cibler basic_materials:silicon
