@@ -57,16 +57,16 @@ ch("ch10", "transport", "Sur les chapeaux de roues !", "bike:bike",
 ch("ch11", "transport", "Le monde ferroviaire", "advtrains:dtrack_placer",
 	"Les rails font la fierté de Minerland. Avant de bâtir une ligne (avec l'accord de l'administration et les "
 	.. "conseils du Grand Maître des trains), apprends à fabriquer voies, signaux et matériel roulant.")
-ch("ch12", "transport", "Métros et tramways", nil,
+ch("ch12", "transport", "Métros et tramways", "trainblocks:subwayblock",
 	"Le transport urbain a ses codes : quais, signalétique, tramways qui serpentent entre les maisons. "
 	.. "Dessine les stations de demain.")
-ch("ch13", "transport", "Les fous volants", nil,
+ch("ch13", "transport", "Les fous volants", "supercub:supercub",
 	"Minerland est une terre d'aviateurs ! Deltaplane, Super Cub, PA-28, Ju 52 ou hydravion : fabrique ton "
 	.. "appareil… et demande à Luffy de te faire passer ton brevet.")
-ch("ch14", "transport", "Larguez les amarres !", nil,
+ch("ch14", "transport", "Larguez les amarres !", "motorboat:boat",
 	"Mers, lacs et rivières n'attendent que ta proue. Bateau à moteur, chalutier ou sous-marin Nautilus : "
 	.. "hissez haut !")
-ch("ch15", "transport", "Prenons de la hauteur !", nil,
+ch("ch15", "transport", "Prenons de la hauteur !", "chair_lift:seat",
 	"Télésièges, ascenseurs réalistes et cabines de téléportation : grimper n'a jamais été aussi confortable. "
 	.. "Les tutoriels de l'Académie t'attendent.")
 
@@ -76,29 +76,29 @@ ch("ch16", "technology", "L'électricité pour les nuls", "technic:lv_cable",
 ch("ch17", "technology", "La révolution industrielle", "technic:mv_cable",
 	"Broyer, fondre, allier, stocker : tes minerais valent bien plus une fois traités. Bienvenue dans "
 	.. "l'industrie lourde de Minerland.")
-ch("ch18", "technology", "L'ère de Techage", nil,
+ch("ch18", "technology", "L'ère de Techage", "techage:flywheel",
 	"Techage raconte l'histoire de la technique, âge après âge : du charbon de bois aux énergies du futur. "
 	.. "Un parcours à part, avec ses propres machines.")
-ch("ch19", "technology", "Les machines intelligentes", nil,
+ch("ch19", "technology", "Les machines intelligentes", "mesecons_luacontroller:luacontroller0000",
 	"Circuits, câbles de données, tubes pneumatiques et foreuses géantes : quand tes machines se mettent à "
 	.. "penser (presque) toutes seules.")
 
 -- PARTIE V
-ch("ch20", "exploration", "Les portes de l'Enfer", nil,
+ch("ch20", "exploration", "Les portes de l'Enfer", "default:obsidian",
 	"Derrière un cadre d'obsidienne s'ouvre un monde de feu. Allume le portail, récolte ses étranges matériaux "
 	.. "et forge des objets venus d'ailleurs.")
-ch("ch21", "exploration", "Au plus profond de Minerland", nil,
+ch("ch21", "exploration", "Au plus profond de Minerland", "caverealms:glow_crystal",
 	"Cristaux luminescents, géodes et champignons géants : les profondeurs cachent des merveilles… "
 	.. "et quelques trésors oubliés.")
-ch("ch22", "exploration", "Dragons et autres bestioles", nil,
+ch("ch22", "exploration", "Dragons et autres bestioles", "draconis:draconic_forge_fire",
 	"Des dragons dorment dans les cavernes ! Découvre leurs secrets, leurs écailles et les objets qui "
 	.. "permettent de vivre à leurs côtés.")
-ch("ch23", "exploration", "Les mystères du passé", nil,
+ch("ch23", "exploration", "Les mystères du passé", "paleotest:fossil_block",
 	"Fossiles, ADN et laboratoires : la science de Minerland ressuscite les créatures d'antan. "
 	.. "À toi de jouer les paléontologues.")
 
 -- PARTIE VI
-ch("ch24", "building", "Les grands bâtisseurs", nil,
+ch("ch24", "building", "Les grands bâtisseurs", "darkage:marble",
 	"Échafaudages, façades, arches et portes ouvragées : les grands chantiers demandent de grands outils. "
 	.. "Prépare-toi à bâtir des merveilles.")
 ch("ch25", "building", "Monsieur ou Madame le Maire", "minerland_quests:city_charter",

@@ -1,6 +1,7 @@
 -- Intégration Unified Inventory : bouton « Quêtes » et page dédiée utilisant les mêmes vues et le même état.
 -- API vérifiée dans unified_inventory/api.lua (register_page, register_button) et internal.lua (get_formspec :
--- formspec_version[4], la page reçoit (player, perplayer_style) et retourne { formspec, draw_inventory, draw_item_list }).
+-- formspec_version[4], la page reçoit (player, perplayer_style) et retourne
+-- { formspec, draw_inventory, draw_item_list }).
 local Q = minerland_quests
 local V = Q.views
 local P = {}

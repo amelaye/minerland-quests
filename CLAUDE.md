@@ -8,7 +8,7 @@ Mod Luanti **`minerland_quests`** pour le serveur pacifique et semi-roleplay *Am
 un livre de quêtes illustré (« Le Grand Livre des Quêtes de Minerland »), intégré à Unified Inventory,
 avec arbres de progression, validation **automatique** des quêtes et récompenses **automatiques**.
 
-- 6 parties, 25 chapitres, ~100 quêtes. Données dans `minerland_quests/quests/`.
+- 6 parties, 25 chapitres, 191 quêtes. Données dans `minerland_quests/quests/`.
 - Le mod vit dans `minerland_quests/` (seul dossier à copier sur le serveur).
 - Les outils, tests, docs et la configuration Claude sont **hors** du mod (à la racine du dépôt).
 

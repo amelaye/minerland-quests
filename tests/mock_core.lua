@@ -267,6 +267,9 @@ function M.new(opts)
 		function p:get_inventory() return self.inv end
 		function p:get_player_control() return self.control end
 		function p:get_pos() return self.pos end
+		-- Attache à une entité (objet simulé : get_luaentity, get_attach) et objet tenu en main
+		function p:get_attach() return self.attached end
+		function p:get_wielded_item() return new_stack(self.wielded or "") end
 		function p:hud_add(def) local id = self.hud_next self.hud_next = id + 1 self.huds[id] = def return id end
 		function p:hud_remove(id) self.huds[id] = nil end
 		function p:hud_change(id, k, v) if self.huds[id] then self.huds[id][k] = v end end
@@ -494,6 +497,14 @@ function M.new(opts)
 	core.register_node = function(n, d) return reg("node", n, d) end
 	core.register_craftitem = function(n, d) return reg("craft", n, d) end
 	core.register_tool = function(n, d) return reg("tool", n, d) end
+	-- Entités : la définition sert de prototype (__index) aux instances, comme dans le moteur.
+	core.registered_entities = {}
+	core.register_entity = function(n, d)
+		n = n:gsub("^:", "")
+		d.name = n
+		core.registered_entities[n] = d
+		return d
+	end
 	core.register_alias = function(a, b) core.registered_aliases[a] = b end
 	core.override_item = function(name, fields)
 		local d = core.registered_items[name]

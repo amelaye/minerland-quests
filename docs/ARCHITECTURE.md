@@ -156,21 +156,22 @@ Interdits : remplacer une fonction globale d'un autre mod, scanner la carte, par
 Chaque intégration : un fichier `integrations/<nom>.lua`, sortie immédiate si le mod est absent, en-tête listant les
 clés émises et la méthode, test simulé dans `tests/`.
 
-### 6.2 Intégrations prévues (d'après `docs/MOD_AUDIT.md`)
+### 6.2 Intégrations en service
 | Fichier | Clés | Méthode |
 |---|---|---|
-| `farming.lua` (fait) | `farming:till`, `farming:sow` | enveloppe `on_use` des houes / `on_place` des graines |
-| `rings.lua` (fait) | `rings:equip`, `rings:activate`, `rings:flight`, `rings:activate_other` | `armor:register_on_equip` + sonde `rings.users` |
-| `rides.lua` | `rides:<famille>` (voiture, moto, avion, bateau, train, télésiège, ascenseur, cheval, wyverne, dino…) | sonde `player:get_attach()` → nom d'entité du parent (remonter un niveau pour les sièges intermédiaires), table nom → famille |
-| `hangglider.lua` | `hangglider:glide` | sonde de l'état public `hangglider.is_gliding` |
-| `smartshop.lua` | `smartshop:purchase` | API publique `smartshop.api.register_on_purchase` (hors propriétaire) |
-| `areas.lua` | `areas:protect` | API publique `areas:registerOnAdd` (`areas.self_protection` actif sur le serveur) |
-| `nether.lua` | `nether:portal_lit` | enveloppe `on_place` du fragment de cristal de mese (le fragment n'est consommé que si l'allumage réussit) |
-| `mesecons.lua`, `digtron.lua` | `mesecons:luac_program`, `digtron:cycle` | enveloppes `on_receive_fields` + vérification d'état après coup |
-| `paleotest.lua` | `paleotest:dna`, `paleotest:egg` | enveloppes `on_metadata_inventory_take` / `on_place` |
-| `draconis.lua` | `draconis:tame` | sonde du propriétaire de l'entité montée |
+| `farming.lua` | `farming:till`, `farming:sow` | enveloppe `on_use` des houes / `on_place` des graines |
+| `rings.lua` | `rings:equip`, `rings:activate`, `rings:flight`, `rings:activate_other` | `armor:register_on_equip` + sonde `rings.users` |
+| `rides.lua` | `rides:horse`, `wyvern`, `dinosaur`, `bike`, `car`, `train`, `metro`, `ferry`, `aviation`, `boat`, `chairlift`, `elevator` | sonde (2 s) `player:get_attach()` → nom d'entité du parent, siège intermédiaire franchi (automobiles, avions airutils, bateau à moteur, chalutier) ; trains : voitures de voyageurs seulement ; voitures : conducteur seulement quand le mod l'indique. Toujours déclarée (API moteur seule) |
+| `mobs.lua` | `mobs:tame`, `mobs:capture` (+ `:<entité>`) | enveloppe du `on_rightclick` des entités de mobs (`_cmi_is_mob`, PNJ exclus), comparaison avant/après |
+| `smartshop.lua` | `smartshop:purchase`, `smartshop:sale` | API publique `smartshop.api.register_on_purchase` ; hors achat chez soi et article gratuit ; vente comptée si le vendeur est connecté |
+| `hangglider.lua` | `hangglider:glide` | sonde (1 s) de l'API publique `hangglider.is_gliding` |
+| `nether.lua` | `nether:portal_lit` | enveloppe `on_place` du fragment de cristal de Mese : fragment consommé, ou portail apparu à côté du cadre |
+| `paleotest.lua` | `paleotest:egg_placed` | enveloppe `on_place` des œufs (`paleotest:egg_*`) : œuf consommé |
+| `areas.lua` | `areas:protect` | API publique `areas:registerOnAdd` ; zones principales seulement (`parent == nil`), propriétaire connecté |
 
-La liste définitive est fixée en Phase 5 ; chaque clé n'existe que si une quête l'utilise.
+Non retenues (coût ou fiabilité insuffisants, documentées dans les fichiers de quêtes et `docs/audit/`) : programmation
+du contrôleur Lua (mesecons), cycle Digtron, mise en service de l'ascenseur celevator, réseau Technic alimenté, retrait
+d'ADN de l'analyseur paleotest, apprivoisement de la wyverne, dépôt au distributeur atm.
 
 ## 7. Sauvegarde (`core/storage.lua`)
 
@@ -284,6 +285,12 @@ La liste définitive est fixée en Phase 5 ; chaque clé n'existe que si une qu�
 | 2026-11-19 | Langue : client si traduite, français si non annoncée, sinon réglage de repli (anglais) | un client dans une langue non traduite lit l'anglais plutôt que le français |
 | 2026-11-19 | « @ » interdit dans les textes de quêtes | caractère réservé aux paramètres de traduction Luanti |
 | 2026-11-19 | Couverture déclinée par langue (`I.localized_textures`) | le titre est dessiné dans l'image |
+| 2026-11-19 | Catalogue complet : 191 quêtes vérifiées (5 à 10 par chapitre) | toutes ont une détection réelle ; au-delà de la cible indicative de 80 à 120 |
+| 2026-11-19 | Aucune dépendance entre chapitres hors tronc commun (chapitres 1 à 4) | carrières indépendantes ; Technic 17 jouable sans le 16 |
+| 2026-11-19 | Adaptateur générique `rides.lua` pour toute montée à bord | une seule sonde `get_attach()` pour chevaux, véhicules, cabines et dinosaures |
+| 2026-11-19 | Ferroviaire sans pose de rail ni de wagon | `track_builder`, `train_operator`, `railway_operator` réservés |
+| 2026-11-19 | Dragons : cavernes (tas d'os, pierre calcinée, magot), échafaudage écarté | réglage `cavern_spawning` du serveur ; choix de l'administratrice |
+| 2026-11-19 | Protection de commune par `/protect` (areas) | auto-protection active sur Minerland |
 
 ## 14. Limites connues
 

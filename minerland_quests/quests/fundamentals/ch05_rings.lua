@@ -16,7 +16,8 @@ Q.register_quest({
 	id = "ch05.gems", title = "Des pierres pour un anneau", difficulty = 3, icon = "glooptest:amethyst_gem",
 	description = "Rubis, saphirs, émeraudes, topazes, améthystes : les gemmes dormant dans les profondeurs sont "
 		.. "la matière première de tous les anneaux. Sois-en sûr, il t'en faudra beaucoup !",
-	hint = "Cinq gemmes quelconques dans la grille donnent cinq gemmes dépareillées, utilisables pour un Anneau aléatoire.",
+	hint = "Cinq gemmes quelconques dans la grille donnent cinq gemmes dépareillées, utilisables pour un Anneau "
+		.. "aléatoire.",
 	trigger = { type = "craft", items = { "goops_rings:mismatched_gems" } },
 	requires = { "ch04.gems" }, mods = { "goops_rings", "glooptest" },
 	reward = { items = { "moreores:silver_lump 2" } },
