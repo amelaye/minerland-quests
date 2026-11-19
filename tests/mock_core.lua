@@ -148,7 +148,7 @@ function M.new(opts)
 	opts = opts or {}
 	local core = {}
 	local env = { core = core, chat = {}, formspecs = {}, inventory_formspecs = {}, log = {}, after_queue = {},
-		time = 0, nodes = {}, metas = {}, players = {}, privs = {}, settings = opts.settings or {} }
+		time = 0, nodes = {}, metas = {}, players = {}, privs = {}, settings = opts.settings or {}, langs = {} }
 	core.registered_items, core.registered_nodes, core.registered_aliases = {}, {}, {}
 	core.registered_chatcommands, core.registered_privileges = {}, {}
 	core.registered_on_placenodes, core.registered_on_dignodes = {}, {}
@@ -285,7 +285,133 @@ function M.new(opts)
 		if opts.all_mods or mods[m] then return "/mock/" .. m end
 		return nil
 	end
-	core.get_translator = function() return function(s) return s end end
+	-- Traductions, fidèles au moteur : balisage de core.translate (builtin/common/misc_helpers.lua),
+	-- fichiers locale/<domaine>.<langue>.tr, core.get_translated_string. La langue d'un joueur vient de
+	-- env.langs[nom] (Env:join(nom, privs, langue) dans le harnais).
+	local ESC = "\27"
+	core.translate = function(textdomain, str, ...)
+		local start_seq = (textdomain == nil or textdomain == "") and (ESC .. "T") or (ESC .. "(T@" .. textdomain .. ")")
+		local arg = { n = select("#", ...), ... }
+		local arg_index = 1
+		local translated = str:gsub("@(.)", function(matched)
+			local c = string.byte(matched)
+			if string.byte("1") <= c and c <= string.byte("9") then
+				local a = c - string.byte("0")
+				if a ~= arg_index then
+					error("Escape sequences in string given to core.translate are not in the correct order: got @"
+						.. matched .. " but expected @" .. tostring(arg_index))
+				end
+				if a > arg.n then error("Not enough arguments provided to core.translate") end
+				arg_index = arg_index + 1
+				return ESC .. "F" .. arg[a] .. ESC .. "E"
+			elseif matched == "n" then
+				return "\n"
+			end
+			return matched
+		end)
+		if arg_index < arg.n + 1 then error("Too many arguments provided to core.translate") end
+		return start_seq .. translated .. ESC .. "E"
+	end
+	core.get_translator = function(textdomain)
+		return function(str, ...) return core.translate(textdomain, str, ...) end
+	end
+	local tr_files = {}
+	local function load_tr(domain, lang)
+		local key = domain .. "." .. lang
+		if tr_files[key] then return tr_files[key] end
+		local map = {}
+		local f = io.open((opts.modpath or ".") .. "/locale/" .. domain .. "." .. lang .. ".tr", "r")
+		if f then
+			for line in f:lines() do
+				if line ~= "" and line:sub(1, 1) ~= "#" then
+					local src, dst, cur, i = nil, nil, {}, 1
+					while i <= #line do
+						local ch = line:sub(i, i)
+						if ch == "@" and i < #line then
+							local nx = line:sub(i + 1, i + 1)
+							cur[#cur + 1] = (nx == "=" and "=") or (nx == "n" and "\n") or (nx == "@" and "@") or ("@" .. nx)
+							i = i + 2
+						elseif ch == "=" and not src then
+							src, cur = table.concat(cur), {}
+							i = i + 1
+						else
+							cur[#cur + 1] = ch
+							i = i + 1
+						end
+					end
+					dst = table.concat(cur)
+					if src and dst ~= "" then map[src] = dst end
+				end
+			end
+			f:close()
+		end
+		tr_files[key] = map
+		return map
+	end
+	local parse_until_end
+	local function translate_at(s, i, domain, lang)
+		local key, args = {}, {}
+		while i <= #s do
+			local ch = s:sub(i, i)
+			if ch == ESC and s:sub(i + 1, i + 1) == "E" then
+				i = i + 2
+				break
+			elseif ch == ESC and s:sub(i + 1, i + 1) == "F" then
+				local a
+				a, i = parse_until_end(s, i + 2, lang)
+				args[#args + 1] = a
+				key[#key + 1] = "@" .. #args
+			else
+				key[#key + 1] = ch
+				i = i + 1
+			end
+		end
+		local k = table.concat(key)
+		local res = load_tr(domain, lang)[k] or k
+		res = res:gsub("@(%d)", function(d) return args[tonumber(d)] or "" end)
+		return res, i
+	end
+	parse_until_end = function(s, i, lang)
+		local out = {}
+		while i <= #s do
+			local ch = s:sub(i, i)
+			if ch == ESC then
+				local nx = s:sub(i + 1, i + 1)
+				if nx == "E" then
+					return table.concat(out), i + 2
+				elseif nx == "T" then
+					local t
+					t, i = translate_at(s, i + 2, "", lang)
+					out[#out + 1] = t
+				elseif nx == "(" then
+					local close = s:find(")", i + 2, true) or #s
+					local inner = s:sub(i + 2, close - 1)
+					if inner:sub(1, 2) == "T@" then
+						local t
+						t, i = translate_at(s, close + 1, inner:sub(3), lang)
+						out[#out + 1] = t
+					else
+						out[#out + 1] = s:sub(i, close)
+						i = close + 1
+					end
+				else
+					out[#out + 1] = s:sub(i, i + 1)
+					i = i + 2
+				end
+			else
+				out[#out + 1] = ch
+				i = i + 1
+			end
+		end
+		return table.concat(out), i
+	end
+	core.get_translated_string = function(lang, s)
+		return (parse_until_end(tostring(s), 1, lang or ""))
+	end
+	core.get_player_information = function(name)
+		if not env.players[name] then return nil end
+		return { lang_code = env.langs[name] or "", protocol_version = 47, formspec_version = 7 }
+	end
 	core.log = function(level, msg) env.log[#env.log + 1] = { level = level, msg = msg } end
 	core.settings = {
 		get = function(_, k) local v = env.settings[k] return v ~= nil and tostring(v) or nil end,

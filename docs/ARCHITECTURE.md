@@ -1,7 +1,7 @@
 # Architecture du Grand Livre des Quêtes (`minerland_quests`)
 
 Ce document décrit l'architecture du mod. Il est vérifié contre le code (`minerland_quests/`) et les tests simulés
-(`tests/`). Toute décision technique non triviale ajoute une ligne à la section **Décisions** (§12).
+(`tests/`). Toute décision technique non triviale ajoute une ligne à la section **Décisions** (§13).
 
 ## 1. Vue d'ensemble
 
@@ -29,6 +29,7 @@ Principes :
 | Couche | Fichier | Rôle |
 |---|---|---|
 | cœur | `core/util.lua` | journal, réglages, listes, alias d'objets, positions, dates |
+| | `core/i18n.lua` | langue de chaque joueur, traduction côté serveur, marquage des textes (§10) |
 | | `core/registry.lua` | enregistrement et validation des parties, chapitres, quêtes ; `finalize()` |
 | | `core/graph.lua` | prérequis, cycles, accessibilité, disposition de l'arbre, enfants |
 | | `core/storage.lua` | persistance versionnée (mod storage), migrations, ensemble « blocs posés » |
@@ -210,19 +211,48 @@ La liste définitive est fixée en Phase 5 ; chaque clé n'existe que si une qu�
 - Texte injecté échappé (`theme.esc` = `core.formspec_escape`), troncature UTF-8 sûre.
 - Rafraîchissement : `Q.ui.refresh(name)` regroupé (0,3 s) ; ne redessine que la surface ouverte.
 - Thème : parchemin `#f3e6c4`, encre `#3b2412`, bronze ; couleurs d'état dans `ui/theme.lua` seulement. Textures
-  procédurales originales `mlq_*.png` (`tools/gen_textures.py`, CC-BY-SA-4.0, 51 fichiers, ~107 Kio) ;
+  procédurales originales `mlq_*.png` (`tools/gen_textures.py`, CC-BY-SA-4.0, 56 fichiers, ~119 Kio) ;
   textures 9-slice (fond du livre 24 px, page UI 12 px, panneaux 6 px, cases 3 px, boutons 4 px, survol 2 px) :
   détails dans les coins, bords et centre lisses ; ornement = filet étiré + fleuron central non déformé.
+- Couverture (`mlq_cover.png`, variante anglaise `mlq_cover_en.png`) : armoiries originales de Minerland, écartelé
+  d'azur et d'or (pioches en sautoir, chêne, tour, roue dentée), couronne murale à cinq tours, branches de chêne et de
+  laurier, listel « DOUCE HARMONIE » ; blasonnement complet dans `draw_arms` (`tools/gen_textures.py`). « MINERLAND » est
+  dessiné en capitales à empattements de 83 px de large, contenues dans le cadre doré intérieur.
 
-## 10. Administration et sécurité
+## 10. Multilingue (`core/i18n.lua`)
 
-- Joueurs : `/quetes`, `/livre` (ouvrir le livre), objet `minerland_quests:book` (donné à l'arrivée, recette simple).
+- **Langue source : le français.** Le code et les données de quêtes sont écrits en français ; les autres langues
+  viennent de `locale/minerland_quests.<code>.tr` (format Luanti). Anglais complet (`en`).
+- **Langue d'un joueur** (`I.lang`) : celle du client si elle est traduite (variante régionale ramenée à la langue de
+  base, `en_GB` → `en`) ; le français si le client n'annonce aucune langue ; sinon le réglage
+  `minerland_quests.fallback_language` (`en` par défaut). Mise en cache par joueur, vidée à la déconnexion.
+- **Deux mécanismes** :
+  - `tr(nom, "texte", …)` traduit **côté serveur** (`core.get_translated_string`) : interface du livre et de la page
+    Unified Inventory, chat, HUD, réponses des commandes. Le texte traduit peut être mesuré, tronqué et échappé ;
+    le client ne reçoit aucun balisage de traduction ;
+  - `S("texte", …)` produit le balisage Luanti traduit **par le client** : textes enregistrés une fois pour tous
+    (descriptions d'objets, infotexts, privilège, commandes) ;
+  - `N("texte")` ne fait rien : il signale à l'extraction un libellé rangé dans une table (verbes d'objectifs, états,
+    difficultés, raisons d'indisponibilité).
+- **Données de quêtes** : titres, intros, descriptions, objectifs, astuces et titres honorifiques sont des clés de
+  traduction ; « @ » y est refusé (réservé aux paramètres `@1`…`@9`). Les raisons d'indisponibilité gardent leur
+  format et leurs paramètres (`q.unavailable_tr`) : français dans les journaux, langue du joueur à l'écran.
+- **Textures par langue** : `I.texture(nom, base)` choisit `base_<langue>.png` si la variante est déclarée dans
+  `I.localized_textures` (couverture), sinon `base.png`.
+- **Outillage** : `tools/i18n.py` extrait les textes (`S`, `N`, `tr` dans le code ; données via
+  `tools/dump_quests.lua`), régénère `locale/template.txt` et fusionne les `.tr` ; `make check-i18n` échoue si le
+  modèle n'est pas à jour, s'il manque une traduction ou si les paramètres diffèrent. Ajouter une langue :
+  `python3 tools/i18n.py --add de`, traduire le fichier créé.
+
+## 11. Administration et sécurité
+
+- Joueurs : `/quetes`, `/livre`, `/quests` (ouvrir le livre ; chaque commande n'est créée que si le nom est libre), objet `minerland_quests:book` (donné à l'arrivée, recette simple).
 - Privilège `minerland_quests_admin` : `/mlq_progress <joueur>`, `/mlq_quest <id>`, `/mlq_reward <joueur>`
   (diagnostic et relance), `/mlq_diag` (quêtes indisponibles, récompenses retirées, intégrations actives).
 - Test seulement (`minerland_quests.allow_reset = true`) : `/mlq_reset` (garde le journal de récompenses) et
   `/mlq_simulate`. Toutes les actions d'administration sont journalisées (`core.log("action")`).
 
-## 11. Performances
+## 12. Performances
 
 - Callbacks moteur : O(1) quand l'objet n'est cible d'aucune quête (cas général).
 - Sondes : un globalstep partagé, intervalle ≥ 1 s, O(joueurs connectés × sondes).
@@ -230,7 +260,7 @@ La liste définitive est fixée en Phase 5 ; chaque clé n'existe que si une qu�
 - Stockage : écritures groupées ; JSON compact par joueur ; aucune lecture du disque dans les callbacks chauds (cache).
 - Interface : rafraîchissement regroupé ; arbre limité par chapitre (≤ 24 nœuds).
 
-## 12. Décisions
+## 13. Décisions
 
 | Date | Décision | Raison |
 |---|---|---|
@@ -250,8 +280,12 @@ La liste définitive est fixée en Phase 5 ; chaque clé n'existe que si une qu�
 | 2026-11-18 | Bouton Unified Inventory lisse en 128 px | cohérent avec les icônes d'Unified Inventory |
 | 2026-11-18 | Couleurs de TEXTE d'état distinctes des couleurs de cadre (`T.state_text_color`) | l'or des cadres est illisible en texte sur papier clair |
 | 2026-11-18 | Cases d'objets texturées (`T.slot_style`) et bouton de fermeture sans bordure | pas de boutons gris standards |
+| 2026-11-19 | Français langue source ; traduction de l'interface, du chat et du HUD côté serveur (`tr`) | la mise en page mesure et tronque le texte réellement affiché |
+| 2026-11-19 | Langue : client si traduite, français si non annoncée, sinon réglage de repli (anglais) | un client dans une langue non traduite lit l'anglais plutôt que le français |
+| 2026-11-19 | « @ » interdit dans les textes de quêtes | caractère réservé aux paramètres de traduction Luanti |
+| 2026-11-19 | Couverture déclinée par langue (`I.localized_textures`) | le titre est dessiné dans l'image |
 
-## 13. Limites connues
+## 14. Limites connues
 
 - Actions sans événement serveur (cuisson au four, tables de craft personnalisées, machines technic/techage,
   `set_node` sans callback, ouverture d'un coffre au trésor) : non détectables, remplacées par une étape voisine

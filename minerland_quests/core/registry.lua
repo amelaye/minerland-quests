@@ -22,9 +22,28 @@ local function check_id(what, id, pattern)
 	end
 end
 
+-- Les textes des données sont des chaînes SOURCE traduites à l'affichage (core/i18n.lua) : « @ » y est réservé
+-- aux paramètres de traduction et donc interdit.
+local function check_text(what, id, field, value)
+	if value ~= nil and (type(value) ~= "string" or value:find("@", 1, true)) then
+		fail(what, id, field .. " doit être une chaîne sans « @ » (caractère réservé aux traductions)")
+	end
+end
+
+-- Marque une quête indisponible. La raison est gardée en texte source + paramètres pour être traduite à
+-- l'affichage (q.unavailable_tr) ; q.unavailable contient la version française (journaux, administration).
+function Q.mark_unavailable(q, fmt, ...)
+	if q.unavailable then return end
+	local args = { ... }
+	q.unavailable_tr = { fmt, ... }
+	q.unavailable = (fmt:gsub("@(%d)", function(d) return tostring(args[tonumber(d)] or "") end))
+end
+
 function Q.register_part(def)
 	check_id("partie", def.id, "^[a-z_]+$")
 	if Q.parts[def.id] then fail("partie", def.id, "déjà enregistrée") end
+	check_text("partie", def.id, "title", def.title)
+	check_text("partie", def.id, "subtitle", def.subtitle)
 	local p = {
 		id = def.id,
 		order = tonumber(def.order) or (#Q.part_list + 1),
@@ -46,6 +65,8 @@ function Q.register_chapter(def)
 	if Q.chapters[def.id] then fail("chapitre", def.id, "déjà enregistré") end
 	local part = Q.parts[def.part]
 	if not part then fail("chapitre", def.id, "partie inconnue : " .. tostring(def.part)) end
+	check_text("chapitre", def.id, "title", def.title)
+	check_text("chapitre", def.id, "intro", def.intro)
 	local c = {
 		id = def.id,
 		part = def.part,
@@ -108,6 +129,10 @@ function Q.register_quest(def)
 	if not chapter then fail("quête", def.id, "chapitre inconnu : " .. tostring(def.chapter)) end
 	if def.id:sub(1, 4) ~= chapter.id then fail("quête", def.id, "le préfixe doit être celui du chapitre") end
 	if type(def.title) ~= "string" or def.title == "" then fail("quête", def.id, "title requis") end
+	for _, field in ipairs({ "title", "description", "objective", "hint" }) do
+		check_text("quête", def.id, field, def[field])
+	end
+	check_text("quête", def.id, "reward.title", def.reward and def.reward.title)
 	local difficulty = math.floor(tonumber(def.difficulty) or 1)
 	if difficulty < 1 or difficulty > 5 then fail("quête", def.id, "difficulty doit être entre 1 et 5") end
 	if def.pos ~= nil and (type(def.pos) ~= "table" or not tonumber(def.pos[1]) or not tonumber(def.pos[2])) then

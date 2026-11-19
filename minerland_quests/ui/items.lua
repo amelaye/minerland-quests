@@ -1,6 +1,7 @@
 -- Objets du mod : le Grand Livre et la Charte de fondation de ville.
 local Q = minerland_quests
 local U = Q.util
+local S = Q.i18n.S   -- textes enregistrés une fois : traduits par le client
 
 local function open_book(itemstack, user)
 	local name = Q.events.real_player(user)
@@ -9,9 +10,9 @@ local function open_book(itemstack, user)
 end
 
 core.register_craftitem("minerland_quests:book", {
-	description = "Le Grand Livre des Quêtes de Minerland\n"
-		.. core.colorize("#e8b84a", "Clic pour l'ouvrir. Aussi accessible depuis l'inventaire (bouton Quêtes) ou /quetes."),
-	short_description = "Le Grand Livre des Quêtes de Minerland",
+	description = S("Le Grand Livre des Quêtes de Minerland") .. "\n"
+		.. core.colorize("#e8b84a", S("Clic pour l'ouvrir. Aussi accessible depuis l'inventaire ou avec /quetes.")),
+	short_description = S("Le Grand Livre des Quêtes de Minerland"),
 	inventory_image = "mlq_book.png",
 	wield_image = "mlq_book.png",
 	stack_max = 1,
@@ -51,9 +52,9 @@ end)
 -- Charte de fondation (chapitre 25) : bloc décoratif symbolique. Sa pose est détectée par le moteur (« place »).
 -- Il ne prétend pas prouver qu'une ville existe : il marque l'intention et la cérémonie de fondation.
 core.register_node("minerland_quests:city_charter", {
-	description = "Charte de fondation de ville\n"
-		.. core.colorize("#e8b84a", "Un parchemin scellé à exposer dans votre future mairie."),
-	short_description = "Charte de fondation de ville",
+	description = S("Charte de fondation de ville") .. "\n"
+		.. core.colorize("#e8b84a", S("Un parchemin scellé à exposer dans votre future mairie.")),
+	short_description = S("Charte de fondation de ville"),
 	drawtype = "signlike",
 	tiles = { "mlq_charter.png" },
 	inventory_image = "mlq_charter.png",
@@ -69,7 +70,7 @@ core.register_node("minerland_quests:city_charter", {
 		local name = placer and placer:is_player() and placer:get_player_name() or ""
 		local meta = core.get_meta(pos)
 		meta:set_string("owner", name)
-		meta:set_string("infotext", ("Charte de fondation — signée par %s le %s"):format(
+		meta:set_string("infotext", S("Charte de fondation — signée par @1 le @2",
 			name ~= "" and name or "?", os.date("%d/%m/%Y")))
 	end,
 	sounds = core.get_modpath("default") and default.node_sound_wood_defaults() or nil,

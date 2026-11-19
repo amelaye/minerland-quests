@@ -43,6 +43,9 @@ def referenced():
     for part in ("fundamentals", "daily_life", "transport", "technology", "exploration", "building"):
         refs.setdefault(f"mlq_emblem_{part}.png", "core/registry.lua (dynamique)")
         refs.setdefault(f"mlq_part_{part}.png", "quests/parts.lua")
+    # textures propres à une langue (core/i18n.lua, I.localized_textures) : nom construit à l'exécution
+    refs.setdefault("mlq_cover.png", "core/i18n.lua (dynamique, langue source)")
+    refs.setdefault("mlq_cover_en.png", "core/i18n.lua (dynamique, anglais)")
     for v in ("mlq_btn", "mlq_btn_gold"):
         for suffix in ("", "_hover", "_press"):
             refs.setdefault(f"{v}{suffix}.png", "ui/theme.lua (dynamique)")

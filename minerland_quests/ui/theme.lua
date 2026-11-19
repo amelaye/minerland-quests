@@ -1,5 +1,6 @@
 -- Thème graphique : couleurs, textures et petites briques formspec réutilisables.
 local Q = minerland_quests
+local N = Q.i18n.N
 local T = {}
 Q.theme = T
 
@@ -30,14 +31,15 @@ T.state_text_color = {
 	unavailable = "#a0523d",
 }
 
+-- Libellés SOURCE (français) : les vues les traduisent pour le joueur avec Q.i18n.tr.
 T.state_label = {
-	available = "Disponible",
-	done = "Terminée",
-	locked = "Verrouillée",
-	unavailable = "Indisponible",
+	available = N("Disponible"),
+	done = N("Terminée"),
+	locked = N("Verrouillée"),
+	unavailable = N("Indisponible"),
 }
 
-T.difficulty_label = { "Facile", "Accessible", "Intermédiaire", "Avancée", "Expert" }
+T.difficulty_label = { N("Facile"), N("Accessible"), N("Intermédiaire"), N("Avancée"), N("Expert") }
 
 -- Échappement obligatoire de tout texte dynamique.
 function T.esc(s)
@@ -57,6 +59,12 @@ end
 
 function T.label(x, y, text, color)
 	return ("label[%s,%s;%s]"):format(n(x), n(y), esc(core.colorize(color or T.color.ink, text)))
+end
+
+-- Titre de vue : police grasse et agrandie, puis retour au style normal pour les libellés suivants.
+function T.title(x, y, text)
+	return "style_type[label;font=bold;font_size=*1.3]" .. T.label(x, y, text, T.color.ink)
+		.. "style_type[label;font=normal;font_size=*1]"
 end
 
 function T.image(x, y, w, h, tex)
@@ -104,14 +112,20 @@ function T.hotspot(x, y, w, h, name)
 	})
 end
 
+-- Remplissage texturé (dégradé vertical + reflet, étirable en largeur) ; autre couleur : aplat.
+local BAR_TEXTURE = { [T.color.green] = "mlq_bar_green.png", [T.color.gold] = "mlq_bar_gold.png" }
+
 function T.progress_bar(x, y, w, h, done, total, color)
 	local ratio = total > 0 and math.min(1, done / total) or 0
 	local out = {
 		T.image(x, y, w, h, "mlq_progress_bg.png"),
 	}
 	if ratio > 0 then
+		color = color or T.color.green
 		local fill = math.max(0.06, (w - 0.08) * ratio)
-		out[#out + 1] = T.box(x + 0.04, y + 0.04, fill, h - 0.08, color or T.color.green)
+		local tex = BAR_TEXTURE[color]
+		out[#out + 1] = tex and T.image(x + 0.04, y + 0.04, fill, h - 0.08, tex)
+			or T.box(x + 0.04, y + 0.04, fill, h - 0.08, color)
 	end
 	return table.concat(out)
 end

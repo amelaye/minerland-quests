@@ -1,6 +1,7 @@
 -- Graphe des prérequis : validation (inconnus, cycles), accessibilité et disposition des arbres.
 -- Module pur : ne dépend que du registre.
 local Q = minerland_quests
+local N = Q.i18n.N
 local U = Q.util
 local G = {}
 Q.graph = G
@@ -51,7 +52,7 @@ function G.check_all()
 		for _, r in ipairs(q.requires) do
 			if not Q.quests[r] then
 				problem(("quête %s : prérequis inconnu %s"):format(q.id, r))
-				q.unavailable = q.unavailable or ("Prérequis inconnu : " .. r)
+				Q.mark_unavailable(q, N("Prérequis inconnu : @1"), r)
 			elseif r == q.id then
 				problem(("quête %s : se requiert elle-même"):format(q.id))
 			end
@@ -60,7 +61,7 @@ function G.check_all()
 	local cyc = G.find_cycles(Q.quests)
 	for id in pairs(cyc) do
 		problem(("quête %s : dépendance circulaire"):format(id))
-		Q.quests[id].unavailable = Q.quests[id].unavailable or "Dépendance circulaire (erreur de données)"
+		Q.mark_unavailable(Q.quests[id], N("Dépendance circulaire (erreur de données)"))
 	end
 	G.layouts = {}
 end

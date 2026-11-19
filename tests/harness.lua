@@ -158,10 +158,12 @@ function Env:player(p)
 	return self.mock.players[p]
 end
 
-function Env:join(name, privs)
+-- lang : code de langue annoncé par le client (ex. "en", "fr", "de" ; "" ou nil = aucune).
+function Env:join(name, privs, lang)
 	local p = self.mock.new_player(name)
 	self.mock.players[name] = p
 	self.mock.privs[name] = privs or { interact = true }
+	self.mock.langs[name] = lang
 	if not self.known[name] and not self.mock.storage_data["p:" .. name] then
 		for _, f in ipairs(self.mock.cb.newplayer) do f(p) end
 	end

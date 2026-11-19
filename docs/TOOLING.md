@@ -36,12 +36,14 @@ L'agent principal coordonne : il découpe le travail, relit les résultats et ga
 
 | Commande | Effet |
 |---|---|
-| `make check` | lint + validation des quêtes + contrôle des textures + tests simulés |
+| `make check` | lint + contrôle des traductions + contrôle des textures + validation des quêtes + tests simulés |
 | `make lint` | `tools/lint.sh` : luacheck (`.luacheckrc`) s'il est installé, sinon syntaxe LuaJIT + détection des globales accidentelles |
 | `make test` | `luajit tests/run.lua` : tests simulés (`luajit tests/run.lua engine` pour un seul fichier) |
 | `make validate` | `tools/validate_quests.py` : ids, prérequis, cycles, accessibilité, objets audités, économie, taille des arbres |
-| `make textures` | `tools/gen_textures.py` : génération procédurale et déterministe des 51 PNG (`--only NOM`, `--list`, `--preview planche.png` pour une planche agrandie sans toucher au mod) |
+| `make textures` | `tools/gen_textures.py` : génération procédurale et déterministe des 56 PNG (`--only NOM`, `--list`, `--preview planche.png` pour une planche agrandie sans toucher au mod) |
 | `make check-textures` | `tools/check_textures.py` : présence, validité PNG, dimensions, textures orphelines |
+| `make i18n` | `tools/i18n.py` : extrait les textes source (français) dans `locale/template.txt` et met à jour les `.tr` |
+| `make check-i18n` | `tools/i18n.py --check` : modèle à jour, aucune traduction manquante, paramètres `@1`…`@9` cohérents |
 | `make docs` | `tools/gen_docs.py` : génère `docs/QUESTS.md` |
 | `make audit-index` | reconstruit `docs/audit/item_index.json` depuis `.audit_src/` |
 | `make fetch-sources` | `tools/fetch_sources.sh` : clone en lecture seule les sources listées dans `tools/audit_sources.txt` |
@@ -56,7 +58,8 @@ L'agent principal coordonne : il découpe le travail, relit les résultats et ga
 | `dump_quests.lua` | Charge le vrai mod dans le mock et exporte le catalogue en JSON (base de `validate_quests.py` et `gen_docs.py`). |
 | `validate_quests.py` | Voir `make validate`. Code 1 en cas d'erreur ; `--strict` rend les avertissements bloquants. |
 | `check_textures.py`, `pngkit.py` | Contrôle des PNG ; lecture et écriture PNG en Python pur (Pillow n'est pas requis). |
-| `gen_textures.py` | Textures originales (CC-BY-SA-4.0, `minerland_quests/LICENSE_TEXTURES.txt`) : petite bibliothèque de dessin (formes, polygones, bruit, tramage ordonné, sprites au pixel, police 5×7, dorure en relief) et une fonction par texture. Règles 9-slice : détails dans les coins, bords et centre lisses (Luanti étire bords et centre). |
+| `gen_textures.py` | Textures originales (CC-BY-SA-4.0, `minerland_quests/LICENSE_TEXTURES.txt`) : petite bibliothèque de dessin (formes, polygones, bruit, tramage ordonné, sprites au pixel, police 5×7, capitales à empattements, dorure en relief, arbres feuillus, héraldique) et une fonction par texture. Règles 9-slice : détails dans les coins, bords et centre lisses (Luanti étire bords et centre). |
+| `i18n.py` | Traductions : extraction des appels `S("…")`, `N("…")`, `tr(joueur, "…")` du code Lua (concaténations de littéraux comprises) et des textes de quêtes (via `dump_quests.lua`) ; `locale/template.txt` régénéré ; fusion dans chaque `minerland_quests.<code>.tr` (traductions conservées, nouvelles entrées vides, entrées obsolètes en commentaire) ; `--check` (code 1 si incomplet) ; `--add CODE` pour une nouvelle langue. |
 | `gen_docs.py` | Catalogue Markdown des quêtes. |
 | `lint.sh` | Voir `make lint`. |
 | `fetch_sources.sh`, `audit_sources.txt` | Récupération des sources publiques des mods. |

@@ -1,0 +1,378 @@
+# textdomain: minerland_quests
+# Fichier tenu à jour par tools/i18n.py : traduire la partie à droite du « = ».
+
+##### Interface et messages (ui/book.lua)
+Fermer le livre=Close the book
+
+##### Interface et messages (ui/inventory.lua)
+Grand Livre des Quêtes=Great Book of Quests
+
+##### Interface et messages (ui/items.lua)
+Le Grand Livre des Quêtes de Minerland=The Great Book of Quests of Minerland
+Clic pour l'ouvrir. Aussi accessible depuis l'inventaire ou avec /quetes.=Click to open it. Also available from your inventory or with /quests.
+Charte de fondation de ville=Town Founding Charter
+Un parchemin scellé à exposer dans votre future mairie.=A sealed parchment to display in your future town hall.
+Charte de fondation — signée par @1 le @2=Founding charter — signed by @1 on @2
+
+##### Interface et messages (ui/notifications.lua)
+Chapitre terminé : @1 !=Chapter complete: @1!
+Nouvelle quête : @1=New quest: @1
+Ouvre le Grand Livre pour la suite.=Open the Great Book to see what comes next.
+Quête accomplie : @1=Quest complete: @1
+[Grand Livre]=[Great Book]
+débloquée(s) : @1=unlocked: @1
+Inventaire plein : la récompense de « @1 » est conservée et sera livrée dès qu'il y aura de la place.=Inventory full: the reward for “@1” is kept safe and will be delivered as soon as there is room.
+@1 récompenses livrées dans ton inventaire.=@1 rewards delivered to your inventory.
+Récompense livrée dans ton inventaire.=Reward delivered to your inventory.
+
+##### Interface et messages (ui/theme.lua)
+Disponible=Available
+Terminée=Completed
+Verrouillée=Locked
+Indisponible=Unavailable
+Facile=Easy
+Accessible=Approachable
+Intermédiaire=Intermediate
+Avancée=Advanced
+Expert=Expert
+
+##### Interface et messages (ui/views.lua)
+Extraire=Dig
+Poser=Place
+Fabriquer=Craft
+Déguster=Eat
+groupe @1=group @1
+@1 ou @2=@1 or @2
+@1 : @2=@1: @2
+@1 (à des endroits différents)=@1 (in different places)
+Accueil=Home
+Retour=Back
+Ouvrir en grand=Open full size
+Carnet d'aventure de @1=@1's adventure journal
+Progression : @1 / @2 quêtes=Progress: @1 / @2 quests
+Titres : @1=Titles: @1
+@1 récompense(s) en attente de place=@1 reward(s) waiting for room
+Recevoir mes récompenses=Collect my rewards
+Partie @1 — @2=Part @1 — @2
+Chapitre @1 — @2=Chapter @1 — @2
+(mods absents sur ce serveur)=(mods missing on this server)
+Difficulté :=Difficulty:
+« @1 »=“@1”
+Indisponible : @1=Unavailable: @1
+Objectif — @1=Objective — @1
+(fait)=(done)
+(ignoré)=(skipped)
+(à faire)=(to do)
+Prérequis : @1=Prerequisites: @1
+Astuce : @1=Tip: @1
+Accomplie le @1.=Completed on @1.
+Progression : @1 / @2=Progress: @1 / @2
+Encore @1 prérequis à accomplir.=@1 more prerequisite(s) to complete.
+Récompense prévue=Reward to earn
+Récompense en attente (inventaire plein)=Reward waiting (inventory full)
+Récompense reçue=Reward received
+Titre : « @1 »=Title: “@1”
+La satisfaction du devoir accompli.=The satisfaction of a job well done.
+Réessayer la livraison=Retry delivery
+Partie @1 · @2/@3 quêtes=Part @1 · @2/@3 quests
+« Retour à l'arbre=« Back to the tree
+Chapitre précédent : @1=Previous chapter: @1
+Chapitre suivant : @1=Next chapter: @1
+Clique sur une quête de l'arbre pour lire sa fiche : objectif, prérequis, avancement et récompense.=Click a quest in the tree to read its page: objective, prerequisites, progress and reward.
+Les quêtes se valident toutes seules quand tu accomplis l'action demandée.=Quests complete by themselves when you perform the requested action.
+Les récompenses arrivent directement dans ton inventaire.=Rewards go straight into your inventory.
+
+##### Interface et messages (core/admin.lua)
+Consulter et diagnostiquer la progression des quêtes de Minerland=View and diagnose Minerland quest progress
+Ouvrir le Grand Livre des Quêtes=Open the Great Book of Quests
+<joueur>=<player>
+Progression d'un joueur par chapitre=A player's progress, chapter by chapter
+Joueur inconnu.=Unknown player.
+@1 : @2/@3 quêtes, @4 récompense(s) en attente=@1: @2/@3 quests, @4 reward(s) pending
+<joueur> <id_quête>=<player> <quest_id>
+État détaillé d'une quête pour un joueur=Detailed status of a quest for a player
+Usage : @1=Usage: @1
+aucun=none
+déclencheur : @1=trigger: @1
+indisponible : @1=unavailable: @1
+non=no
+prérequis manquants : @1=missing prerequisites: @1
+terminée le : @1=completed on: @1
+récompense : @1=reward: @1
+Diagnostic des récompenses d'un joueur (journal et file d'attente) ; relance la livraison=Diagnose a player's rewards (log and queue); retries delivery
+@1 : @2 récompense(s) attribuée(s), @3 en attente=@1: @2 reward(s) granted, @3 pending
+depuis le @1=since @1
+@1 livraison(s) effectuée(s) maintenant=@1 delivery(ies) made now
+Diagnostic du livre de quêtes (intégrations, quêtes indisponibles, problèmes de données)=Quest book diagnostics (integrations, unavailable quests, data problems)
+Grand Livre v@1 : @2 quêtes, @3 chapitres=Great Book v@1: @2 quests, @3 chapters
+Intégrations actives : @1=Active integrations: @1
+aucune=none
+Langues : @1=Languages: @1
+@1 quête(s) indisponible(s)=@1 unavailable quest(s)
+Commande désactivée : réservée aux instances de test (@1).=Command disabled: reserved for test servers (@1).
+[TEST] Réinitialise une quête (la récompense reste journalisée : pas de seconde récompense)=[TEST] Resets a quest (the reward stays logged: no second reward)
+Quête @1 réinitialisée pour @2 (journal des récompenses conservé).=Quest @1 reset for @2 (reward log kept).
+<id_quête>=<quest_id>
+[TEST] Émet l'événement déclencheur d'une quête pour soi-même (passe par le circuit normal)=[TEST] Emits a quest's trigger event for yourself (goes through the normal pipeline)
+Quête inconnue.=Unknown quest.
+Quête sans cible résolue (indisponible ?).=Quest without a resolved target (unavailable?).
+Événement @1 @2 émis : @3 quête(s) affectée(s). État : @4=Event @1 @2 emitted: @3 quest(s) affected. State: @4
+
+##### Interface et messages (core/compat.lua)
+Le mod « @1 » n'est pas activé sur ce serveur.=The mod “@1” is not enabled on this server.
+Objet introuvable sur ce serveur : @1=Item not found on this server: @1
+L'intégration « @1 » n'est pas active sur ce serveur.=The “@1” integration is not active on this server.
+
+##### Interface et messages (core/graph.lua)
+Prérequis inconnu : @1=Unknown prerequisite: @1
+Dépendance circulaire (erreur de données)=Circular dependency (data error)
+
+##### Interface et messages (core/i18n.lua)
+@1/@2/@3=@2/@1/@3
+
+##### Partie I — Les Fondamentaux
+Les Fondamentaux=The Fundamentals
+Premiers pas, premier toit, premières richesses=First steps, first roof, first riches
+
+##### Partie II — La Vie quotidienne
+La Vie quotidienne=Everyday Life
+Animaux, cuisine, décoration et commerce=Animals, cooking, decoration and trade
+
+##### Partie III — Les Transports
+Les Transports=Transport
+Routes, rails, ciel, mers et hauteurs=Roads, rails, skies, seas and heights
+
+##### Partie IV — Sciences et Technologies
+Sciences et Technologies=Science and Technology
+Électricité, industrie et automatisation=Electricity, industry and automation
+
+##### Partie V — L'Aventure
+L'Aventure=Adventure
+Mondes extraordinaires et créatures fabuleuses=Extraordinary worlds and fabulous creatures
+
+##### Partie VI — Les Grands Projets
+Les Grands Projets=Grand Projects
+Bâtisseurs et fondateurs de cités=Builders and founders of cities
+
+##### Chapitre 1 — Bienvenue à Minerland
+Bienvenue à Minerland=Welcome to Minerland
+Bienvenue, voyageur ! Avant de bâtir des cathédrales et des trains, il faut savoir manier la hache. Ce chapitre t'apprend les gestes de base : couper, fabriquer, ranger.=Welcome, traveller! Before building cathedrals and trains, you need to know how to swing an axe. This chapter teaches you the basics: chop, craft, store.
+Bûcheron du dimanche=Weekend Lumberjack
+Tout grand voyage commence par un arbre. Choisis-en un beau et donne-lui un petit coup de hache.=Every great journey begins with a tree. Pick a handsome one and give it a gentle whack.
+Creuse un tronc d'arbre (à la main ou avec une hache). Les troncs posés par un joueur ne comptent pas.=Dig a tree trunk (by hand or with an axe). Trunks placed by a player don't count.
+Des planches, encore des planches=Planks, More Planks
+Un tronc, c'est bien. Quatre planches, c'est mieux !=One trunk is good. Four planks are better!
+Place un tronc dans la grille de fabrication de ton inventaire.=Put a trunk in the crafting grid of your inventory.
+Bâton de pèlerin=Pilgrim's Staff
+Le bâton : humble, léger, indispensable à presque tous les outils du royaume.=The stick: humble, light, and essential to almost every tool in the kingdom.
+Deux planches l'une au-dessus de l'autre donnent quatre bâtons.=Two planks, one on top of the other, make four sticks.
+Mon premier outil=My First Tool
+Une pioche, une hache ou une pelle : fabrique-toi de quoi attaquer le monde.=A pickaxe, an axe or a shovel: craft yourself something to take on the world.
+Bâtons + planches ou pavés. La recette s'affiche dans le guide d'Unified Inventory.=Sticks + planks or cobblestone. The recipe is shown in the Unified Inventory guide.
+Un coffre pour mes trésors=A Chest for My Treasures
+Huit planches en couronne et te voilà propriétaire d'un coffre tout neuf.=Eight planks in a ring and you're the proud owner of a brand-new chest.
+Huit planches autour d'une case vide.=Eight planks around an empty slot.
+Chaque chose à sa place=A Place for Everything
+Un coffre dans le sac ne range rien du tout. Pose-le quelque part !=A chest in your bag tidies nothing at all. Put it down somewhere!
+Le feu sacré=The Sacred Fire
+Huit pavés et un peu de courage : le fourneau te permettra de cuire, fondre et rêver.=Eight cobblestones and a little courage: the furnace will let you cook, smelt and dream.
+Huit pavés autour d'une case vide, puis pose le fourneau.=Eight cobblestones around an empty slot, then place the furnace.
+Apprenti de Minerland=Minerland Apprentice
+
+##### Chapitre 2 — Mon premier chez-moi
+Mon premier chez-moi=My First Home
+Un toit, une porte, un lit et une lampe : voilà de quoi se sentir chez soi. Et n'oublie pas de protéger ton terrain, la Reine y tient !=A roof, a door, a bed and a lamp: all you need to feel at home. And don't forget to protect your land — the Queen insists!
+On ne rentre pas sans frapper=Knock Before Entering
+Une maison sans porte, c'est un courant d'air avec un toit.=A house without a door is just a draught with a roof.
+Six planches en deux colonnes.=Six planks in two columns.
+Pas de porte, pas de chez-soi=No Door, No Home
+Installe ta porte. Bonus : tu peux maintenant claquer la porte avec élégance.=Install your door. Bonus: you can now slam it with style.
+Au lit, les marmottes !=Off to Bed, Sleepyheads!
+Après une longue journée de construction, rien ne vaut un bon lit douillet.=After a long day of building, nothing beats a nice cosy bed.
+Laine ou coton + planches. Il suffit d'en fabriquer un.=Wool or cotton + planks. Crafting one is enough.
+Que la lumière soit=Let There Be Light
+Les nuits de Minerland sont belles, mais un peu sombres. Éclaire ta maison.=Minerland nights are beautiful, but a little dark. Light up your house.
+Pose trois torches à trois endroits différents (sol, mur ou plafond).=Place three torches in three different spots (floor, wall or ceiling).
+Propriété privée=Private Property
+À Minerland, on protège ses constructions. Un bloc de protection et les voisins indélicats resteront à la porte.=In Minerland, we protect what we build. One protection block and rude neighbours stay outside.
+Le bloc Protector protège une zone autour de lui. Clic droit dessus pour gérer les membres.=The Protector block protects an area around it. Right-click it to manage members.
+Un intérieur qui a du chien=An Interior with Character
+Une bibliothèque, un panneau ou une barrière : un premier meuble pour personnaliser ton nid.=A bookshelf, a sign or a fence: a first piece of furniture to make your nest your own.
+Mon coffre-fort=My Strongbox
+Un coffre à serrure, et voilà ta maison officiellement digne de ce nom.=A locked chest, and your house is officially worthy of the name.
+Un coffre + un lingot de fer dans la grille, puis pose-le.=A chest + a steel ingot in the grid, then place it.
+Propriétaire terrien=Landowner
+
+##### Chapitre 3 — Les joies de l'agriculture
+Les joies de l'agriculture=The Joys of Farming
+La faim est désactivée à Minerland, mais rien ne vaut un potager bien tenu. Bêche, sème, récolte… et transforme tes récoltes en bons produits.=Hunger is disabled in Minerland, but nothing beats a well-kept vegetable garden. Dig, sow, harvest… and turn your crops into tasty treats.
+La houe, amie du jardinier=The Hoe, a Gardener's Friend
+Avant de semer, il faut retourner la terre. Et pour ça, rien ne vaut une bonne houe.=Before sowing, you need to turn the soil. And for that, nothing beats a good hoe.
+Deux planches (ou pavés, ou lingots) et deux bâtons.=Two planks (or cobblestones, or ingots) and two sticks.
+Retourner la terre=Turning the Soil
+Un coup de houe sur la terre près de l'eau, et le sol devient fertile.=One stroke of the hoe on soil near water, and the ground becomes fertile.
+Labourer de la terre avec une houe.=Till soil with a hoe.
+Clic gauche avec la houe sur de la terre (avec ou sans herbe), idéalement à moins de 3 blocs d'eau.=Left-click soil (with or without grass) with the hoe, ideally within 3 blocks of water.
+Petite graine deviendra grande=Mighty Oaks from Little Seeds
+Sème une graine dans ta terre labourée… et sois patient.=Sow a seed in your tilled soil… and be patient.
+Semer une graine sur de la terre labourée.=Sow a seed on tilled soil.
+Les graines de blé s'obtiennent en arrachant les hautes herbes.=Wheat seeds are obtained by pulling up tall grass.
+Moisson dorée=Golden Harvest
+Le blé est mûr, ses épis dorés ondulent sous le vent. C'est l'heure de la moisson !=The wheat is ripe, its golden ears swaying in the wind. Harvest time!
+Récolte des plants de blé arrivés à maturité (stade 8).=Harvest fully grown wheat plants (stage 8).
+Un potager varié=A Varied Vegetable Patch
+Carottes, tomates, maïs, potirons… Un vrai jardinier ne cultive pas qu'une seule plante.=Carrots, tomatoes, corn, pumpkins… A true gardener never grows just one plant.
+Récolte des légumes mûrs : carottes, pommes de terre, tomates, maïs, concombres, oignons…=Harvest ripe vegetables: carrots, potatoes, tomatoes, corn, cucumbers, onions…
+Le moulin à bras=Elbow-Grease Mill
+Du blé, un mortier, de l'huile de coude : voilà de la farine.=Wheat, a mortar and some elbow grease: there's your flour.
+Fabrique d'abord un mortier et pilon (pierre + bâton), puis broie du blé dans la grille.=First craft a mortar and pestle (stone + stick), then grind wheat in the grid.
+Le pain de la maison=Homemade Bread
+Cuis ta farine au fourneau et goûte le fruit de ton travail. Croustillant !=Bake your flour in the furnace and taste the fruit of your labour. Crunchy!
+Mets la farine dans un fourneau allumé, puis mange un morceau de pain.=Put the flour in a lit furnace, then eat a piece of bread.
+Chef de la ferme=Farmhouse Chef
+Salade, jus de carotte, popcorn ou salade de pommes de terre : signe ta première recette élaborée.=Salad, carrot juice, popcorn or potato salad: sign off your first elaborate recipe.
+Ces recettes demandent des ustensiles de farming (planche à découper, presse-agrumes, casserole, bol).=These recipes need farming utensils (cutting board, juicer, saucepan, bowl).
+Main verte=Green Thumb
+
+##### Chapitre 4 — Les trésors de la terre
+Les trésors de la terre=Treasures of the Earth
+Sous tes pieds dorment le fer, l'or, le diamant et la mystérieuse Mese. Prends ta pioche et descends : certaines richesses ne demandent qu'à être découvertes.=Beneath your feet sleep iron, gold, diamond and the mysterious Mese. Grab your pickaxe and head down: some riches are just waiting to be discovered.
+Gueules noires=Coal Face
+Le charbon, c'est la torche de demain. Descends un peu et ouvre l'œil.=Coal is tomorrow's torch. Head down a little and keep your eyes peeled.
+L'âge du fer=The Iron Age
+Le fer se cache dans la pierre, souvent un peu plus bas que le charbon.=Iron hides in the stone, often a little deeper than coal.
+Il faut au moins une pioche en pierre.=You need at least a stone pickaxe.
+Cuivre et étain=Copper and Tin
+Mélange-les plus tard et tu obtiendras du bronze. Mais d'abord, il faut les trouver !=Mix them later and you'll get bronze. But first, you have to find them!
+Une pioche qui en jette=A Pickaxe with Panache
+Fonds ton fer, forge une pioche en acier : les profondeurs n'ont qu'à bien se tenir.=Smelt your iron, forge a steel pickaxe: the depths had better watch out.
+Cuis le minerai de fer au fourneau, puis trois lingots et deux bâtons.=Smelt the iron ore in the furnace, then three ingots and two sticks.
+Reflets d'argent=Silver Gleams
+Plus discret que l'or, l'argent sert aux anneaux et à de jolis outils.=More discreet than gold, silver is used for rings and handsome tools.
+La ruée vers l'or=The Gold Rush
+Certaines richesses ne demandent qu'à être découvertes. À toi de creuser !=Some riches are just waiting to be discovered. Get digging!
+L'or se trouve plus en profondeur que le fer.=Gold is found deeper than iron.
+La pierre qui brille=The Shining Stone
+La Mese, cristal jaune et mystérieux, alimente bien des machines de Minerland.=Mese, a mysterious yellow crystal, powers many of Minerland's machines.
+Pierres précieuses=Precious Stones
+Rubis, saphirs, émeraudes, topazes et améthystes : les joailliers de Minerland en raffolent.=Rubies, sapphires, emeralds, topazes and amethysts: Minerland's jewellers adore them.
+Ces gemmes servent aussi à fabriquer les anneaux (chapitre 5).=These gems are also used to craft rings (chapter 5).
+Diamants sur canapé=Diamonds Are a Miner's Best Friend
+Le diamant : le plus dur, le plus rare, le plus convoité. Il t'attend très bas.=Diamond: the hardest, the rarest, the most coveted. It's waiting for you way down below.
+Le métal des légendes=The Metal of Legends
+Tout au fond du monde dort le mithril, le métal des héros. Prépare des torches… beaucoup de torches.=At the very bottom of the world sleeps mithril, the metal of heroes. Bring torches… lots of torches.
+Le mithril n'apparaît qu'à très grande profondeur.=Mithril only appears at very great depths.
+Maître mineur=Master Miner
+
+##### Chapitre 5 — Les anneaux du ciel
+Les anneaux du ciel=Rings of the Sky
+Goops a forgé des anneaux merveilleux : voler, résister au feu, respirer sous l'eau, briller… Un anneau se porte comme une armure ; c'est l'Anneau d'activation, tenu en main, qui le réveille pour un temps limité.=Goops forged marvellous rings: flying, resisting fire, breathing underwater, glowing… A ring is worn like armour; the Activation Ring, held in your hand, wakes it up for a limited time.
+Des pierres pour un anneau=Stones for a Ring
+Rubis, saphirs, émeraudes, topazes, améthystes : les gemmes dormant dans les profondeurs sont la matière première de tous les anneaux. Sois-en sûr, il t'en faudra beaucoup !=Rubies, sapphires, emeralds, topazes, amethysts: the gems sleeping in the depths are the raw material of every ring. Rest assured, you'll need plenty!
+Cinq gemmes quelconques dans la grille donnent cinq gemmes dépareillées, utilisables pour un Anneau aléatoire.=Any five gems in the grid give five mismatched gems, usable for a Random Ring.
+L'anneau qui les commande=The Ring That Commands Them
+Avant tout autre anneau, il te faut l'Anneau d'activation : c'est lui qui réveille la magie.=Before any other ring, you need the Activation Ring: it is what awakens the magic.
+Recette : 4 pépites d'or aux coins, et une émeraude, un saphir, un rubis, une améthyste et une topaze.=Recipe: 4 gold nuggets in the corners, plus an emerald, a sapphire, a ruby, an amethyst and a topaz.
+Bague au doigt=Ring on My Finger
+Céleste, infernal, abyssal, lumineux ou durci : forge ton premier anneau magique.=Celestial, infernal, abyssal, luminous or hardened: forge your first magic ring.
+5 gemmes du même type (améthyste @= céleste, rubis @= infernal, saphir @= abyssal, topaze @= lumineux, émeraude @= durci), 2 pépites d'argent et 2 pépites d'or.=5 gems of the same kind (amethyst @= celestial, ruby @= infernal, sapphire @= abyssal, topaz @= luminous, emerald @= hardened), 2 silver nuggets and 2 gold nuggets.
+Comme une armure=Just Like Armour
+Un anneau ne fait rien dans ta poche : il se porte, comme une pièce d'armure.=A ring does nothing in your pocket: you wear it, like a piece of armour.
+Équiper un anneau dans l'inventaire d'armure.=Equip a ring in the armour inventory.
+Clic droit avec l'anneau en main, ou place-le dans l'emplacement d'anneau de l'onglet Armure.=Right-click with the ring in hand, or put it in the ring slot of the Armour tab.
+Que la magie opère=Let the Magic Work
+Anneau au doigt, Anneau d'activation en main : un clic, et la magie s'éveille pour un temps.=Ring on your finger, Activation Ring in hand: one click, and the magic awakens for a while.
+Activer un anneau porté avec l'Anneau d'activation.=Activate a worn ring with the Activation Ring.
+Tiens l'Anneau d'activation et fais un clic gauche. Clic droit pour désactiver. Accroupi + clic gauche : mode automatique.=Hold the Activation Ring and left-click. Right-click to deactivate. Sneak + left-click: automatic mode.
+Un éclat du ciel=A Shard of Sky
+L'Anneau céleste, serti d'améthystes, renferme le secret du vol.=The Celestial Ring, set with amethysts, holds the secret of flight.
+Cinq améthystes, deux pépites d'argent et deux pépites d'or.=Five amethysts, two silver nuggets and two gold nuggets.
+Les ailes du ciel=Wings of the Sky
+Porte l'Anneau céleste, active-le… et envole-toi ! Attention, le pouvoir ne dure qu'un temps.=Wear the Celestial Ring, activate it… and take off! Careful, the power only lasts a while.
+Voler grâce à l'Anneau céleste activé.=Fly with the activated Celestial Ring.
+Une fois l'anneau activé, appuie sur la touche de vol (K par défaut). Repose-toi avant la fin du compte à rebours : il retire le vol à la désactivation !=Once the ring is active, press the fly key (K by default). Land before the countdown ends: flight is taken away when it wears off!
+Un pouvoir de plus=One More Power
+Résister au feu, respirer sous l'eau, briller dans la nuit, frapper comme le fer : un second anneau, un second pouvoir. Les vrais maîtres des anneaux en portent plusieurs.=Resist fire, breathe underwater, glow in the dark, strike like iron: a second ring, a second power. True masters of rings wear several.
+Activer un anneau qui n'est pas l'Anneau céleste (infernal, abyssal, lumineux ou durci).=Activate a ring other than the Celestial Ring (infernal, abyssal, luminous or hardened).
+Fabrique un anneau d'un autre type puis active-le avec l'Anneau d'activation.=Craft a ring of another kind, then activate it with the Activation Ring.
+Seigneur des anneaux=Lord of the Rings
+
+##### Chapitre 6 — La ferme aux animaux
+La ferme aux animaux=The Animal Farm
+Vaches, moutons, poules et chevaux n'attendent que ton affection. Apprends à les attirer, à les soigner et à profiter de leurs bienfaits — avec amour, toujours.=Cows, sheep, chickens and horses are just waiting for your affection. Learn to attract them, care for them and enjoy what they give — always with love.
+
+##### Chapitre 7 — Les petits plats dans les grands
+Les petits plats dans les grands=Pulling Out All the Stops
+Ici, on ne cuisine pas pour survivre, mais pour le plaisir ! Barbecue, conserves, jus de fruits et grands crus : à toi les recettes de Minerland.=Here we don't cook to survive, but for the pleasure of it! Barbecues, preserves, fruit juices and fine wines: Minerland's recipes are all yours.
+
+##### Chapitre 8 — L'art de la décoration
+L'art de la décoration=The Art of Decoration
+Une maison sans meubles, c'est une grotte avec une porte. Scies, tables, lampes et coussins : fais de ton foyer le plus douillet du royaume.=A house without furniture is a cave with a door. Saws, tables, lamps and cushions: make your home the cosiest in the kingdom.
+
+##### Chapitre 9 — Les affaires sont les affaires
+Les affaires sont les affaires=Business Is Business
+Le Minegeld fait tourner le royaume. Ouvre boutique, propose tes marchandises et découvre les rouages de l'économie de Minerland.=Minegeld makes the kingdom go round. Open a shop, offer your goods and discover the inner workings of Minerland's economy.
+
+##### Chapitre 10 — Sur les chapeaux de roues !
+Sur les chapeaux de roues !=Full Throttle!
+À bicyclette, en 4L ou en DeLorean : la route est à toi ! Du vélo au carburant vert, apprends à rouler avec style.=By bicycle, in a vintage runabout or a DeLorean: the road is yours! From bikes to green fuel, learn to ride in style.
+
+##### Chapitre 11 — Le monde ferroviaire
+Le monde ferroviaire=The World of Railways
+Les rails font la fierté de Minerland. Avant de bâtir une ligne (avec l'accord de l'administration et les conseils du Grand Maître des trains), apprends à fabriquer voies, signaux et matériel roulant.=Railways are Minerland's pride. Before building a line (with the administration's approval and advice from the Grand Master of Trains), learn to craft tracks, signals and rolling stock.
+
+##### Chapitre 12 — Métros et tramways
+Métros et tramways=Metros and Trams
+Le transport urbain a ses codes : quais, signalétique, tramways qui serpentent entre les maisons. Dessine les stations de demain.=Urban transport has its own codes: platforms, signage, trams winding between the houses. Design tomorrow's stations.
+
+##### Chapitre 13 — Les fous volants
+Les fous volants=Those Magnificent Flyers
+Minerland est une terre d'aviateurs ! Deltaplane, Super Cub, PA-28, Ju 52 ou hydravion : fabrique ton appareil… et demande à Luffy de te faire passer ton brevet.=Minerland is a land of aviators! Hang glider, Super Cub, PA-28, Ju 52 or seaplane: build your aircraft… and ask Luffy to give you your pilot's licence.
+
+##### Chapitre 14 — Larguez les amarres !
+Larguez les amarres !=Cast Off!
+Mers, lacs et rivières n'attendent que ta proue. Bateau à moteur, chalutier ou sous-marin Nautilus : hissez haut !=Seas, lakes and rivers are waiting for your bow. Motorboat, trawler or the Nautilus submarine: anchors aweigh!
+
+##### Chapitre 15 — Prenons de la hauteur !
+Prenons de la hauteur !=Rising Higher!
+Télésièges, ascenseurs réalistes et cabines de téléportation : grimper n'a jamais été aussi confortable. Les tutoriels de l'Académie t'attendent.=Chairlifts, realistic elevators and teleport booths: climbing has never been so comfortable. The Academy's tutorials await you.
+
+##### Chapitre 16 — L'électricité pour les nuls
+L'électricité pour les nuls=Electricity for Dummies
+Un générateur, quelques câbles et hop : la lumière fut ! Premiers pas dans Technic, en toute sécurité.=A generator, a few cables and presto: there was light! First steps into Technic, perfectly safely.
+
+##### Chapitre 17 — La révolution industrielle
+La révolution industrielle=The Industrial Revolution
+Broyer, fondre, allier, stocker : tes minerais valent bien plus une fois traités. Bienvenue dans l'industrie lourde de Minerland.=Grind, smelt, alloy, store: your ores are worth far more once processed. Welcome to Minerland's heavy industry.
+
+##### Chapitre 18 — L'ère de Techage
+L'ère de Techage=The Age of Techage
+Techage raconte l'histoire de la technique, âge après âge : du charbon de bois aux énergies du futur. Un parcours à part, avec ses propres machines.=Techage tells the story of technology, age after age: from charcoal to the energies of the future. A path of its own, with its own machines.
+
+##### Chapitre 19 — Les machines intelligentes
+Les machines intelligentes=Smart Machines
+Circuits, câbles de données, tubes pneumatiques et foreuses géantes : quand tes machines se mettent à penser (presque) toutes seules.=Circuits, data cables, pneumatic tubes and giant drills: when your machines start thinking (almost) by themselves.
+
+##### Chapitre 20 — Les portes de l'Enfer
+Les portes de l'Enfer=The Gates of the Nether
+Derrière un cadre d'obsidienne s'ouvre un monde de feu. Allume le portail, récolte ses étranges matériaux et forge des objets venus d'ailleurs.=Behind an obsidian frame lies a world of fire. Light the portal, gather its strange materials and forge objects from beyond.
+
+##### Chapitre 21 — Au plus profond de Minerland
+Au plus profond de Minerland=Deep Beneath Minerland
+Cristaux luminescents, géodes et champignons géants : les profondeurs cachent des merveilles… et quelques trésors oubliés.=Glowing crystals, geodes and giant mushrooms: the depths hide wonders… and a few forgotten treasures.
+
+##### Chapitre 22 — Dragons et autres bestioles
+Dragons et autres bestioles=Dragons and Other Critters
+Des dragons dorment dans les cavernes ! Découvre leurs secrets, leurs écailles et les objets qui permettent de vivre à leurs côtés.=Dragons are sleeping in the caverns! Discover their secrets, their scales and the items that let you live alongside them.
+
+##### Chapitre 23 — Les mystères du passé
+Les mystères du passé=Mysteries of the Past
+Fossiles, ADN et laboratoires : la science de Minerland ressuscite les créatures d'antan. À toi de jouer les paléontologues.=Fossils, DNA and laboratories: Minerland's science brings the creatures of old back to life. Your turn to play palaeontologist.
+
+##### Chapitre 24 — Les grands bâtisseurs
+Les grands bâtisseurs=The Great Builders
+Échafaudages, façades, arches et portes ouvragées : les grands chantiers demandent de grands outils. Prépare-toi à bâtir des merveilles.=Scaffolding, façades, arches and ornate doors: great building sites call for great tools. Get ready to build wonders.
+
+##### Chapitre 25 — Monsieur ou Madame le Maire
+Monsieur ou Madame le Maire=Mister or Madam Mayor
+Fonder une ville, c'est un rêve et beaucoup de travail. Scelle ta charte, trace les rues, installe la signalisation et les commerces. (La Reine valide toujours les grands projets !)=Founding a town is a dream and a lot of work. Seal your charter, lay out the streets, put up signs and shops. (The Queen always approves major projects!)

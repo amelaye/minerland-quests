@@ -1,8 +1,10 @@
 -- Vues du Grand Livre, partagées par le livre autonome et la page Unified Inventory.
 -- Chaque vue dessine dans un rectangle {x, y, w, h}. Les champs ne servent qu'à naviguer.
+-- Tous les textes sont traduits CÔTÉ SERVEUR pour le joueur (core/i18n.lua) avant d'être tronqués et échappés.
 local Q = minerland_quests
-local U = Q.util
 local T = Q.theme
+local I = Q.i18n
+local tr, N = I.tr, I.N
 local esc, n = T.esc, T.n
 local V = {}
 Q.ui = Q.ui or {}
@@ -26,28 +28,37 @@ end)
 ---------------------------------------------------------------------------
 -- Textes dérivés des données
 ---------------------------------------------------------------------------
-local VERB = { dig = "Extraire", place = "Poser", craft = "Fabriquer", eat = "Déguster" }
+local VERB = { dig = N("Extraire"), place = N("Poser"), craft = N("Fabriquer"), eat = N("Déguster") }
 
-function V.objective_text(q)
-	if q.objective then return q.objective end
+-- Objectif lisible d'une quête, dans la langue du joueur.
+function V.objective_text(name, q)
+	if q.objective then return tr(name, q.objective) end
 	local t = q.trigger
-	if t.type == "custom" then return q.description end
-	local names = {}
+	if t.type == "custom" then return tr(name, q.description) end
 	local list = {}
 	for item in pairs(q.targets or {}) do list[#list + 1] = item end
 	table.sort(list)
+	local names = {}
 	for i, item in ipairs(list) do
 		if i > 3 then names[#names + 1] = "…" break end
-		names[#names + 1] = U.item_description(item)
+		names[#names + 1] = I.item_name(name, item)
 	end
 	if #names == 0 then
 		for _, it in ipairs(t.items) do names[#names + 1] = it end
-		for _, g in ipairs(t.groups) do names[#names + 1] = "groupe " .. g end
+		for _, g in ipairs(t.groups) do names[#names + 1] = tr(name, "groupe @1", g) end
 	end
-	local what = table.concat(names, " ou ")
-	local qty = t.count > 1 and (" ×" .. t.count) or ""
-	local extra = (t.type == "place" and t.distinct) and " (à des endroits différents)" or ""
-	return ("%s : %s%s%s"):format(VERB[t.type] or t.type, what, qty, extra)
+	local what = names[1] or "?"
+	for i = 2, #names do what = tr(name, "@1 ou @2", what, names[i]) end
+	local text = tr(name, "@1 : @2", tr(name, VERB[t.type] or t.type), what)
+	if t.count > 1 then text = text .. " ×" .. t.count end
+	if t.type == "place" and t.distinct then text = tr(name, "@1 (à des endroits différents)", text) end
+	return text
+end
+
+-- Raison d'indisponibilité traduite (texte source + paramètres gardés par Q.mark_unavailable).
+local function unavailable_text(name, q)
+	if q.unavailable_tr then return tr(name, unpack(q.unavailable_tr)) end
+	return tr(name, q.unavailable or "?")
 end
 
 local function quest_icon(x, y, s, q)
@@ -63,53 +74,57 @@ local function chapter_icon(x, y, s, c)
 end
 
 ---------------------------------------------------------------------------
--- En-tête commun (fil d'Ariane + boutons)
+-- En-tête commun (titre, sous-titre, boutons de navigation)
 ---------------------------------------------------------------------------
 local function header(fs, name, r, title, subtitle, opts)
 	local s = V.state(name)
 	local bx = r.x + r.w
 	if s.view ~= "home" then
 		bx = bx - 1.6
-		fs[#fs + 1] = T.button(bx, r.y, 1.5, 0.6, "mlq_home", "Accueil")
+		fs[#fs + 1] = T.button(bx, r.y, 1.5, 0.6, "mlq_home", tr(name, "Accueil"))
 		bx = bx - 1.6
-		fs[#fs + 1] = T.button(bx, r.y, 1.5, 0.6, "mlq_back", "Retour")
+		fs[#fs + 1] = T.button(bx, r.y, 1.5, 0.6, "mlq_back", tr(name, "Retour"))
 	end
 	if opts.inventory then
 		bx = bx - 2.3
-		fs[#fs + 1] = T.button(bx, r.y, 2.2, 0.6, "mlq_open_book", "Ouvrir en grand", "gold")
+		fs[#fs + 1] = T.button(bx, r.y, 2.2, 0.6, "mlq_open_book", tr(name, "Ouvrir en grand"), "gold")
 	end
-	fs[#fs + 1] = T.label(r.x + 0.1, r.y + 0.2, title, T.color.ink)
+	fs[#fs + 1] = T.title(r.x + 0.1, r.y + 0.22, title)
 	if subtitle and subtitle ~= "" then
-		fs[#fs + 1] = T.label(r.x + 0.1, r.y + 0.6, subtitle, T.color.ink_soft)
+		fs[#fs + 1] = T.label(r.x + 0.1, r.y + 0.64, subtitle, T.color.ink_soft)
 	end
-	fs[#fs + 1] = T.ornament(r.x, r.y + 0.9, r.w)
+	fs[#fs + 1] = T.ornament(r.x, r.y + 0.92, r.w)
 end
 
 ---------------------------------------------------------------------------
 -- Accueil
 ---------------------------------------------------------------------------
 local function view_home(fs, name, r, opts)
-	header(fs, name, r, "Le Grand Livre des Quêtes de Minerland",
-		"Carnet d'aventure de " .. name, opts)
+	header(fs, name, r, tr(name, "Le Grand Livre des Quêtes de Minerland"),
+		tr(name, "Carnet d'aventure de @1", name), opts)
 	local top = r.y + 1.2
 	local narrow = r.w < 14
 	local left_w = narrow and 0 or math.min(5.6, r.w * 0.34)
 	if not narrow then
 		-- page de gauche : couverture et progression
 		local cx = r.x + 0.1
-		fs[#fs + 1] = T.image(cx + (left_w - 4.2) / 2, top, 4.2, 5.25, "mlq_cover.png")
+		fs[#fs + 1] = T.image(cx + (left_w - 4.2) / 2, top, 4.2, 5.25, I.texture(name, "mlq_cover"))
 		local d, t = Q.progress.global_stats(name)
 		local y = top + 5.45
-		fs[#fs + 1] = T.label(cx, y, ("Progression : %d / %d quêtes"):format(d, t))
+		fs[#fs + 1] = T.label(cx, y, tr(name, "Progression : @1 / @2 quêtes", d, t))
 		fs[#fs + 1] = T.progress_bar(cx, y + 0.3, left_w - 0.2, 0.35, d, t)
 		local rec = Q.storage.get(name)
 		local titles = {}
-		for qid, title in pairs(rec.titles) do titles[#titles + 1] = { qid = qid, title = title } end
+		for qid, title in pairs(rec.titles) do
+			-- texte source actuel de la quête de préférence (traduisible même si le titre a été retouché)
+			local q = Q.quests[qid]
+			titles[#titles + 1] = { qid = qid, title = tr(name, q and q.reward.title or title) }
+		end
 		table.sort(titles, function(a, b) return a.qid < b.qid end)
 		y = y + 0.95
 		if #titles > 0 then
 			fs[#fs + 1] = T.image(cx, y - 0.2, 0.4, 0.4, "mlq_title.png")
-			fs[#fs + 1] = T.label(cx + 0.5, y, ("Titres : %s"):format(T.truncate(titles[#titles].title, 30)))
+			fs[#fs + 1] = T.label(cx + 0.5, y, tr(name, "Titres : @1", T.truncate(titles[#titles].title, 30)))
 			if #titles > 1 then
 				local all = {}
 				for _, t2 in ipairs(titles) do all[#all + 1] = t2.title end
@@ -120,8 +135,9 @@ local function view_home(fs, name, r, opts)
 		local pending = Q.rewards.pending_count(name)
 		if pending > 0 then
 			fs[#fs + 1] = T.image(cx, y - 0.2, 0.4, 0.4, "mlq_reward.png")
-			fs[#fs + 1] = T.label(cx + 0.5, y, ("%d récompense(s) en attente de place"):format(pending), T.color.brick)
-			fs[#fs + 1] = T.button(cx, y + 0.3, left_w - 0.2, 0.6, "mlq_deliver", "Recevoir mes récompenses", "gold")
+			fs[#fs + 1] = T.label(cx + 0.5, y, tr(name, "@1 récompense(s) en attente de place", pending), T.color.brick)
+			fs[#fs + 1] = T.button(cx, y + 0.3, left_w - 0.2, 0.6, "mlq_deliver", tr(name, "Recevoir mes récompenses"),
+				"gold")
 		end
 	end
 	-- page de droite : les six parties
@@ -135,18 +151,20 @@ local function view_home(fs, name, r, opts)
 		local col, row = (i - 1) % cols, math.floor((i - 1) / cols)
 		local x, y = gx + col * (cw + 0.3), top + row * (ch + 0.2)
 		local ih = ch - 0.75
+		local title = tr(name, p.title)
 		fs[#fs + 1] = T.panel(x, y, cw, ch)
 		fs[#fs + 1] = T.image(x + 0.1, y + 0.1, cw - 0.2, ih, p.illustration)
 		local d, t = Q.progress.part_stats(name, p.id)
-		fs[#fs + 1] = T.label(x + 0.2, y + ih + 0.3, T.truncate(p.numeral .. ". " .. p.title, narrow and 24 or 34))
-		fs[#fs + 1] = T.progress_bar(x + 0.2, y + ih + 0.5, cw - 1.6, 0.2, d, t)
+		fs[#fs + 1] = T.image(x + 0.12, y + ih + 0.12, 0.56, 0.56, "mlq_emblem_" .. p.id .. ".png")
+		fs[#fs + 1] = T.label(x + 0.78, y + ih + 0.3, T.truncate(p.numeral .. ". " .. title, narrow and 22 or 32))
+		fs[#fs + 1] = T.progress_bar(x + 0.78, y + ih + 0.5, cw - 2.2, 0.2, d, t)
 		fs[#fs + 1] = T.label(x + cw - 1.25, y + ih + 0.58, ("%d/%d"):format(d, t), T.color.ink_soft)
 		if t > 0 and d == t then
 			fs[#fs + 1] = T.image(x + cw - 0.6, y + 0.15, 0.45, 0.45, "mlq_badge_done.png")
 		end
 		local field = "mlq_part_" .. p.id
 		fs[#fs + 1] = T.hotspot(x, y, cw, ch, field)
-		fs[#fs + 1] = T.tooltip(field, p.title .. "\n" .. p.subtitle)
+		fs[#fs + 1] = T.tooltip(field, title .. "\n" .. tr(name, p.subtitle))
 	end
 end
 
@@ -158,7 +176,8 @@ local function view_part(fs, name, r, opts)
 	local p = Q.parts[s.part]
 	if not p then s.view = "home" return view_home(fs, name, r, opts) end
 	local d, t = Q.progress.part_stats(name, p.id)
-	header(fs, name, r, ("Partie %s — %s"):format(p.numeral, p.title), ("%s  (%d/%d)"):format(p.subtitle, d, t), opts)
+	header(fs, name, r, tr(name, "Partie @1 — @2", p.numeral, tr(name, p.title)),
+		tr(name, p.subtitle) .. ("  (%d/%d)"):format(d, t), opts)
 	local top = r.y + 1.2
 	local narrow = r.w < 14
 	local banner_w = narrow and 0 or math.min(5.6, r.w * 0.34)
@@ -176,11 +195,12 @@ local function view_part(fs, name, r, opts)
 		local col, row = (i - 1) % cols, math.floor((i - 1) / cols)
 		local x, y = gx + col * (cw + 0.3), top + row * (ch + 0.2)
 		local cd, ct = Q.progress.chapter_stats(name, c.id)
+		local ctitle = tr(name, c.title)
 		fs[#fs + 1] = T.panel(x, y, cw, ch)
 		fs[#fs + 1] = T.image(x + 0.12, y + 0.12, 1.1, 1.1, "mlq_frame_" .. (ct > 0 and cd == ct and "done"
 			or ct == 0 and "unavailable" or "available") .. ".png")
 		fs[#fs + 1] = chapter_icon(x + 0.27, y + 0.27, 0.8, c)
-		fs[#fs + 1] = T.label(x + 1.4, y + 0.35, T.truncate(("Chapitre %d — %s"):format(c.number, c.title), 40))
+		fs[#fs + 1] = T.label(x + 1.4, y + 0.35, T.truncate(tr(name, "Chapitre @1 — @2", c.number, ctitle), 40))
 		fs[#fs + 1] = T.progress_bar(x + 1.4, y + 0.7, cw - 2.6, 0.25, cd, ct)
 		fs[#fs + 1] = T.label(x + cw - 1.1, y + 0.83, ct > 0 and ("%d/%d"):format(cd, ct) or "—", T.color.ink_soft)
 		if ct > 0 and cd == ct then
@@ -188,7 +208,7 @@ local function view_part(fs, name, r, opts)
 		end
 		local field = "mlq_ch_" .. c.id
 		fs[#fs + 1] = T.hotspot(x, y, cw, ch, field)
-		fs[#fs + 1] = T.tooltip(field, c.title .. (ct == 0 and "\n(mods absents sur ce serveur)" or ""))
+		fs[#fs + 1] = T.tooltip(field, ctitle .. (ct == 0 and ("\n" .. tr(name, "(mods absents sur ce serveur)")) or ""))
 	end
 end
 
@@ -205,45 +225,57 @@ function V.tree_size(chapter_id)
 	return V.MARGIN * 2 + (L.cols - 1) * V.COL + V.NODE, V.MARGIN * 2 + (L.rows - 1) * V.ROW + V.NODE + 0.35, L
 end
 
-local function edge_color(name, from, to)
+-- Couleurs d'un lien (cœur, liseré) selon l'état des deux quêtes.
+local function edge_colors(name, from, to)
 	local sf = Q.progress.state(name, from)
 	local st = Q.progress.state(name, to)
-	if sf == "done" and st == "done" then return T.color.green end
-	if sf == "done" then return T.color.gold end
-	return "#9c8b70"
+	if sf == "done" and st == "done" then return T.color.green, "#1e4a22" end
+	if sf == "done" then return T.color.gold, "#7a5214" end
+	return "#a8977a", "#6e604c"
 end
 
 local function draw_tree(fs, name, chapter_id, ox, oy)
 	local s = V.state(name)
 	local L = Q.graph.layout(chapter_id)
-	local S, th = V.NODE, 0.08
+	local S, th, rim = V.NODE, 0.08, 0.03
 	local function origin(qid)
 		local p = L.pos[qid]
 		return ox + V.MARGIN + p.col * V.COL, oy + V.MARGIN + p.row * V.ROW
 	end
-	-- 1) connexions (sous les nœuds)
+	-- 1) liens (sous les nœuds) : tous les liserés, puis tous les cœurs, puis les flèches
+	local segments, arrows = {}, {}
 	for _, e in ipairs(L.edges) do
 		local px, py = origin(e.from)
 		local cx, cy = origin(e.to)
-		local color = edge_color(name, Q.quests[e.from], Q.quests[e.to])
+		local core_c, rim_c = edge_colors(name, Q.quests[e.from], Q.quests[e.to])
 		local x1, y1 = px + S, py + S / 2
 		local x2, y2 = cx, cy + S / 2
 		if x2 > x1 then
 			local mx = x1 + (x2 - x1) / 2
-			fs[#fs + 1] = T.box(x1, y1 - th / 2, mx - x1, th, color)
-			fs[#fs + 1] = T.box(mx - th / 2, math.min(y1, y2) - th / 2, th, math.abs(y2 - y1) + th, color)
-			fs[#fs + 1] = T.box(mx, y2 - th / 2, x2 - mx, th, color)
-			fs[#fs + 1] = T.image(x2 - 0.22, y2 - 0.13, 0.22, 0.26, "mlq_arrow.png")
+			segments[#segments + 1] = { x1, y1 - th / 2, mx - x1, th, core_c, rim_c }
+			segments[#segments + 1] = { mx - th / 2, math.min(y1, y2) - th / 2, th, math.abs(y2 - y1) + th, core_c, rim_c }
+			segments[#segments + 1] = { mx, y2 - th / 2, x2 - mx, th, core_c, rim_c }
+			arrows[#arrows + 1] = { x2 - 0.22, y2 - 0.13 }
 		else
 			-- même colonne (position forcée) : liaison verticale
 			local x = px + S / 2
-			fs[#fs + 1] = T.box(x - th / 2, math.min(py, cy) + S, th, math.abs(cy - py) - S, color)
+			segments[#segments + 1] = { x - th / 2, math.min(py, cy) + S, th, math.abs(cy - py) - S, core_c, rim_c }
 		end
+	end
+	for _, g in ipairs(segments) do
+		fs[#fs + 1] = T.box(g[1] - rim, g[2] - rim, g[3] + 2 * rim, g[4] + 2 * rim, g[6])
+	end
+	for _, g in ipairs(segments) do
+		fs[#fs + 1] = T.box(g[1], g[2], g[3], g[4], g[5])
+	end
+	for _, a in ipairs(arrows) do
+		fs[#fs + 1] = T.image(a[1], a[2], 0.22, 0.26, "mlq_arrow.png")
 	end
 	-- 2) nœuds
 	for _, q in ipairs(Q.get_chapter_quests(chapter_id)) do
 		local x, y = origin(q.id)
 		local st = Q.progress.state(name, q)
+		local title = tr(name, q.title)
 		if s.quest == q.id then
 			fs[#fs + 1] = T.image(x - 0.12, y - 0.12, S + 0.24, S + 0.24, "mlq_select.png")
 		end
@@ -256,12 +288,12 @@ local function draw_tree(fs, name, chapter_id, ox, oy)
 		if q.final then
 			fs[#fs + 1] = T.image(x - 0.12, y - 0.12, 0.42, 0.42, "mlq_star.png")
 		end
-		fs[#fs + 1] = T.label(x - 0.25, y + S + 0.2, T.truncate(q.title, 15),
+		fs[#fs + 1] = T.label(x - 0.25, y + S + 0.2, T.truncate(title, 15),
 			st == "locked" and T.color.ink_soft or T.color.ink)
 		local field = "mlq_q_" .. q.index
 		fs[#fs + 1] = T.hotspot(x, y, S, S, field)
-		local tip = q.title .. "\n" .. T.state_label[st]
-		if st == "available" then tip = tip .. "\n" .. V.objective_text(q) end
+		local tip = title .. "\n" .. tr(name, T.state_label[st])
+		if st == "available" then tip = tip .. "\n" .. V.objective_text(name, q) end
 		fs[#fs + 1] = T.tooltip(field, tip)
 	end
 end
@@ -279,25 +311,27 @@ local function view_detail(fs, name, q, r)
 	fs[#fs + 1] = T.image(x, y, 1.4, 1.4, "mlq_frame_" .. st .. ".png")
 	fs[#fs + 1] = quest_icon(x + 0.25, y + 0.25, 0.9, q)
 	if st == "done" then fs[#fs + 1] = T.image(x + 0.95, y - 0.1, 0.55, 0.55, "mlq_badge_done.png") end
-	fs[#fs + 1] = T.label(x + 1.6, y + 0.25, T.truncate(q.title, 34))
-	fs[#fs + 1] = T.label(x + 1.6, y + 0.65, T.state_label[st], T.state_text_color[st])
-	fs[#fs + 1] = T.label(x + 1.6, y + 1.05, "Difficulté :", T.color.ink_soft)
+	fs[#fs + 1] = T.label(x + 1.6, y + 0.25, T.truncate(tr(name, q.title), 34))
+	fs[#fs + 1] = T.label(x + 1.6, y + 0.65, tr(name, T.state_label[st]), T.state_text_color[st])
+	fs[#fs + 1] = T.label(x + 1.6, y + 1.05, tr(name, "Difficulté :"), T.color.ink_soft)
 	for i = 1, 5 do
 		fs[#fs + 1] = T.image(x + 3.0 + (i - 1) * 0.32, y + 0.92, 0.28, 0.28,
 			i <= q.difficulty and "mlq_pip_on.png" or "mlq_pip_off.png")
 	end
-	fs[#fs + 1] = T.label(x + 4.7, y + 1.05, T.difficulty_label[q.difficulty], T.color.ink_soft)
+	fs[#fs + 1] = T.label(x + 4.7, y + 1.05, tr(name, T.difficulty_label[q.difficulty]), T.color.ink_soft)
 	y = y + 1.6
 	fs[#fs + 1] = T.ornament(x, y, w)
 	y = y + 0.25
 
 	local lines = {}
-	lines[#lines + 1] = "« " .. q.description .. " »"
-	lines[#lines + 1] = ""
+	if q.description ~= "" then
+		lines[#lines + 1] = tr(name, "« @1 »", tr(name, q.description))
+		lines[#lines + 1] = ""
+	end
 	if st == "unavailable" then
-		lines[#lines + 1] = "Indisponible : " .. (q.unavailable or "?")
+		lines[#lines + 1] = tr(name, "Indisponible : @1", unavailable_text(name, q))
 	else
-		lines[#lines + 1] = "Objectif — " .. V.objective_text(q)
+		lines[#lines + 1] = tr(name, "Objectif — @1", V.objective_text(name, q))
 	end
 	local miss = Q.progress.missing_requirements(name, q)
 	if #q.requires > 0 then
@@ -305,20 +339,21 @@ local function view_detail(fs, name, q, r)
 		for _, rid in ipairs(q.requires) do
 			local p = Q.quests[rid]
 			if p then
-				local mark = rec.done[rid] and "(fait) " or (p.unavailable and "(ignoré) " or "(à faire) ")
-				local where = p.chapter ~= q.chapter and (" (" .. Q.chapters[p.chapter].title .. ")") or ""
-				parts[#parts + 1] = mark .. p.title .. where
+				local mark = rec.done[rid] and tr(name, "(fait)") or (p.unavailable and tr(name, "(ignoré)")
+					or tr(name, "(à faire)"))
+				local where = p.chapter ~= q.chapter and (" (" .. tr(name, Q.chapters[p.chapter].title) .. ")") or ""
+				parts[#parts + 1] = mark .. " " .. tr(name, p.title) .. where
 			end
 		end
-		lines[#lines + 1] = "Prérequis : " .. table.concat(parts, ", ")
+		lines[#lines + 1] = tr(name, "Prérequis : @1", table.concat(parts, ", "))
 	end
 	if q.hint and st ~= "done" then
 		lines[#lines + 1] = ""
-		lines[#lines + 1] = "Astuce : " .. q.hint
+		lines[#lines + 1] = tr(name, "Astuce : @1", tr(name, q.hint))
 	end
 	if st == "done" then
 		lines[#lines + 1] = ""
-		lines[#lines + 1] = "Accomplie le " .. U.format_date(rec.done[q.id]) .. "."
+		lines[#lines + 1] = tr(name, "Accomplie le @1.", I.date(name, rec.done[q.id]))
 	end
 	-- place réservée sous le texte : progression, récompense, cases d'objets et marge basse du panneau
 	local text_h = math.max(1.6, r.h - (y - r.y) - 2.85)
@@ -327,11 +362,11 @@ local function view_detail(fs, name, q, r)
 
 	-- progression
 	local c, total = Q.progress.count(name, q), q.trigger.count
-	fs[#fs + 1] = T.label(x, y + 0.15, ("Progression : %d / %d"):format(c, total))
+	fs[#fs + 1] = T.label(x, y + 0.15, tr(name, "Progression : @1 / @2", c, total))
 	fs[#fs + 1] = T.progress_bar(x + 3.2, y, w - 3.2, 0.3, c, total,
 		st == "done" and T.color.green or T.color.gold)
 	if #miss > 0 and st == "locked" then
-		fs[#fs + 1] = T.label(x, y + 0.55, ("Encore %d prérequis à accomplir."):format(#miss), T.color.ink_soft)
+		fs[#fs + 1] = T.label(x, y + 0.55, tr(name, "Encore @1 prérequis à accomplir.", #miss), T.color.ink_soft)
 	end
 	y = y + 0.85
 
@@ -340,10 +375,10 @@ local function view_detail(fs, name, q, r)
 	y = y + 0.25
 	fs[#fs + 1] = T.image(x, y, 0.5, 0.5, "mlq_reward.png")
 	local status = Q.rewards.status(name, q)
-	local status_txt = ({ none = "Récompense prévue", pending = "Récompense en attente (inventaire plein)",
-		delivered = "Récompense reçue" })[status]
-	fs[#fs + 1] = T.label(x + 0.6, y + 0.25, status_txt, status == "pending" and T.color.brick
-		or status == "delivered" and T.color.green or T.color.ink)
+	local status_txt = ({ none = N("Récompense prévue"), pending = N("Récompense en attente (inventaire plein)"),
+		delivered = N("Récompense reçue") })[status]
+	fs[#fs + 1] = T.label(x + 0.6, y + 0.25, tr(name, status_txt), status == "pending" and T.color.brick
+		or status == "delivered" and T.state_text_color.done or T.color.ink)
 	local ix = x + 0.1
 	y = y + 0.6
 	fs[#fs + 1] = T.slot_style("mlq_noop")
@@ -352,18 +387,20 @@ local function view_detail(fs, name, q, r)
 		if ix + 0.8 > x + w then break end
 		fs[#fs + 1] = ("item_image_button[%s,%s;0.8,0.8;%s;mlq_noop;%s]"):format(n(ix), n(y), esc(stack:get_name()),
 			stack:get_count() > 1 and esc(tostring(stack:get_count())) or "")
-		fs[#fs + 1] = T.tooltip_area(ix, y, 0.8, 0.8, U.item_description(stack:get_name()) .. " ×" .. stack:get_count())
+		fs[#fs + 1] = T.tooltip_area(ix, y, 0.8, 0.8, I.item_name(name, stack:get_name()) .. " ×" .. stack:get_count())
 		ix = ix + 0.9
 	end
 	if q.reward.title then
 		fs[#fs + 1] = T.image(ix, y + 0.15, 0.5, 0.5, "mlq_title.png")
-		fs[#fs + 1] = T.label(ix + 0.55, y + 0.4, "Titre : « " .. T.truncate(q.reward.title, 26) .. " »", T.color.bronze)
+		fs[#fs + 1] = T.label(ix + 0.55, y + 0.4, tr(name, "Titre : « @1 »", T.truncate(tr(name, q.reward.title), 26)),
+			T.color.bronze)
 	end
 	if #(q.reward_items or {}) == 0 and not q.reward.title then
-		fs[#fs + 1] = T.label(x, y + 0.4, "La satisfaction du devoir accompli.", T.color.ink_soft)
+		fs[#fs + 1] = T.label(x, y + 0.4, tr(name, "La satisfaction du devoir accompli."), T.color.ink_soft)
 	end
 	if status == "pending" then
-		fs[#fs + 1] = T.button(x + w - 2.6, r.y + r.h - 0.85, 2.5, 0.6, "mlq_deliver", "Réessayer la livraison", "gold")
+		fs[#fs + 1] = T.button(x + w - 2.6, r.y + r.h - 0.85, 2.5, 0.6, "mlq_deliver", tr(name, "Réessayer la livraison"),
+			"gold")
 	end
 end
 
@@ -375,8 +412,8 @@ local function view_chapter(fs, name, r, opts)
 	local c = Q.chapters[s.chapter]
 	if not c then s.view = "home" return view_home(fs, name, r, opts) end
 	local d, t = Q.progress.chapter_stats(name, c.id)
-	header(fs, name, r, ("Chapitre %d — %s"):format(c.number, c.title),
-		("Partie %s · %d/%d quêtes"):format(Q.parts[c.part].numeral, d, t), opts)
+	header(fs, name, r, tr(name, "Chapitre @1 — @2", c.number, tr(name, c.title)),
+		tr(name, "Partie @1 · @2/@3 quêtes", Q.parts[c.part].numeral, d, t), opts)
 	local top = r.y + 1.15
 	local narrow = r.w < 14
 	local q = s.quest and Q.quests[s.quest]
@@ -389,7 +426,7 @@ local function view_chapter(fs, name, r, opts)
 	end
 
 	if narrow and s.detail and q then
-		fs[#fs + 1] = T.button(r.x, top, 2.6, 0.6, "mlq_tree", "« Retour à l'arbre")
+		fs[#fs + 1] = T.button(r.x, top, 2.6, 0.6, "mlq_tree", tr(name, "« Retour à l'arbre"))
 		view_detail(fs, name, q, { x = r.x, y = top + 0.75, w = r.w, h = r.h - (top - r.y) - 0.75 })
 		return
 	end
@@ -398,11 +435,13 @@ local function view_chapter(fs, name, r, opts)
 	local tw = r.w - detail_w - (narrow and 0 or 0.3)
 	-- introduction
 	fs[#fs + 1] = T.image(r.x, top, 0.9, 0.9, c.emblem)
-	fs[#fs + 1] = T.textarea(r.x + 1.0, top - 0.05, tw - 1.0, 1.0, c.intro)
+	fs[#fs + 1] = T.textarea(r.x + 1.0, top - 0.05, tw - 1.0, 1.0, tr(name, c.intro))
 	local ty = top + 1.05
 	local th = r.y + r.h - ty - 0.65
-	-- arbre
+	-- arbre, sur une rose des vents en filigrane
 	fs[#fs + 1] = T.panel(r.x, ty, tw, th)
+	local wm = math.min(tw, th) * 0.7
+	fs[#fs + 1] = T.image(r.x + (tw - wm) / 2, ty + (th - wm) / 2, wm, wm, "mlq_compass.png")
 	local cw, chh = V.tree_size(c.id)
 	local vx, vy, vw, vh = r.x + 0.1, ty + 0.1, tw - 0.2, th - 0.2
 	local horizontal = cw > vw
@@ -436,15 +475,15 @@ local function view_chapter(fs, name, r, opts)
 	local lx = r.x
 	for _, st in ipairs({ "available", "done", "locked", "unavailable" }) do
 		fs[#fs + 1] = T.image(lx, ly, 0.45, 0.45, "mlq_badge_" .. st .. ".png")
-		fs[#fs + 1] = T.label(lx + 0.5, ly + 0.22, T.state_label[st], T.color.ink_soft)
+		fs[#fs + 1] = T.label(lx + 0.5, ly + 0.22, tr(name, T.state_label[st]), T.color.ink_soft)
 		lx = lx + (narrow and 2.3 or 2.15)
 		-- la légende s'arrête avant les boutons « / » (largeur réservée : 1,8)
 		if lx > r.x + tw - 1.8 - 2.15 then break end
 	end
 	if prev then fs[#fs + 1] = T.button(r.x + tw - 1.7, ly - 0.02, 0.8, 0.5, "mlq_prev", "«") end
 	if nxt then fs[#fs + 1] = T.button(r.x + tw - 0.85, ly - 0.02, 0.8, 0.5, "mlq_next", "»") end
-	if prev then fs[#fs + 1] = T.tooltip("mlq_prev", "Chapitre précédent : " .. prev.title) end
-	if nxt then fs[#fs + 1] = T.tooltip("mlq_next", "Chapitre suivant : " .. nxt.title) end
+	if prev then fs[#fs + 1] = T.tooltip("mlq_prev", tr(name, "Chapitre précédent : @1", tr(name, prev.title))) end
+	if nxt then fs[#fs + 1] = T.tooltip("mlq_next", tr(name, "Chapitre suivant : @1", tr(name, nxt.title))) end
 
 	if not narrow then
 		local dx = r.x + tw + 0.3
@@ -453,10 +492,12 @@ local function view_chapter(fs, name, r, opts)
 		else
 			fs[#fs + 1] = T.panel(dx, top, detail_w, r.h - (top - r.y))
 			fs[#fs + 1] = T.image(dx + (detail_w - 3) / 2, top + 0.6, 3, 1.5, Q.parts[c.part].illustration)
-			fs[#fs + 1] = T.textarea(dx + 0.3, top + 2.4, detail_w - 0.6, 4,
-				"Clique sur une quête de l'arbre pour lire sa fiche : objectif, prérequis, avancement et récompense.\n\n"
-				.. "Les quêtes se valident toutes seules quand tu accomplis l'action demandée. "
-				.. "Les récompenses arrivent directement dans ton inventaire.")
+			fs[#fs + 1] = T.textarea(dx + 0.3, top + 2.4, detail_w - 0.6, 4, table.concat({
+				tr(name, "Clique sur une quête de l'arbre pour lire sa fiche : objectif, prérequis, avancement et récompense."),
+				"",
+				tr(name, "Les quêtes se valident toutes seules quand tu accomplis l'action demandée.") .. " "
+					.. tr(name, "Les récompenses arrivent directement dans ton inventaire."),
+			}, "\n"))
 		end
 	end
 end

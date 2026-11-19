@@ -12,3 +12,8 @@ minerland_quests.placed_cap (Mémoire anti-triche des blocs posés) int 20000 10
 
 # Annoncer la réussite d'une quête dans le chat du joueur (en plus de la notification à l'écran).
 minerland_quests.notify_chat (Message de chat à la réussite) bool true
+
+# Langue du livre pour un joueur dont le client utilise une langue non traduite.
+# Le français est la langue source du livre ; les autres langues viennent de locale/ (anglais fourni).
+# Un client qui n'annonce aucune langue voit le livre en français.
+minerland_quests.fallback_language (Langue de repli) enum en en,fr

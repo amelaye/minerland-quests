@@ -571,33 +571,126 @@ def fill_ridge(cv, ys, lit, shade, body, light_from_left=True, band=4, snow=None
             cv.set(x, y, c)
 
 
-def make_tree_round(h, seed, leaf=LEAF, trunk=WOOD):
+TREE_LEAF = [C("132c1e"), C("1c452b"), C("2a6232"), C("3f7f3a"), C("5f9f44"), C("93c45a")]
+TREE_BARK = [C("2b1a0d"), C("4a2f18"), C("6a4526"), C("8c6238")]
+TREE_OUTLINE = C("10200f")
+
+
+def make_tree(h, seed, light=-1, spread=1.0, leaf=TREE_LEAF, bark=TREE_BARK):
+    """Feuillu en pixel art : couronne de touffes modelées une à une (éclairage sphérique, ombre de contact au-dessus
+    des touffes avant, bord feuillu bruité), tronc évasé et charpente visible dans l'ombre du dessous, ombre au sol.
+    light = -1 : lumière venant de la gauche, +1 : de la droite. Le résultat porte base (rangée du pied du tronc) et
+    trunk_x (abscisse du tronc), utilisés par plant()."""
     import random
     rng = random.Random(seed)
-    w = int(h * 0.9) + 4
-    t = Canvas(w, h + 2)
-    cx = w / 2
-    base = h + 1
-    tw = max(2, h // 9)
-    th = int(h * 0.42)
-    t.rect(int(cx - tw / 2), base - th, int(cx - tw / 2) + tw - 1, base - 1, trunk[2])
-    t.vline(int(cx - tw / 2) + tw - 1, base - th, base - 1, trunk[1])
-    cy = base - th - h * 0.22
-    r = h * 0.3
-    blobs = [(cx + rng.uniform(-r * 0.75, r * 0.75), cy + rng.uniform(-r * 0.55, r * 0.35), r * rng.uniform(0.6, 0.8))
-             for _ in range(6)]
-    blobs.append((cx, cy - r * 0.2, r * 0.85))
-    for bx, by, br in blobs:
-        t.disc(bx, by, br, leaf[1])
-    for bx, by, br in blobs:
-        t.disc(bx - br * 0.22, by - br * 0.28, br * 0.62, leaf[2])
-    for bx, by, br in blobs[:4]:
-        t.disc(bx - br * 0.42, by - br * 0.45, br * 0.28, leaf[3])
-    for _ in range(int(h * 0.6)):
-        px, py = rng.randint(1, w - 2), rng.randint(1, base - th)
-        if t.get(px, py)[3] and t.get(px, py) == leaf[2]:
-            t.set(px, py, leaf[3])
-    return t.outlined(C("16240f"))
+    rx = h * 0.44 * spread
+    W = int(2 * rx + 10)
+    ground = h + 1
+    H = ground + 4
+    cx = W / 2.0
+    top = ground - h + 1.0
+    ry = h * 0.68 / 2.0
+    ccx, ccy = cx, top + ry
+    body = Canvas(W, H)
+    # touffes de la couronne : anneau extérieur, anneau intérieur, cœur ; tri de l'arrière (haut) vers l'avant (bas)
+    rm = (rx + ry) / 2.0
+    clumps = []
+    n_ring = max(5, int(h / 4.0))
+    a0 = rng.uniform(0, 2 * math.pi)
+    for k in range(n_ring):
+        a = a0 + k * 2 * math.pi / n_ring + rng.uniform(-0.25, 0.25)
+        px, py = math.cos(a), math.sin(a)
+        if py > 0.45:
+            py = 0.45 + (py - 0.45) * 0.35
+        clumps.append((ccx + 0.64 * rx * px, ccy + 0.6 * ry * py, rm * rng.uniform(0.36, 0.48)))
+    if h >= 24:
+        for k in range(max(2, n_ring // 2)):
+            a = math.pi + (k + 0.5) * math.pi / max(2, n_ring // 2) + rng.uniform(-0.2, 0.2)
+            clumps.append((ccx + 0.3 * rx * math.cos(a), ccy + 0.35 * ry * math.sin(a) - ry * 0.05,
+                           rm * rng.uniform(0.34, 0.42)))
+    clumps.append((ccx + rng.uniform(-1, 1), ccy - ry * 0.1, ry * 0.62))
+    clumps.sort(key=lambda c: c[1])
+    owner = {}
+    for k, (bx, by, br) in enumerate(clumps):
+        amp = min(1.4, 0.4 + br * 0.09)
+        f = max(1.2, br * 0.55)
+        for y in range(int(by - br - 3), int(by + br + 4)):
+            for x in range(int(bx - br - 3), int(bx + br + 4)):
+                dx, dy = x + 0.5 - bx, y + 0.5 - by
+                ang = math.atan2(dy, dx)
+                e = (noise2(math.cos(ang) * f + k * 7.3, math.sin(ang) * f + seed * 1.7, seed) - 0.5) * 2 * amp
+                if math.hypot(dx, dy) <= br + e:
+                    owner[(x, y)] = k
+    L = (0.55 * light, -0.72, 0.42)
+    ln = math.sqrt(sum(v * v for v in L))
+    L = tuple(v / ln for v in L)
+    tone = {}
+    for (x, y), k in owner.items():
+        bx, by, br = clumps[k]
+        nx, ny = (x + 0.5 - bx) / (br + 0.8), (y + 0.5 - by) / (br + 0.8)
+        nz = math.sqrt(max(0.0, 1 - nx * nx - ny * ny))
+        lam = nx * L[0] + ny * L[1] + nz * L[2]
+        v = (y + 0.5 - ccy) / ry
+        sx = (x + 0.5 - ccx) / rx
+        s = 0.9 * lam - 0.42 * v + 0.15 * sx * light
+        s += (noise2(x / 1.8, y / 1.8, seed + 3) - 0.5) * 0.26 + (bayer(x, y) - 0.5) * 0.08
+        t = 0 if s < -0.5 else 1 if s < -0.18 else 2 if s < 0.12 else 3 if s < 0.44 else 4 if s < 0.74 else 5
+        below = owner.get((x, y + 1), -1)
+        if below > k:
+            t -= 2                                                # ombre de contact au-dessus d'une touffe avant
+        elif owner.get((x, y + 2), -1) > k or owner.get((x - light, y + 1), -1) > k:
+            t -= 1
+        tone[(x, y)] = max(0, t)
+    # tronc évasé, assombri sous la couronne
+    tw = max(2, int(round(h * 0.085)))
+    xl = int(round(cx - tw / 2.0))
+    for y in range(int(ccy), ground + 1):
+        el = er = 0
+        if y == ground:
+            el = er = 1
+        elif y == ground - 1 and h >= 24:
+            el, er = (1, 0) if light < 0 else (0, 1)
+        x0, x1 = xl - el, xl + tw - 1 + er
+        shade = sum(1 for j in (1, 2, 3) if (xl, y - j) in tone)
+        for x in range(x0, x1 + 1):
+            u = (x - x0 + 0.5) / (x1 - x0 + 1)
+            if light > 0:
+                u = 1 - u
+            idx = 3 if u < 0.34 else 2 if u < 0.72 else 1
+            if idx == 2 and rng.random() < 0.12:
+                idx = 1
+            if shade >= 2:
+                idx = max(0, idx - 1)
+            body.set(x, y, bark[idx])
+    for (x, y), t in tone.items():
+        body.set(x, y, leaf[t])
+    # charpente visible dans l'ombre du dessous de la couronne
+    bw = 1 if h < 30 else 2
+    lay = Canvas(W, H)
+    fork = ccy + ry * 0.5
+    lay.line(cx - 0.5, fork + 2, cx - 0.5, fork - 1, bark[1], bw)
+    for (ex, ey) in ((cx - rx * 0.55, ccy - ry * 0.05), (cx + rx * 0.5, ccy - ry * 0.15), (cx + 0.5, ccy - ry * 0.45)):
+        lay.line(cx - 0.5, fork, ex, ey, bark[1], bw if ey > ccy - ry * 0.3 else 1)
+    for (x, y) in lay.mask():
+        if (x, y) not in tone or tone[(x, y)] <= 1:
+            body.set(x, y, bark[0] if (x, y) in tone else bark[1])
+    out = body.outlined(TREE_OUTLINE)
+    for y in range(out.h):                                        # contour adouci côté lumière
+        for x in range(out.w):
+            if out.get(x, y) == TREE_OUTLINE:
+                if any(tone.get((x + dx, y + dy), 0) >= 4 for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                    out.set(x, y, leaf[1])
+    final = Canvas(W, H)
+    final.ellipse(cx - light * rx * 0.3, ground + 0.6, rx * 0.9, max(1.6, h * 0.06), (16, 32, 14, 80))
+    final.blit(out, 0, 0)
+    final.base = ground
+    final.trunk_x = cx
+    return final
+
+
+def plant(cv, tree, x, base_y):
+    """Plante un arbre de make_tree() : tronc à l'abscisse x, pied du tronc sur la rangée base_y."""
+    cv.blit(tree, int(round(x - tree.trunk_x)), base_y - tree.base)
 
 
 def make_pine(h, seed, leaf=(C("1c3a24"), C("2a5434"), C("3c7046"))):
@@ -1347,6 +1440,81 @@ def tex_ornament_center():
     ], pal)
 
 
+@texture("mlq_compass.png")
+def tex_compass():
+    """Rose des vents en filigrane derrière l'arbre : encre claire et transparente (ne gêne pas la lecture)."""
+    S = 128
+    cv = Canvas(S, S)
+    c = S / 2
+
+    def ink(a):
+        return with_alpha(INK_SOFT, a)
+    for y in range(S):
+        for x in range(S):
+            d = math.hypot(x + 0.5 - c, y + 0.5 - c)
+            if 59 <= d <= 61 or 53 <= d <= 54:
+                cv.set(x, y, ink(44))
+    for k in range(64):                                           # graduations
+        ang = k * math.pi / 32
+        length = 5 if k % 8 == 0 else 3 if k % 4 == 0 else 1.5
+        cv.line(c + math.cos(ang) * 58.5, c + math.sin(ang) * 58.5, c + math.cos(ang) * (58.5 - length),
+                c + math.sin(ang) * (58.5 - length), ink(48))
+    for k in range(8):                                            # étoile à huit branches
+        ang = -math.pi / 2 + k * math.pi / 4
+        R, w = (44, 8) if k % 2 == 0 else (28, 5)
+        tip = (c + R * math.cos(ang), c + R * math.sin(ang))
+        left = (c + w * math.cos(ang - math.pi / 2), c + w * math.sin(ang - math.pi / 2))
+        right = (c + w * math.cos(ang + math.pi / 2), c + w * math.sin(ang + math.pi / 2))
+        cv.poly([tip, left, (c, c)], ink(66 if k % 2 == 0 else 46))
+        cv.poly([tip, (c, c), right], ink(30 if k % 2 == 0 else 22))
+    cv.disc(c, c, 4.2, ink(70))
+    cv.disc(c, c, 2.0, ink(20))
+    for (px, py) in text_mask("N", int(c) - 2, 11):
+        cv.set(px, py, ink(80))
+    return cv
+
+
+@texture("mlq_ribbon.png")
+def tex_ribbon():
+    """Signet de soie rouge qui descend de la reliure (queue d'aronde)."""
+    W, H = 11, 56
+    cv = Canvas(W, H)
+    cols = [C("4a100c"), C("8a2218"), C("b0332a"), C("c0392b"), C("e05a48"), C("c0392b"), C("c0392b"),
+            C("b0332a"), C("9a2a20"), C("7a1e16"), C("4a100c")]
+    for y in range(H):
+        depth = None
+        for x in range(W):
+            depth = max(0, 5 - abs(x - 5))
+            if y >= H - depth:
+                continue
+            col = cols[x]
+            if y < 4:
+                col = darken(col, 0.45 - y * 0.1)                 # passe sous le cuir de la reliure
+            edge = y == H - depth - 1 and depth > 0
+            cv.set(x, y, darken(col, 0.35) if edge else col)
+    return cv
+
+
+def bar_tex(hl, light, mid, mid2, dark):
+    rows = [hl, light, light, mid, mid, mid2, mid2, dark]
+    cv = Canvas(6, len(rows))
+    for y, col in enumerate(rows):
+        for x in range(6):
+            cv.set(x, y, col)
+    return cv
+
+
+@texture("mlq_bar_green.png")
+def tex_bar_green():
+    """Remplissage des barres de progression (étiré en largeur)."""
+    return bar_tex(C("b5ecb0"), C("7fd07f"), C("4caf50"), C("3f9a43"), C("2e7a32"))
+
+
+@texture("mlq_bar_gold.png")
+def tex_bar_gold():
+    return bar_tex(C("fff0b0"), C("f7dc8a"), C("e8b84a"), C("d9a23a"), C("a0702a"))
+
+
 ###########################################################################
 # Notification (HUD, affichée ×3)
 ###########################################################################
@@ -1529,6 +1697,17 @@ def smoke(cv, x, y, n, drift, seed, color=C("e8e4dc")):
         cv.disc(x + drift * i * 2.2 + rng.uniform(-0.6, 0.6), y - i * 3.0, r, with_alpha(color, max(60, 220 - i * 26)))
 
 
+def birds(cv, spots, color=C("3a3440")):
+    """Oiseaux en vol (silhouette de mouette de 5 px) : spots = [(x, y, ailes_hautes)]."""
+    for (x, y, up) in spots:
+        if up:
+            pts = ((x - 2, y), (x - 1, y - 1), (x, y), (x + 1, y - 1), (x + 2, y))
+        else:
+            pts = ((x - 2, y + 1), (x - 1, y), (x, y), (x + 1, y), (x + 2, y + 1))
+        for (px, py) in pts:
+            cv.set(px, py, color)
+
+
 @texture("mlq_part_fundamentals.png")
 def tex_part_fundamentals():
     import random
@@ -1601,10 +1780,8 @@ def tex_part_fundamentals():
     house = make_house(26, 13, WOOD[3], WOOD[2], C("8f3a22"), C("6a2a18"), timber=WOOD[2])
     cv.blit(house, 60, 66 - house.h + 1)
     smoke(cv, 82, 41, 6, 0.9, 3)
-    tree = make_tree_round(42, 4)
-    cv.blit(tree, 2, 72 - tree.h + 1)
-    small = make_tree_round(20, 8)
-    cv.blit(small, 96, 66 - small.h + 1)
+    plant(cv, make_tree(42, 4, light=1), 23, 72)                 # soleil à droite : arbres éclairés de la droite
+    plant(cv, make_tree(20, 8, light=1), 107, 66)
     for x in range(40, 58):                                      # blé
         h = 4 + (x * 7) % 3
         cv.vline(x, 76 - h, 76, C("c9a03a"))
@@ -1614,6 +1791,7 @@ def tex_part_fundamentals():
         x, y = rng.randint(2, IW - 3), rng.randint(70, IH - 2)
         if x < 110 or x > 165:
             cv.set(x, y, rng.choice([C("e05a4a"), C("f2d36a"), C("fbf8f0"), C("b07ae0")]))
+    birds(cv, [(112, 24, True), (120, 19, False), (127, 23, True)])
     vintage(cv)
     return cv
 
@@ -1725,8 +1903,130 @@ def tex_part_daily_life():
     for _ in range(20):
         x, y = rng.randint(2, 128), rng.randint(73, IH - 2)
         cv.set(x, y, rng.choice([C("e05a4a"), C("f2d36a"), C("fbf8f0")]))
+    birds(cv, [(58, 20, True), (66, 16, False)])
     vintage(cv)
     return cv
+
+
+RIVER = [C("336e9f"), C("4280b2"), C("5e98c8")]
+FOAM = C("e4f2fa")
+
+
+def river_color(x, y):
+    """Eau de rivière : aplats tramés et reflets en tirets horizontaux (pas de grille de points)."""
+    n = fbm2(x / 14.0, y / 2.5, 13, 2)
+    c = bands(RIVER, n, x, y)
+    d = noise2(x / 4.0, y * 1.35, 17)
+    if d > 0.80:
+        c = C("d6eaf6")
+    elif d > 0.71:
+        c = C("8fbde0")
+    return c
+
+
+def make_sailboat():
+    """Voilier de profil (proue à droite). Renvoie (sprite, rangée de flottaison) ; rien n'est dessiné sous l'eau."""
+    b = Canvas(23, 19)
+    sail_l, sail_d, seam = WHITE, C("e2dac6"), C("cfc6ae")
+    b.poly([(9.6, 1.5), (9.6, 12.6), (1.6, 12.6), (2.6, 9.5), (4.6, 6.2), (7.2, 3.4)],
+           lambda x, y: sail_d if x >= 8 or y >= 11 else sail_l)      # grand-voile, gonflée par le vent
+    b.poly([(10.8, 3.0), (10.8, 12.6), (18.4, 12.6), (16.6, 9.0), (14.2, 5.6)],
+           lambda x, y: sail_d if x <= 11 or y >= 11 else sail_l)     # foc
+    for y in (5, 8, 11):
+        for x in range(2, 10):
+            if b.get(x, y)[3] and b.get(x - 1, y)[3]:
+                b.set(x, y, seam)
+    b.vline(10, 1, 14, WOOD[1])                                       # mât
+    b.hline(2, 10, 13, WOOD[2])                                       # bôme
+    b.poly([(10.5, 0), (15.5, 1), (10.5, 2)], C("c0392b"))            # flamme
+    hull = [(0.5, 13.5), (22.5, 12.5), (19.5, 18.5), (3.5, 18.5)]
+    b.poly(hull, lambda x, y: WOOD[5] if y <= 14 and x > 1 else WOOD[3] if y <= 16 else WOOD[2])
+    for x in range(1, 23):                                            # bordage et liston
+        if b.get(x, 15)[3]:
+            b.set(x, 15, WOOD[2])
+        if b.get(x, 17)[3]:
+            b.set(x, 17, C("a8322a"))
+    for x in (6, 9, 12, 15, 18):
+        if b.get(x, 16)[3]:
+            b.set(x, 16, darken(WOOD[3], 0.18))
+    return b.outlined(OUTLINE), 18
+
+
+def draw_boat(cv, boat, wl_row, x, y_water):
+    """Pose le voilier : coque coupée à la flottaison, reflet brisé sous la ligne d'eau, écume et sillage."""
+    for j in range(boat.h):
+        for i in range(boat.w):
+            p = boat.get(i, j)
+            if p[3] and y_water - wl_row + j < y_water:
+                cv.set(x + i, y_water - wl_row + j, p)
+    for k in range(1, IH - y_water - 1):                              # reflet : rangées miroir, décalées
+        sy = wl_row - k
+        if sy < 0:
+            break
+        off = (1 if k % 2 else -1) if k > 1 else 0
+        for i in range(boat.w):
+            p = boat.get(i, sy)
+            if p[3]:
+                xx, yy = x + i + off, y_water + k - 1
+                cv.set(xx, yy, mix(cv.get(xx, yy), darken(p, 0.3), 0.55 if k < 4 else 0.35))
+    hull_l = min(i for i in range(boat.w) if boat.get(i, wl_row - 1)[3])
+    hull_r = max(i for i in range(boat.w) if boat.get(i, wl_row - 1)[3])
+    for i in range(hull_l - 1, hull_r + 2):                           # ligne d'écume le long de la coque
+        if (i + y_water) % 3:
+            cv.set(x + i, y_water, FOAM)
+    for (dx, dy) in ((hull_r + 2, 0), (hull_r + 3, -1), (hull_r + 2, -1)):
+        cv.set(x + dx, y_water + dy, FOAM)                            # moustache d'étrave
+    for k in range(1, 6):                                             # sillage qui s'ouvre derrière la poupe
+        fade = mix(FOAM, RIVER[2], 0.12 * k)
+        cv.set(x + hull_l - 1 - 3 * k, y_water + (k + 1) // 2, fade)
+        cv.set(x + hull_l - 2 - 3 * k, y_water + (k + 1) // 2, mix(fade, RIVER[2], 0.4))
+
+
+def make_biplane():
+    """Biplan ancien vu de profil, nez à gauche : ailes entoilées crème, fuselage rouge effilé, gouvernail tricolore,
+    pilote à écharpe, hélice en rotation (voile translucide)."""
+    p = Canvas(36, 19)
+    red, red_l, red_d = C("c0392b"), C("e2654c"), C("842116")
+    wing, wing_l, wing_d = C("efdcaa"), C("fbf1d0"), C("c4ab72")
+    metal, metal_l, metal_d = STONE[2], STONE[4], STONE[1]
+    strut = C("4a3020")
+    p.poly([(7, 7.2), (12, 6.8), (24, 7.6), (31.5, 9.0), (31.5, 10.4), (24, 11.2), (12, 12.4), (7, 12.4)],
+           lambda x, y: red_l if y <= 7 else red_d if y >= 11.5 or (x > 22 and y >= 10.5) else red)   # fuselage
+    p.poly([(26, 9.2), (28, 4.2), (30.4, 3.6), (32.6, 4.6), (32.8, 9.6), (26, 9.6)], red)             # dérive
+    for x, c in ((30, C("2c4f9e")), (31, WHITE), (32, red)):                                       # gouvernail tricolore
+        for y in range(3, 10):
+            if p.get(x, y)[3]:
+                p.set(x, y, c)
+    p.poly([(25, 10.0), (33, 9.8), (34.2, 10.6), (25.5, 11.0)], wing_d)                            # stabilisateur
+    p.poly([(2.6, 8.0), (4.6, 6.8), (7.6, 6.8), (7.6, 12.6), (4.6, 12.6), (2.6, 11.4)],
+           lambda x, y: metal_l if y <= 7 else metal_d if y >= 11.5 else metal)                   # capot moteur
+    p.vline(5, 8, 11, metal_d)
+    p.set(4, 13, C("3a3a3a"))
+    p.set(6, 13, C("3a3a3a"))
+    p.poly([(8.6, 3.0), (10, 1.6), (20.4, 1.4), (22, 2.4), (21.4, 3.8), (9.2, 3.8)],
+           lambda x, y: wing_l if y <= 1.9 else wing_d if y >= 3 else wing)                       # aile haute
+    p.poly([(9.6, 12.8), (11, 12.0), (20, 12.0), (21.6, 12.8), (20.8, 14.0), (10.2, 14.0)],
+           lambda x, y: wing if y <= 12.9 else wing_d)                                            # aile basse
+    p.disc(23.6, 6.2, 1.8, C("6a4526"))                                                             # pilote (casque cuir)
+    p.set(23, 5, C("8c6238"))
+    p.set(22, 6, C("bfe0f0"))                                                                       # lunettes
+    p.set(21, 6, C("9fc4d8"))                                                                       # pare-brise
+    p.set(21, 7, C("9fc4d8"))
+    for (x, y) in ((25, 7), (26, 6), (27, 6), (28, 7), (29, 7)):
+        p.set(x, y, WHITE)                                                                          # écharpe au vent
+    for (x0, y0, x1, y1) in ((10, 12, 12, 15), (15, 12, 13, 15)):
+        p.line(x0, y0, x1, y1, strut)                                                               # train d'atterrissage
+    p.line(30, 10, 31, 12, strut)                                                                   # béquille
+    out = p.outlined(OUTLINE)
+    for x in (10, 19):                                                                              # mâts entre les ailes
+        out.vline(x, 4, 11, strut)
+    out.disc(12.6, 15.8, 1.9, C("2a2a2a"))                                                          # roue
+    out.set(12, 15, STONE[4])
+    out.ellipse(1.8, 9.6, 1.3, 7.4, (238, 238, 232, 105))                                           # hélice en rotation
+    out.vline(1, 3, 16, (238, 238, 232, 60))
+    out.disc(2.6, 9.6, 1.3, C("3a3a3a"))                                                            # moyeu
+    out.set(2, 9, metal_l)
+    return out
 
 
 @texture("mlq_part_transport.png")
@@ -1740,7 +2040,7 @@ def tex_part_transport():
                snow_line=32, haze=C("dfe8ee"), haze_from=36)
     hills = ridge(IW, 60, 9, 0.04, 7, 3)
     fill_ridge(cv, hills, C("8cc25a"), C("5e9a3a"), C("74ad48"), band=2)
-    pylon = Canvas(14, 30)                                        # pylône en treillis du téléphérique
+    pylon = Canvas(14, 30)
     pc = C("4a4a54")
     pylon.line(1, 29, 6, 3, pc)
     pylon.line(12, 29, 7, 3, pc)
@@ -1750,7 +2050,7 @@ def tex_part_transport():
         pylon.line(6 - off, y, 7 + off + 1, y + 5, C("6a6a74"))
     pylon.rect(2, 1, 11, 2, pc)
     cv.blit(pylon, 38, 22)
-    cv.line(0, 6, 70, 29, C("2a2a2a"))                             # câble
+    cv.line(0, 6, 70, 29, C("2a2a2a"))
     gx, gy = 22, 13
     cv.vline(gx + 3, gy - 2, gy + 1, C("2a2a2a"))
     gond = Canvas(9, 8)
@@ -1758,43 +2058,67 @@ def tex_part_transport():
     gond.rect(1, 1, 7, 3, C("bfe0f0"))
     gond.hline(0, 8, 6, C("7a2418"))
     cv.blit(gond.outlined(OUTLINE), gx - 1, gy + 1)
-    for y in range(64, IH):                                       # rivière
+    for y in range(64, IH):
         for x in range(IW):
-            n = fbm2(x / 14.0, y / 2.5, 13, 2)
-            c = bands([C("3a76aa"), C("4a86b8"), C("6aa2d0")], n, x, y)
-            if (x * 3 + y * 7) % 23 == 0:
-                c = C("cfe6f5")
-            cv.set(x, y, c)
+            cv.set(x, y, river_color(x, y))
     for x in range(IW):
         cv.set(x, 63, C("4f8a32"))
         cv.set(x, 64, C("3e6e2a"))
-    via = Canvas(IW, IH)                                          # viaduc
-    via.rect(14, 46, 162, 50, C("b8a888"))
-    via.hline(14, 162, 46, C("d8ccb0"))
-    via.hline(14, 162, 50, C("8e7e64"))
-    for px in range(18, 160, 24):
-        via.rect(px, 50, px + 6, IH - 1, C("a89878"))
-        via.vline(px, 50, IH - 1, C("c8bc9c"))
-        via.vline(px + 6, 50, IH - 1, C("7e6e54"))
-    for ax in range(24, 160, 24):
-        via.poly([(ax, 51), (ax + 12, 51), (ax + 12, 56), (ax, 56)], C("a89878"))
-        for y in range(51, 58):
-            for x in range(ax, ax + 13):
-                if ((x + 0.5 - (ax + 6)) / 6.5) ** 2 + ((y + 0.5 - 58) / 6.0) ** 2 <= 1:
+    WL = 69                                                       # pied des piles dans l'eau
+    via = Canvas(IW, IH)
+    x0v, x1v, deck, spring = 14, 162, 46, 57
+    stone, stone_l, stone_d, vous = C("b8a888"), C("d8ccb0"), C("8e7e64"), C("9a8a6c")
+    via.rect(x0v, deck, x1v, IH - 1, stone)
+    piers = list(range(18, 160, 24))
+    for a0, b0 in zip(piers[:-1], piers[1:]):
+        a, b = a0 + 7, b0
+        cx, r = (a + b) / 2, (b - a) / 2
+        for y in range(deck + 4, IH):
+            for x in range(a, b):
+                if y >= spring or (x + 0.5 - cx) ** 2 + (y + 0.5 - spring) ** 2 <= r * r:
                     via.set(x, y, CLEAR)
-    for y in range(47, 50):
-        for x in range(14, 163):
+    m = via.mask()
+    for (x, y) in list(m):
+        if deck + 3 < y <= spring and any((x + dx, y + dy) not in m and via.inside(x + dx, y + dy)
+                                          for dx, dy in ((1, 0), (-1, 0), (0, 1), (1, 1), (-1, 1))):
+            via.set(x, y, vous if (x + y) % 2 else stone_d)
+    via.hline(x0v, x1v, deck, stone_l)
+    via.hline(x0v, x1v, deck + 3, stone_d)
+    for y in range(deck + 1, deck + 3):
+        for x in range(x0v, x1v + 1):
             if (x + (y % 2) * 3) % 6 == 0:
-                via.set(x, y, C("9a8a6c"))
-    cv.blit(via.outlined(C("3a3024")), 0, 0)
-    cv.hline(10, 166, 45, C("4a4a52"))                             # rails
+                via.set(x, y, vous)
+    for px in piers:
+        via.vline(px, spring, IH - 1, stone_l)
+        via.vline(px + 6, spring, IH - 1, stone_d)
+    for y in range(WL - 2, WL + 1):                                # pied des piles mouillé, plus sombre
+        for x in range(IW):
+            p = via.get(x, y)
+            if p[3] and y >= spring:
+                via.set(x, y, darken(p, 0.22 if y == WL else 0.1))
+    via = via.outlined(C("3a3024"))
+    for y in range(WL + 1, IH):                                   # l'eau passe devant le pied des piles
+        for x in range(IW):
+            via.set(x, y, CLEAR)
+    cv.blit(via, 0, 0)
+    for k in range(1, IH - WL - 1):                               # reflets des piles
+        sy = WL - k + 1
+        off = (1 if k % 2 else -1) if k > 2 else 0
+        for x in range(IW):
+            p = via.get(x - off, sy)
+            if p[3] and sy >= spring - 2:
+                cv.set(x, WL + k, mix(cv.get(x, WL + k), darken(p, 0.35), 0.5 if k < 5 else 0.3))
+    for px in piers:                                              # remous au pied des piles
+        for x in (px - 2, px - 1, px + 7, px + 8):
+            cv.set(x, WL + 1, FOAM if x in (px - 1, px + 7) else mix(FOAM, RIVER[2], 0.5))
+    cv.hline(10, 166, 45, C("4a4a52"))
     train = Canvas(66, 16)
-    train.rect(2, 4, 17, 11, C("2e5e3e"))                          # chaudière
+    train.rect(2, 4, 17, 11, C("2e5e3e"))
     train.hline(2, 17, 5, C("4a8a5e"))
     train.rect(0, 6, 2, 11, C("1e3e2a"))
-    train.rect(14, 1, 22, 11, C("7a2418"))                         # cabine
+    train.rect(14, 1, 22, 11, C("7a2418"))
     train.rect(16, 3, 19, 6, C("ffe9a0"))
-    train.rect(4, 0, 6, 4, C("2a2a2a"))                            # cheminée
+    train.rect(4, 0, 6, 4, C("2a2a2a"))
     train.rect(0, 11, 22, 12, C("2a2a2a"))
     for cx0 in (24, 45):
         train.rect(cx0, 3, cx0 + 19, 11, C("3d6fa3"))
@@ -1808,25 +2132,10 @@ def tex_part_transport():
         train.set(wx, 13, STONE[4])
     cv.blit(train.outlined(OUTLINE), 92, 45 - 15)
     smoke(cv, 98, 24, 7, 1.6, 5, C("f2f0ea"))
-    boat = Canvas(20, 16)
-    boat.poly([(0, 11), (19, 11), (16, 15), (3, 15)], WOOD[2])
-    boat.hline(0, 19, 11, WOOD[4])
-    boat.vline(9, 0, 11, WOOD[1])
-    boat.poly([(10, 1), (10, 10), (18, 10)], WHITE)
-    boat.poly([(8, 3), (8, 10), (2, 10)], C("e8e0cc"))
-    boat.rect(10, 0, 12, 1, C("c0392b"))
-    cv.blit(boat.outlined(OUTLINE), 34, 60)
-    plane = sprite([
-        "....OOOOOOOOOOO...",
-        "....OwwwwwwwwwO...",
-        "OO...OOOOOOOOO....",
-        "OrO.OOrrrrrrrrrOOO",
-        "OrrOrrrrrrrrrrrrHO",
-        ".OOOOOOOOOOOOOOOOO",
-        "....OwwwwwwwwwO...",
-        "....OOOOOOOOOOO...",
-    ], {"O": OUTLINE, "w": C("e8e0cc"), "r": C("c0392b"), "H": C("bfe0f0")})
-    cv.blit(plane.flipped_h(), 136, 6)
+    boat, wl_row = make_sailboat()
+    draw_boat(cv, boat, wl_row, 45, 74)
+    cv.blit(make_biplane(), 132, 3)
+    birds(cv, [(70, 14, False), (78, 18, True)])
     vintage(cv)
     return cv
 
@@ -1886,16 +2195,25 @@ def tex_part_technology():
         for x in range(x0, x1 + 1):
             t = (x - x0) / max(1, x1 - x0)
             cv.set(x, int(y0 + (y1 - y0) * t + 3 * math.sin(t * math.pi)), C("2a2430"))
-    box = Canvas(26, 20)                                          # générateur luminescent
-    box.rect(0, 2, 25, 19, STONE[2])
-    box.hline(0, 25, 2, STONE[4])
-    box.rect(4, 6, 21, 14, C("2a2a36"))
-    box.rect(5, 7, 20, 13, C("e8b84a"))
-    for (x, y) in ((12, 7), (13, 8), (11, 9), (12, 10), (13, 10), (12, 11), (11, 12)):
-        box.set(x, y, C("fff6c0"))
-    box.rect(2, 0, 6, 2, STONE[1])
-    cv.blit(box.outlined(C("1a1014")), 120, 50)
-    glow(cv, 132, 60, 8, 16, C("ffd76a"), 120)
+    box = Canvas(28, 22)                                          # armoire électrique
+    box.rect(0, 2, 27, 21, STONE[2])
+    box.hline(0, 27, 2, STONE[4])
+    box.vline(0, 2, 21, STONE[3])
+    box.vline(27, 2, 21, STONE[1])
+    box.rect(10, 0, 13, 2, STONE[1])                              # presse-étoupe du câble
+    box.rect(4, 5, 23, 15, C("2a2a36"))
+    box.rect(5, 6, 22, 14, C("e8a83a"))
+    box.rect(5, 6, 22, 7, C("ffd76a"))
+    stamp(box, ["...##", "..##.", ".##..", "#####", "..##.", ".##..", "##..."], 11, 7, C("fff8d0"),
+          shadow=C("8a4a10"))
+    for x in range(1, 27):                                        # bande de danger
+        box.set(x, 18, C("e8b84a") if (x // 2) % 2 else C("2a2a2a"))
+        box.set(x, 19, C("2a2a2a") if (x // 2) % 2 else C("e8b84a"))
+    for (rx, ry) in ((2, 4), (25, 4), (2, 20), (25, 20)):
+        box.set(rx, ry, STONE[5])
+    cv.blit(box.outlined(C("1a1014")), 119, 49)
+    cv.line(131, 49, 130, 30, C("2a2430"))                        # câble vers le pylône
+    glow(cv, 133, 59, 6, 16, C("ffd76a"), 110)
     for y in range(71, 75):                                       # tuyau de cuivre
         c = [C("f0a070"), C("d0784a"), C("a85a34"), C("7a3e22")][y - 71]
         cv.hline(36, IW - 1, y, c)
@@ -2023,6 +2341,12 @@ def tex_part_exploration():
         "........................OO....",
     ], {"O": C("6a5a48"), "W": C("e8dcc0")})
     cv.blit(bones, 4, 72)
+    for (mx, base, h) in ((60, 73, 6), (98, 74, 4), (123, 73, 5)):    # champignons luminescents
+        glow(cv, mx + 0.5, base - h, 1, 8, C("7af0e8"), 110)
+        cv.vline(mx, base - h + 1, base, C("e0d8c8"))
+        cv.ellipse(mx + 0.5, base - h, 3.0, 1.7, C("3ab8c8"))
+        cv.hline(mx - 2, mx + 3, base - h + 1, C("1e7a90"))
+        cv.set(mx - 1, base - h - 1, C("bff8ff"))
     vintage(cv)
     return cv
 
@@ -2100,8 +2424,8 @@ def tex_part_building():
     sign.rect(3, 3, 9, 4, WHITE)
     sign.poly([(9, 1), (12.5, 3.5), (9, 6)], WHITE)
     cv.blit(sign.outlined(OUTLINE), 108, 49)
-    tree = make_tree_round(16, 9)
-    cv.blit(tree, 98, 68 - tree.h + 1)
+    plant(cv, make_tree(16, 9), 107, 68)
+    birds(cv, [(104, 22, True), (112, 18, False), (120, 24, True)])
     vintage(cv)
     return cv
 
@@ -2131,9 +2455,8 @@ def tex_part_default():
     post.poly([(28, 17), (6, 17), (2, 20.5), (6, 24), (28, 24)], WOOD[4])
     post.hline(6, 28, 17, WOOD[5])
     cv.blit(post.outlined(OUTLINE), 50, IH - 38)
-    for (x, h, s) in ((14, 30, 21), (128, 24, 22), (150, 18, 23)):
-        t = make_tree_round(h, s)
-        cv.blit(t, x, IH - 6 - t.h)
+    for (x, h, s) in ((29, 30, 21), (140, 24, 22), (160, 18, 23)):
+        plant(cv, make_tree(h, s), x, IH - 7)
     vintage(cv)
     return cv
 
@@ -2143,8 +2466,479 @@ def tex_part_default():
 ###########################################################################
 
 
-@texture("mlq_cover.png")
-def tex_cover():
+AZURE = [C("1b3a6c"), C("27508f"), C("3566ab"), C("5486c8")]
+GULES = [C("6a1915"), C("a12a23"), C("c23d2f"), C("de5e48")]
+VERT = [C("143f1c"), C("22612b"), C("31803a"), C("4f9f4a")]
+OR = [GOLD[1], GOLD[3], GOLD[4], GOLD[5], GOLD[6]]
+SABLE = C("1c1410")
+DEEP = C("1e0e07")
+
+
+def thick_seg(x0, y0, x1, y1, w):
+    dx, dy = x1 - x0, y1 - y0
+    n = math.hypot(dx, dy) or 1
+    ox, oy = -dy / n * w / 2, dx / n * w / 2
+    return [(x0 + ox, y0 + oy), (x1 + ox, y1 + oy), (x1 - ox, y1 - oy), (x0 - ox, y0 - oy)]
+
+
+def shield_inside(px, py, w, h):
+    """Écu (coordonnées locales continues) : flancs droits jusqu'à 45 % de la hauteur, puis deux arcs en pointe."""
+    if px < 0 or px > w or py < 0 or py > h:
+        return False
+    ys = h * 0.45
+    if py <= ys:
+        return True
+    half = w / 2.0
+    d = ((h - ys) ** 2 - half ** 2) / (2 * half)
+    R = half + d
+    ccx = half + d if px <= half else half - d
+    return (px - ccx) ** 2 + (py - ys) ** 2 <= R * R
+
+
+def nearest_out_normal(mask, x, y, rad=4):
+    best = None
+    for dy in range(-rad, rad + 1):
+        for dx in range(-rad, rad + 1):
+            if (x + dx, y + dy) not in mask:
+                d = dx * dx + dy * dy
+                if best is None or d < best[0]:
+                    best = (d, dx, dy)
+    if not best:
+        return (0.0, 0.0)
+    n = math.sqrt(best[0])
+    return (best[1] / n, best[2] / n)
+
+
+def gilt(cv, mask, pal=OR, outline=None, shadow=None):
+    """Dorure en relief : bord éclairé en haut à gauche, ombré en bas à droite ; contour et ombre portée facultatifs."""
+    if shadow:
+        for (x, y) in mask:
+            if (x + 1, y + 1) not in mask:
+                cv.put(x + 1, y + 1, shadow)
+    if outline:
+        for (x, y) in mask:
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                if (x + dx, y + dy) not in mask:
+                    cv.set(x + dx, y + dy, outline)
+    for (x, y) in mask:
+        lit = (x - 1, y) not in mask or (x, y - 1) not in mask
+        dim = (x + 1, y) not in mask or (x, y + 1) not in mask
+        cv.set(x, y, pal[3] if lit and not dim else pal[1] if dim and not lit else pal[2])
+
+
+def colored(cv, mask, pal, outline):
+    """Meuble émaillé : contour sombre, modelé simple (clair en haut à gauche, sombre en bas à droite)."""
+    for (x, y) in mask:
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            if (x + dx, y + dy) not in mask:
+                cv.set(x + dx, y + dy, outline)
+    for (x, y) in mask:
+        lit = (x - 1, y) not in mask or (x, y - 1) not in mask
+        dim = (x + 1, y) not in mask or (x, y + 1) not in mask
+        cv.set(x, y, pal[3] if lit and not dim else pal[0] if dim and not lit else pal[2])
+
+
+def poly_mask(pts):
+    """Pixels (coordonnées absolues) dont le centre est dans le polygone."""
+    x0 = int(math.floor(min(p[0] for p in pts))) - 1
+    y0 = int(math.floor(min(p[1] for p in pts))) - 1
+    x1 = int(math.ceil(max(p[0] for p in pts))) + 1
+    y1 = int(math.ceil(max(p[1] for p in pts))) + 1
+    lay = Canvas(x1 - x0 + 1, y1 - y0 + 1)
+    lay.poly([(x - x0, y - y0) for (x, y) in pts], (255, 255, 255, 255))
+    return {(x + x0, y + y0) for (x, y) in lay.mask()}
+
+
+# ---------------------------------------------------------------- meubles (charges) de l'écu, centrés en (cx, cy)
+def charge_pickaxes(cx, cy):
+    m = set()
+    s2 = math.sqrt(0.5)
+    for sg in (1, -1):
+        hx0, hy0 = cx - sg * 5.8, cy + 5.8
+        ex, ey = cx + sg * 4.4, cy - 4.4
+        m |= poly_mask(thick_seg(hx0, hy0, ex + sg * 0.9, ey - 0.9, 1.5))
+        hd = (sg * s2, -s2)
+        pd = (s2, sg * s2) if sg > 0 else (-s2, s2)
+        pts_u, pts_l = [], []
+        t0, t1, k = -2.6, 3.9, 0.12
+        for i in range(15):
+            t = t0 + i * (t1 - t0) / 14
+            px = ex + pd[0] * t - hd[0] * k * t * t
+            py = ey + pd[1] * t - hd[1] * k * t * t
+            tx, ty = pd[0] - 2 * k * t * hd[0], pd[1] - 2 * k * t * hd[1]
+            tn = math.hypot(tx, ty)
+            nx, ny = -ty / tn, tx / tn
+            span = t1 if t > 0 else -t0
+            w = 2.4 * (1 - 0.72 * (abs(t) / span) ** 2)
+            pts_u.append((px + nx * w / 2, py + ny * w / 2))
+            pts_l.append((px - nx * w / 2, py - ny * w / 2))
+        m |= poly_mask(pts_u + pts_l[::-1])
+    return m
+
+
+def charge_gear(cx, cy):
+    m = poly_mask(gear_points(cx, cy, 6.0, 4.4, 8, -1.5 * 2 * math.pi / 32))
+    hole = {(x, y) for (x, y) in m if (x + 0.5 - cx) ** 2 + (y + 0.5 - cy) ** 2 <= 1.9 ** 2}
+    return m - hole, hole
+
+
+def draw_tree_charge(cv, cx, cy):
+    """Chêne de sinople fûté au naturel, arraché (racines apparentes)."""
+    trunk = set()
+    for y in range(int(cy + 1), int(cy + 6)):
+        trunk |= {(int(cx) - 1, y), (int(cx), y)}
+    roots = {(int(cx) - 2, int(cy + 6)), (int(cx) + 1, int(cy + 6)), (int(cx) - 3, int(cy + 7)), (int(cx) + 2, int(cy + 7)),
+             (int(cx) - 1, int(cy + 6)), (int(cx), int(cy + 6))}
+    crown = set()
+    for (bx, by, br) in ((0, -2.2, 4.0), (-3.2, -0.2, 2.9), (3.2, -0.2, 2.9), (0, 0.6, 3.0), (-1.8, -4.4, 2.4),
+                         (1.8, -4.4, 2.4)):
+        crown |= {(x, y) for y in range(int(cy + by - br - 1), int(cy + by + br + 2))
+                  for x in range(int(cx + bx - br - 1), int(cx + bx + br + 2))
+                  if (x + 0.5 - cx - bx) ** 2 + (y + 0.5 - cy - by) ** 2 <= br * br}
+    wood = trunk | roots
+    for (x, y) in wood | crown:
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            if (x + dx, y + dy) not in wood | crown:
+                cv.set(x + dx, y + dy, SABLE)
+    for (x, y) in wood:
+        cv.set(x, y, WOOD[3] if x < cx - 0.5 else WOOD[1])
+    for (x, y) in crown:
+        dx, dy = x + 0.5 - cx, y + 0.5 - (cy - 2)
+        s = -0.55 * dx / 5 - 0.75 * dy / 5 + (noise2(x / 1.6, y / 1.6, 5) - 0.5) * 0.5
+        lit = (x - 1, y) not in crown or (x, y - 1) not in crown
+        if lit and s > -0.1:
+            s += 0.5
+        cv.set(x, y, VERT[3] if s > 0.55 else VERT[2] if s > 0.05 else VERT[1] if s > -0.5 else VERT[0])
+
+
+def draw_tower_charge(cv, cx, cy):
+    """Tour de gueules, maçonnée et ajourée de sable."""
+    x0, x1 = int(cx) - 4, int(cx) + 4
+    top, bot = int(cy) - 6, int(cy) + 6
+    m = set()
+    for y in range(top + 2, bot + 1):
+        for x in range(x0 + 1, x1):
+            m.add((x, y))
+    for y in range(top + 1, top + 3):
+        for x in range(x0, x1 + 1):
+            m.add((x, y))
+    for x in (x0, x0 + 1, cx - 0.5, cx + 0.5, x1 - 1, x1):
+        m.add((int(x), top))
+    m = {(int(x), y) for (x, y) in m}
+    colored(cv, m, [GULES[0], GULES[1], GULES[2], GULES[3]], SABLE)
+    for y in (top + 5, top + 8):                                   # maçonnage
+        for x in range(x0 + 1, x1):
+            if (x + y) % 3:
+                cv.set(x, y, GULES[0])
+    for y in range(bot - 3, bot + 1):                              # porte cintrée
+        for x in (int(cx) - 1, int(cx), int(cx) + 1):
+            if not (y == bot - 3 and x != int(cx)):
+                cv.set(x, y, SABLE)
+    cv.set(int(cx), top + 4, SABLE)                                # fenêtre
+    cv.set(int(cx), top + 5, SABLE)
+
+
+# ---------------------------------------------------------------- écu écartelé
+def draw_shield(cv, x0, y0, w, h):
+    m = {(x0 + x, y0 + y) for y in range(h) for x in range(w) if shield_inside(x + 0.5, y + 0.5, w, h)}
+    dist = inner_distance(m, diagonal=True)
+    vx = x0 + w // 2 - 1                                           # partitions (2 px) : verticale vx, vx+1
+    hy = y0 + int(h * 0.42)                                        # horizontale hy, hy+1
+    for (x, y), d in dist.items():
+        nx, ny = nearest_out_normal(m, x, y)
+        lam = -(nx * 0.7 + ny * 0.7)                               # > 0 : bord tourné vers la lumière (haut gauche)
+        if d == 1:
+            c = OUTLINE
+        elif d == 2:
+            c = OR[3] if lam > 0.2 else OR[1] if lam < -0.2 else OR[2]
+        elif d == 3:
+            c = OR[2] if lam > 0.2 else OR[3] if lam < -0.2 else OR[2]
+        elif d == 4:
+            c = GOLD[0]
+        else:
+            u, v = x - x0, y - y0
+            if x in (vx, vx + 1) or y in (hy, hy + 1):
+                if x in (vx, vx + 1) and y in (hy, hy + 1):
+                    c = OR[3]
+                elif x == vx or y == hy:
+                    c = OR[3]
+                else:
+                    c = OR[1]
+            else:
+                q = (0 if x < vx else 1) + (0 if y < hy else 2)
+                pal = AZURE if q in (0, 3) else [OR[0], OR[1], OR[2], OR[3]]
+                g = (u + v * 0.9) / (w + h * 0.9)
+                glint = 0.14 < (u - v * 0.55) / w + 0.25 < 0.24
+                k = 2 if g < 0.33 else 1
+                if q in (1, 2):
+                    k = 2 if g < 0.5 else 1
+                    k += 1 if glint else 0
+                else:
+                    k += 1 if glint else 0
+                if d == 5 and lam > 0.2:
+                    k -= 1                                         # ombre portée par la bordure
+                if (x == vx + 2 and y != hy + 2) or y == hy + 2:
+                    k -= 1                                         # ombre portée par les partitions
+                c = pal[max(0, min(3, k))]
+        cv.set(x, y, c)
+    q1 = ((x0 + 4 + vx - 1) / 2 + 0.5, (y0 + 4 + hy - 1) / 2 + 0.5)
+    q2 = ((vx + 2 + x0 + w - 5) / 2 + 0.5, q1[1])
+    q3 = (q1[0] + 1, hy + 2 + 9.0)                                 # pointe de l'écu : meubles remontés et recentrés
+    q4 = (q2[0] - 1, q3[1])
+    pick = charge_pickaxes(*q1)
+    gilt(cv, pick, outline=AZURE[0])
+    draw_tree_charge(cv, *q2)
+    draw_tower_charge(cv, q3[0], q3[1])
+    gear, hole = charge_gear(*q4)
+    gilt(cv, gear, outline=AZURE[0])
+    for (x, y) in hole:
+        cv.set(x, y, AZURE[1])
+    return m
+
+
+# ---------------------------------------------------------------- couronne murale d'or à cinq tours
+def crown_parts(cx, bottom):
+    """Couronne murale à cinq tours : bandeau (3 px), tours de 5 px dépassant de 6 px, courtines crénelées."""
+    band, towers, walls, doors = set(), set(), set(), set()
+    n, tw, gap = 5, 5, 3
+    width = n * tw + (n - 1) * gap
+    x0 = cx - width // 2
+
+    def lift(x):
+        return int(round(1.8 * (1 - ((x + 0.5 - cx) / (width / 2.0 + 1)) ** 2)))
+    for x in range(x0 - 1, x0 + width + 1):
+        for y in range(bottom - 2, bottom + 1):
+            band.add((x, y - lift(x)))
+    for i in range(n):
+        tx0 = x0 + i * (tw + gap)
+        for x in range(tx0, tx0 + tw):
+            for y in range(bottom - 9, bottom - 2):
+                if y == bottom - 9 and (x - tx0) == 2:
+                    continue
+                towers.add((x, y - lift(x)))
+        doors |= {(tx0 + 2, bottom - 4 - lift(tx0 + 2)), (tx0 + 2, bottom - 3 - lift(tx0 + 2))}
+        if i < n - 1:
+            for x in range(tx0 + tw, tx0 + tw + gap):
+                for y in range(bottom - 5, bottom - 2):
+                    if y == bottom - 5 and (x - tx0 - tw) == 1:
+                        continue
+                    walls.add((x, y - lift(x)))
+    return band, towers, walls, doors
+
+
+def draw_crown(cv, cx, bottom):
+    band, towers, walls, doors = crown_parts(cx, bottom)
+    allm = band | towers | walls
+    for (x, y) in allm:
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            if (x + dx, y + dy) not in allm:
+                cv.set(x + dx, y + dy, DEEP)
+    gilt(cv, walls, pal=[GOLD[0], GOLD[2], GOLD[3], GOLD[4]])
+    gilt(cv, towers)
+    gilt(cv, band)
+    for (x, y) in band:
+        if (x, y - 1) not in band and (x, y - 1) in allm:
+            cv.set(x, y - 1, GOLD[1])                              # joint entre tours et bandeau
+        if (x + y) % 4 == 0 and (x, y - 1) in band and (x, y + 1) in band:
+            cv.set(x, y, GOLD[2])                                  # pierres serties du bandeau
+    for (x, y) in doors:
+        cv.set(x, y, DEEP)
+
+
+# ---------------------------------------------------------------- branches de chêne et de laurier
+def bez(p0, p1, p2, p3, t):
+    a, b, c, d = (1 - t) ** 3, 3 * (1 - t) ** 2 * t, 3 * (1 - t) * t * t, t ** 3
+    return (a * p0[0] + b * p1[0] + c * p2[0] + d * p3[0], a * p0[1] + b * p1[1] + c * p2[1] + d * p3[1])
+
+
+def leaf_poly(px, py, ang, length, width):
+    ca, sa = math.cos(ang), math.sin(ang)
+    pts = []
+    for i in range(12):
+        t = i / 11.0 * math.pi * 2
+        lx = (math.cos(t) + 1) / 2 * length
+        ly = math.sin(t) * width / 2 * (1 - 0.35 * (math.cos(t) + 1) / 2)
+        pts.append((px + lx * ca - ly * sa, py + lx * sa + ly * ca))
+    return pts
+
+
+def branch_parts(side, cx, y_cross, top, kind):
+    """side = -1 : à gauche (chêne), +1 : à droite (laurier). Les tiges se croisent sous la pointe de l'écu.
+    Renvoie (tige, [feuilles], glands)."""
+    p0 = (cx - side * 5, y_cross + 4)
+    p1 = (cx + side * 22, y_cross + 4)
+    p2 = (cx + side * 37, y_cross - 26)
+    p3 = (cx + side * 27, top)
+    pts = [bez(p0, p1, p2, p3, i / 80.0) for i in range(81)]
+    stem = set()
+    for a_, b_ in zip(pts[:-1], pts[1:]):
+        stem |= poly_mask(thick_seg(a_[0], a_[1], b_[0], b_[1], 1.4))
+    leaves, acorns = [], []
+    acc, last, flip, idx = 0.0, pts[0], 1, 0
+    step = 5.6 if kind == "laurel" else 6.2
+    for i, p in enumerate(pts[1:], 1):
+        acc += math.hypot(p[0] - last[0], p[1] - last[1])
+        last = p
+        if acc >= step and i > 12 and i < 76:
+            acc = 0.0
+            q = pts[min(80, i + 1)]
+            tang = math.atan2(q[1] - p[1], q[0] - p[0])
+            flip = -flip
+            idx += 1
+            outer = (flip * side) < 0
+            if kind == "laurel":
+                ang, ln, wd = tang + flip * 0.62, (6.4 if outer else 5.2), 2.8
+            else:
+                ang, ln, wd = tang + flip * 0.9, (5.8 if outer else 4.8), 3.8
+            leaves.append(poly_mask(leaf_poly(p[0], p[1], ang, ln, wd)))
+            if kind == "oak" and outer and idx % 2 == 1:
+                acorns.append((p[0] + math.cos(ang - flip * 1.2) * 3.0, p[1] + math.sin(ang - flip * 1.2) * 3.0))
+    tip = pts[-1]
+    tang = math.atan2(pts[-1][1] - pts[-4][1], pts[-1][0] - pts[-4][0])
+    leaves.append(poly_mask(leaf_poly(tip[0], tip[1], tang, 6.0 if kind == "laurel" else 5.4,
+                                      2.8 if kind == "laurel" else 3.8)))
+    return stem, leaves, acorns
+
+
+def draw_branch(cv, side, cx, y_cross, top, kind):
+    stem, leaves, acorns = branch_parts(side, cx, y_cross, top, kind)
+    gilt(cv, stem, pal=[GOLD[0], GOLD[1], GOLD[2], GOLD[3]], outline=DEEP)
+    for lm in leaves:
+        gilt(cv, lm, outline=DEEP)
+        if kind == "oak":                                          # lobes : encoches sombres sur le pourtour
+            edge = [(x, y) for (x, y) in lm if sum((x + dx, y + dy) in lm for dx, dy in
+                                                   ((1, 0), (-1, 0), (0, 1), (0, -1))) == 3]
+            for (x, y) in edge[1::4]:
+                cv.set(x, y, GOLD[1])
+    for (ax, ay) in acorns:
+        am = {(int(ax), int(ay)), (int(ax) + 1, int(ay)), (int(ax), int(ay) + 1), (int(ax) + 1, int(ay) + 1)}
+        gilt(cv, am, pal=[GOLD[0], GOLD[3], GOLD[4], GOLD[6]], outline=DEEP)
+        cv.set(int(ax), int(ay), GOLD[1])
+        cv.set(int(ax) + 1, int(ay), GOLD[1])
+
+
+# ---------------------------------------------------------------- listel (devise)
+MINI = {                                                           # capitales 5 px de haut pour la devise
+    "A": [".#.", "#.#", "###", "#.#", "#.#"], "B": ["##.", "#.#", "##.", "#.#", "##."],
+    "C": [".##", "#..", "#..", "#..", ".##"], "D": ["##.", "#.#", "#.#", "#.#", "##."],
+    "E": ["###", "#..", "##.", "#..", "###"], "H": ["#.#", "#.#", "###", "#.#", "#.#"],
+    "I": ["#", "#", "#", "#", "#"], "L": ["#..", "#..", "#..", "#..", "###"],
+    "M": ["#...#", "##.##", "#.#.#", "#...#", "#...#"], "N": ["#..#", "##.#", "#.##", "#..#", "#..#"],
+    "O": [".#.", "#.#", "#.#", "#.#", ".#."], "P": ["##.", "#.#", "##.", "#..", "#.."],
+    "R": ["##.", "#.#", "##.", "#.#", "#.#"], "T": ["###", ".#.", ".#.", ".#.", ".#."],
+    "U": ["#.#", "#.#", "#.#", "#.#", "###"], "X": ["#.#", "#.#", ".#.", "#.#", "#.#"],
+    " ": ["..", "..", "..", "..", ".."],
+}
+MOTTO = "DOUCE HARMONIE"
+
+
+def draw_scroll(cv, cx, yc, text):
+    """Listel (ruban à queues fourchues) portant `text`. Sa longueur s'adapte au texte ; il s'incurve (bouts relevés de
+    3 px) par marches d'un pixel calées sur les lettres : lettres jamais déformées, marge constante sous les bords dorés."""
+    cx, yc = int(cx), int(yc)
+    w = sum(len(MINI[ch][0]) + 1 for ch in text) - 1
+    half = max(24, w // 2 + 5)
+
+    def curve(x):
+        return int(round(-3.0 / (half * half) * (x + 0.5 - cx) ** 2))
+    glyphs, x = [], int(round(cx - w / 2.0))
+    for ch in text:
+        gw = len(MINI[ch][0])
+        glyphs.append((x, curve(x + gw / 2.0), MINI[ch]))
+        x += gw + 1
+    col_off = {}
+    for (gx, o, g) in glyphs:
+        for xx in range(gx - 1, gx + len(g[0]) + 1):
+            col_off.setdefault(xx, o)
+
+    def off(x):
+        return col_off.get(x, curve(x))
+    band = {(x, yc + off(x) + y) for x in range(cx - half, cx + half + 1) for y in range(-4, 5)}
+    tails = set()
+    for sd in (-1, 1):
+        ex = cx + sd * half
+        yb = yc + off(ex) + 2
+        for i in range(1, 10):
+            for y in range(-3, 4):
+                if not (i >= 7 and abs(y) <= i - 7):              # queue fourchue
+                    tails.add((ex + sd * i, yb + y))
+    tails -= band
+    allm = tails | band
+    for (x, y) in allm:
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            if (x + dx, y + dy) not in allm:
+                cv.set(x + dx, y + dy, DEEP)
+    for (x, y) in tails:
+        cv.set(x, y, GULES[0] if (x, y - 1) in tails else GULES[1])
+    for (x, y) in band:
+        top = (x, y - 1) not in band
+        bot = (x, y + 1) not in band
+        cv.set(x, y, OR[3] if top else OR[1] if bot else GULES[2] if (x, y - 2) not in band else GULES[1])
+    for sd in (-1, 1):                                             # pli du ruban
+        ex = cx + sd * half
+        for y in range(-3, 4):
+            cv.set(ex + sd, yc + off(ex) + y + 2, GULES[0])
+    for (gx, o, g) in glyphs:
+        for j, row in enumerate(g):
+            for i, c in enumerate(row):
+                if c == "#":
+                    cv.set(gx + i, yc + o - 2 + j, OR[3] if j < 2 else OR[2])
+
+
+def draw_arms(cv, cx, top):
+    """Armoiries de Minerland (création originale), centrées en cx, couronne à partir de la rangée top.
+    Blasonnement : écartelé, au 1 d'azur à deux pioches d'or passées en sautoir (la mine), au 2 d'or au chêne arraché
+    de sinople fûté au naturel (la nature), au 3 d'or à la tour de gueules maçonnée et ajourée de sable (la
+    construction), au 4 d'azur à la roue dentée d'or (la technique) ; bordure d'or. L'écu timbré d'une couronne murale
+    d'or à cinq tours, accosté d'une branche de chêne à dextre et d'une branche de laurier à senestre, d'or, passées en
+    sautoir sous la pointe ; listel de gueules à la devise « DOUCE HARMONIE » d'or."""
+    sw, sh = 42, 48
+    sx0, sy0 = cx - sw // 2, top + 11
+    y_cross = sy0 + sh + 2
+    for side, kind in ((-1, "oak"), (1, "laurel")):
+        draw_branch(cv, side, cx, y_cross, sy0 + 2, kind)
+    draw_shield(cv, sx0, sy0, sw, sh)
+    draw_crown(cv, cx, sy0 + 1)
+    draw_scroll(cv, cx, y_cross + 3, MOTTO)
+
+
+SERIF = {
+    "M": ["###.....###", ".###...###.", ".####.####.", ".##.###.##.", ".##..#..##.", ".##.....##.", ".##.....##.",
+          ".##.....##.", ".##.....##.", "####...####"],
+    "I": ["####", ".##.", ".##.", ".##.", ".##.", ".##.", ".##.", ".##.", ".##.", "####"],
+    "N": ["###...####", ".##....##.", ".###...##.", ".####..##.", ".####..##.", ".##.##.##.", ".##..####.",
+          ".##..####.", ".##...###.", "####...##."],
+    "E": ["#######", ".##...#", ".##....", ".##.#..", ".####..", ".##.#..", ".##....", ".##....", ".##...#",
+          "#######"],
+    "R": ["######..", ".##..##.", ".##...##", ".##...##", ".##..##.", ".####...", ".##.##..", ".##..##.", ".##...##",
+          "####.###"],
+    "L": ["####...", ".##....", ".##....", ".##....", ".##....", ".##....", ".##....", ".##...#", ".##..##", "#######"],
+    "A": ["....##....", "...####...", "...####...", "..##..##..", "..##..##..", ".########.", ".##....##.",
+          ".##....##.", "##......##", "###....###"],
+    "D": ["######..", ".##..##.", ".##...##", ".##...##", ".##...##", ".##...##", ".##...##", ".##...##", ".##..##.",
+          "######.."],
+}
+
+
+def serif_mask(s, x, y, spacing=1):
+    m = set()
+    for ch in s:
+        g = SERIF[ch]
+        for j, row in enumerate(g):
+            for i, c in enumerate(row):
+                if c == "#":
+                    m.add((x + i, y + j))
+        x += len(g[0]) + spacing
+    return m
+
+
+def serif_width(s, spacing=1):
+    return sum(len(SERIF[ch][0]) + spacing for ch in s) - spacing
+
+
+def cover(lines):
+    """Couverture 128 × 160 : cuir, filets dorés, titre gravé (lignes = [(texte, y)]), armoiries de Minerland,
+    MINERLAND en capitales à empattements (83 px, contenu dans le cadre intérieur 21..115)."""
     W, H = 128, 160
     cv = Canvas(W, H)
     m = round_rect_mask(0, 0, W - 1, H - 1, 4)
@@ -2158,7 +2952,7 @@ def tex_cover():
         elif d == 2:
             c = LEATHER[6] if (x < 4 or y < 4) else LEATHER[1]
         elif x in (11, 12):
-            c = LEATHER[1] if x == 11 else LEATHER[5]                 # charnière
+            c = LEATHER[1] if x == 11 else LEATHER[5]
         cv.set(x, y, c)
     gold_mask = set()
     for (x0, y0, x1, y1) in ((17, 8, W - 9, H - 9), (21, 12, W - 13, H - 13)):
@@ -2175,60 +2969,32 @@ def tex_cover():
                 if ch == "#":
                     gold_mask.add((fx + i, fy + j))
     emboss(cv, gold_mask, GOLD[3], GOLD[5], GOLD[1], shadow=LEATHER[0])
-    for (s, y, scale) in (("LE GRAND LIVRE", 22, 1), ("DES QUÊTES", 35, 1)):
-        x = (W + 8 - text_width(s, scale)) // 2
-        emboss(cv, text_mask(s, x, y, scale), GOLD[4], GOLD[6], GOLD[2], shadow=LEATHER[0])
+    for (s_, y) in lines:
+        x = (W + 8 - text_width(s_)) // 2
+        emboss(cv, text_mask(s_, x, y), GOLD[4], GOLD[6], GOLD[2], shadow=LEATHER[0])
     deco = set()
-    for x in range(44, 92):
+    for x in range(46, 91):
         if abs(x - 68) > 4:
-            deco.add((x, 47))
+            deco.add((x, 43))
     for (dx, dy) in ((0, -2), (-1, -1), (0, -1), (1, -1), (-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0), (-1, 1), (0, 1),
                      (1, 1), (0, 2)):
-        deco.add((68 + dx, 47 + dy))
+        deco.add((68 + dx, 43 + dy))
     emboss(cv, deco, GOLD[3], GOLD[5], GOLD[1], shadow=LEATHER[0])
-    cx, cy, R = 68, 86, 25                                        # blason central
-    crest = Canvas(W, H)
-    for y in range(cy - R - 1, cy + R + 2):
-        for x in range(cx - R - 1, cx + R + 2):
-            d = math.hypot(x + 0.5 - cx, y + 0.5 - cy)
-            if d <= R:
-                if d > R - 1:
-                    crest.set(x, y, GOLD[0])
-                elif d > R - 4:
-                    crest.set(x, y, GOLD[5] if (x - cx + y - cy) < -6 else GOLD[2] if (x - cx + y - cy) > 6 else GOLD[4])
-                elif d > R - 5:
-                    crest.set(x, y, GOLD[1])
-                else:
-                    crest.set(x, y, ramp([C("3a1a10"), C("4a2214"), C("5a2a17")], 1 - (y - cy + R) / (2.0 * R), x, y))
-    cv.blit(crest, 0, 0)
-    lay = Canvas(W, H)                                            # pioche et plume croisées
-    lay.line(cx - 11, cy + 12, cx + 8, cy - 8, GOLD[4], 3)        # manche de la pioche
-    lay.poly([(cx + 1, cy - 17), (cx + 8, cy - 15.5), (cx + 14, cy - 11), (cx + 17.5, cy - 2.5), (cx + 15, cy - 3.5),
-              (cx + 11, cy - 9), (cx + 7, cy - 12), (cx + 1.5, cy - 14.5)], GOLD[4])   # fer en croissant
-    ax, ay = -0.68, -0.73                                         # axe de la plume (bas droite → haut gauche)
-    px, py = 0.73, -0.68
-    bx, by, L = cx + 12, cy + 13, 36.0
-
-    def P(t, w):
-        return (bx + ax * L * t + px * w, by + ay * L * t + py * w)
-    vane = [P(0.22, 0)] + [P(t, 4.6 * math.sin(math.pi * (t - 0.22) / 0.78) ** 0.7) for t in
-                           (0.3, 0.42, 0.55, 0.68, 0.8, 0.9)] + [P(1.0, 0)]
-    vane += [P(t, -3.2 * math.sin(math.pi * (t - 0.22) / 0.78) ** 0.8) for t in (0.9, 0.78, 0.62, 0.46, 0.32)]
-    lay.poly(vane, GOLD[4])
-    lay.line(*P(0.0, 0), *P(0.24, 0), GOLD[4], 2)                 # tuyau et bec
-    emblem = lay.mask()
-    for (x, y) in list(emblem):
-        if math.hypot(x + 0.5 - cx, y + 0.5 - cy) > R - 5.5:
-            emblem.discard((x, y))
-    emboss(cv, emblem, GOLD[4], GOLD[6], GOLD[2], shadow=C("1e0e07"))
-    for t in (0.36, 0.5, 0.64, 0.78):                             # barbes de la plume (incisions)
-        x0, y0 = P(t, 0)
-        x1, y1 = P(t + 0.07, 3.0)
-        cv.line(x0, y0, x1, y1, GOLD[2])
-    s = "MINERLAND"
-    x = (W + 8 - text_width(s, 2, 1)) // 2
-    emboss(cv, text_mask(s, x, 124, 2, 1), GOLD[4], GOLD[6], GOLD[2], shadow=LEATHER[0])
+    draw_arms(cv, 68, 47)
+    name = "MINERLAND"
+    x = 68 - serif_width(name) // 2
+    emboss(cv, serif_mask(name, x, 125), GOLD[4], GOLD[6], GOLD[2], shadow=LEATHER[0])
     return cv
+
+
+@texture("mlq_cover.png")
+def tex_cover():
+    return cover([("LE GRAND LIVRE", 20), ("DES QUÊTES", 32)])
+
+
+@texture("mlq_cover_en.png")
+def tex_cover_en():
+    return cover([("THE GREAT BOOK", 20), ("OF QUESTS", 32)])
 
 
 ###########################################################################

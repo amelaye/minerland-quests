@@ -36,7 +36,7 @@ end
 ui.register_button(P.PAGE, {
 	type = "image",
 	image = "mlq_ui_button.png",
-	tooltip = "Grand Livre des Quêtes",
+	tooltip = Q.i18n.S("Grand Livre des Quêtes"),
 })
 
 ui.register_page(P.PAGE, {

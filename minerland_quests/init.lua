@@ -15,6 +15,7 @@ end
 
 -- Cœur (ordre significatif)
 load("core/util")
+load("core/i18n")
 load("core/registry")
 load("core/graph")
 load("core/storage")

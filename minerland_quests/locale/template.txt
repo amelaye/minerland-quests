@@ -1,0 +1,378 @@
+# textdomain: minerland_quests
+# Modèle généré par tools/i18n.py — langue source : français. Ne pas éditer à la main.
+
+##### Interface et messages (ui/book.lua)
+Fermer le livre=
+
+##### Interface et messages (ui/inventory.lua)
+Grand Livre des Quêtes=
+
+##### Interface et messages (ui/items.lua)
+Le Grand Livre des Quêtes de Minerland=
+Clic pour l'ouvrir. Aussi accessible depuis l'inventaire ou avec /quetes.=
+Charte de fondation de ville=
+Un parchemin scellé à exposer dans votre future mairie.=
+Charte de fondation — signée par @1 le @2=
+
+##### Interface et messages (ui/notifications.lua)
+Chapitre terminé : @1 !=
+Nouvelle quête : @1=
+Ouvre le Grand Livre pour la suite.=
+Quête accomplie : @1=
+[Grand Livre]=
+débloquée(s) : @1=
+Inventaire plein : la récompense de « @1 » est conservée et sera livrée dès qu'il y aura de la place.=
+@1 récompenses livrées dans ton inventaire.=
+Récompense livrée dans ton inventaire.=
+
+##### Interface et messages (ui/theme.lua)
+Disponible=
+Terminée=
+Verrouillée=
+Indisponible=
+Facile=
+Accessible=
+Intermédiaire=
+Avancée=
+Expert=
+
+##### Interface et messages (ui/views.lua)
+Extraire=
+Poser=
+Fabriquer=
+Déguster=
+groupe @1=
+@1 ou @2=
+@1 : @2=
+@1 (à des endroits différents)=
+Accueil=
+Retour=
+Ouvrir en grand=
+Carnet d'aventure de @1=
+Progression : @1 / @2 quêtes=
+Titres : @1=
+@1 récompense(s) en attente de place=
+Recevoir mes récompenses=
+Partie @1 — @2=
+Chapitre @1 — @2=
+(mods absents sur ce serveur)=
+Difficulté :=
+« @1 »=
+Indisponible : @1=
+Objectif — @1=
+(fait)=
+(ignoré)=
+(à faire)=
+Prérequis : @1=
+Astuce : @1=
+Accomplie le @1.=
+Progression : @1 / @2=
+Encore @1 prérequis à accomplir.=
+Récompense prévue=
+Récompense en attente (inventaire plein)=
+Récompense reçue=
+Titre : « @1 »=
+La satisfaction du devoir accompli.=
+Réessayer la livraison=
+Partie @1 · @2/@3 quêtes=
+« Retour à l'arbre=
+Chapitre précédent : @1=
+Chapitre suivant : @1=
+Clique sur une quête de l'arbre pour lire sa fiche : objectif, prérequis, avancement et récompense.=
+Les quêtes se valident toutes seules quand tu accomplis l'action demandée.=
+Les récompenses arrivent directement dans ton inventaire.=
+
+##### Interface et messages (core/admin.lua)
+Consulter et diagnostiquer la progression des quêtes de Minerland=
+Ouvrir le Grand Livre des Quêtes=
+<joueur>=
+Progression d'un joueur par chapitre=
+Joueur inconnu.=
+@1 : @2/@3 quêtes, @4 récompense(s) en attente=
+<joueur> <id_quête>=
+État détaillé d'une quête pour un joueur=
+Usage : @1=
+aucun=
+déclencheur : @1=
+indisponible : @1=
+non=
+prérequis manquants : @1=
+terminée le : @1=
+récompense : @1=
+Diagnostic des récompenses d'un joueur (journal et file d'attente) ; relance la livraison=
+@1 : @2 récompense(s) attribuée(s), @3 en attente=
+depuis le @1=
+@1 livraison(s) effectuée(s) maintenant=
+Diagnostic du livre de quêtes (intégrations, quêtes indisponibles, problèmes de données)=
+Grand Livre v@1 : @2 quêtes, @3 chapitres=
+Intégrations actives : @1=
+aucune=
+Langues : @1=
+@1 quête(s) indisponible(s)=
+Commande désactivée : réservée aux instances de test (@1).=
+[TEST] Réinitialise une quête (la récompense reste journalisée : pas de seconde récompense)=
+Quête @1 réinitialisée pour @2 (journal des récompenses conservé).=
+<id_quête>=
+[TEST] Émet l'événement déclencheur d'une quête pour soi-même (passe par le circuit normal)=
+Quête inconnue.=
+Quête sans cible résolue (indisponible ?).=
+Événement @1 @2 émis : @3 quête(s) affectée(s). État : @4=
+
+##### Interface et messages (core/compat.lua)
+Le mod « @1 » n'est pas activé sur ce serveur.=
+Objet introuvable sur ce serveur : @1=
+L'intégration « @1 » n'est pas active sur ce serveur.=
+
+##### Interface et messages (core/graph.lua)
+Prérequis inconnu : @1=
+Dépendance circulaire (erreur de données)=
+
+##### Interface et messages (core/i18n.lua)
+@1/@2/@3=
+
+##### Partie I — Les Fondamentaux
+Les Fondamentaux=
+Premiers pas, premier toit, premières richesses=
+
+##### Partie II — La Vie quotidienne
+La Vie quotidienne=
+Animaux, cuisine, décoration et commerce=
+
+##### Partie III — Les Transports
+Les Transports=
+Routes, rails, ciel, mers et hauteurs=
+
+##### Partie IV — Sciences et Technologies
+Sciences et Technologies=
+Électricité, industrie et automatisation=
+
+##### Partie V — L'Aventure
+L'Aventure=
+Mondes extraordinaires et créatures fabuleuses=
+
+##### Partie VI — Les Grands Projets
+Les Grands Projets=
+Bâtisseurs et fondateurs de cités=
+
+##### Chapitre 1 — Bienvenue à Minerland
+Bienvenue à Minerland=
+Bienvenue, voyageur ! Avant de bâtir des cathédrales et des trains, il faut savoir manier la hache. Ce chapitre t'apprend les gestes de base : couper, fabriquer, ranger.=
+Bûcheron du dimanche=
+Tout grand voyage commence par un arbre. Choisis-en un beau et donne-lui un petit coup de hache.=
+Creuse un tronc d'arbre (à la main ou avec une hache). Les troncs posés par un joueur ne comptent pas.=
+Des planches, encore des planches=
+Un tronc, c'est bien. Quatre planches, c'est mieux !=
+Place un tronc dans la grille de fabrication de ton inventaire.=
+Bâton de pèlerin=
+Le bâton : humble, léger, indispensable à presque tous les outils du royaume.=
+Deux planches l'une au-dessus de l'autre donnent quatre bâtons.=
+Mon premier outil=
+Une pioche, une hache ou une pelle : fabrique-toi de quoi attaquer le monde.=
+Bâtons + planches ou pavés. La recette s'affiche dans le guide d'Unified Inventory.=
+Un coffre pour mes trésors=
+Huit planches en couronne et te voilà propriétaire d'un coffre tout neuf.=
+Huit planches autour d'une case vide.=
+Chaque chose à sa place=
+Un coffre dans le sac ne range rien du tout. Pose-le quelque part !=
+Le feu sacré=
+Huit pavés et un peu de courage : le fourneau te permettra de cuire, fondre et rêver.=
+Huit pavés autour d'une case vide, puis pose le fourneau.=
+Apprenti de Minerland=
+
+##### Chapitre 2 — Mon premier chez-moi
+Mon premier chez-moi=
+Un toit, une porte, un lit et une lampe : voilà de quoi se sentir chez soi. Et n'oublie pas de protéger ton terrain, la Reine y tient !=
+On ne rentre pas sans frapper=
+Une maison sans porte, c'est un courant d'air avec un toit.=
+Six planches en deux colonnes.=
+Pas de porte, pas de chez-soi=
+Installe ta porte. Bonus : tu peux maintenant claquer la porte avec élégance.=
+Au lit, les marmottes !=
+Après une longue journée de construction, rien ne vaut un bon lit douillet.=
+Laine ou coton + planches. Il suffit d'en fabriquer un.=
+Que la lumière soit=
+Les nuits de Minerland sont belles, mais un peu sombres. Éclaire ta maison.=
+Pose trois torches à trois endroits différents (sol, mur ou plafond).=
+Propriété privée=
+À Minerland, on protège ses constructions. Un bloc de protection et les voisins indélicats resteront à la porte.=
+Le bloc Protector protège une zone autour de lui. Clic droit dessus pour gérer les membres.=
+Un intérieur qui a du chien=
+Une bibliothèque, un panneau ou une barrière : un premier meuble pour personnaliser ton nid.=
+Mon coffre-fort=
+Un coffre à serrure, et voilà ta maison officiellement digne de ce nom.=
+Un coffre + un lingot de fer dans la grille, puis pose-le.=
+Propriétaire terrien=
+
+##### Chapitre 3 — Les joies de l'agriculture
+Les joies de l'agriculture=
+La faim est désactivée à Minerland, mais rien ne vaut un potager bien tenu. Bêche, sème, récolte… et transforme tes récoltes en bons produits.=
+La houe, amie du jardinier=
+Avant de semer, il faut retourner la terre. Et pour ça, rien ne vaut une bonne houe.=
+Deux planches (ou pavés, ou lingots) et deux bâtons.=
+Retourner la terre=
+Un coup de houe sur la terre près de l'eau, et le sol devient fertile.=
+Labourer de la terre avec une houe.=
+Clic gauche avec la houe sur de la terre (avec ou sans herbe), idéalement à moins de 3 blocs d'eau.=
+Petite graine deviendra grande=
+Sème une graine dans ta terre labourée… et sois patient.=
+Semer une graine sur de la terre labourée.=
+Les graines de blé s'obtiennent en arrachant les hautes herbes.=
+Moisson dorée=
+Le blé est mûr, ses épis dorés ondulent sous le vent. C'est l'heure de la moisson !=
+Récolte des plants de blé arrivés à maturité (stade 8).=
+Un potager varié=
+Carottes, tomates, maïs, potirons… Un vrai jardinier ne cultive pas qu'une seule plante.=
+Récolte des légumes mûrs : carottes, pommes de terre, tomates, maïs, concombres, oignons…=
+Le moulin à bras=
+Du blé, un mortier, de l'huile de coude : voilà de la farine.=
+Fabrique d'abord un mortier et pilon (pierre + bâton), puis broie du blé dans la grille.=
+Le pain de la maison=
+Cuis ta farine au fourneau et goûte le fruit de ton travail. Croustillant !=
+Mets la farine dans un fourneau allumé, puis mange un morceau de pain.=
+Chef de la ferme=
+Salade, jus de carotte, popcorn ou salade de pommes de terre : signe ta première recette élaborée.=
+Ces recettes demandent des ustensiles de farming (planche à découper, presse-agrumes, casserole, bol).=
+Main verte=
+
+##### Chapitre 4 — Les trésors de la terre
+Les trésors de la terre=
+Sous tes pieds dorment le fer, l'or, le diamant et la mystérieuse Mese. Prends ta pioche et descends : certaines richesses ne demandent qu'à être découvertes.=
+Gueules noires=
+Le charbon, c'est la torche de demain. Descends un peu et ouvre l'œil.=
+L'âge du fer=
+Le fer se cache dans la pierre, souvent un peu plus bas que le charbon.=
+Il faut au moins une pioche en pierre.=
+Cuivre et étain=
+Mélange-les plus tard et tu obtiendras du bronze. Mais d'abord, il faut les trouver !=
+Une pioche qui en jette=
+Fonds ton fer, forge une pioche en acier : les profondeurs n'ont qu'à bien se tenir.=
+Cuis le minerai de fer au fourneau, puis trois lingots et deux bâtons.=
+Reflets d'argent=
+Plus discret que l'or, l'argent sert aux anneaux et à de jolis outils.=
+La ruée vers l'or=
+Certaines richesses ne demandent qu'à être découvertes. À toi de creuser !=
+L'or se trouve plus en profondeur que le fer.=
+La pierre qui brille=
+La Mese, cristal jaune et mystérieux, alimente bien des machines de Minerland.=
+Pierres précieuses=
+Rubis, saphirs, émeraudes, topazes et améthystes : les joailliers de Minerland en raffolent.=
+Ces gemmes servent aussi à fabriquer les anneaux (chapitre 5).=
+Diamants sur canapé=
+Le diamant : le plus dur, le plus rare, le plus convoité. Il t'attend très bas.=
+Le métal des légendes=
+Tout au fond du monde dort le mithril, le métal des héros. Prépare des torches… beaucoup de torches.=
+Le mithril n'apparaît qu'à très grande profondeur.=
+Maître mineur=
+
+##### Chapitre 5 — Les anneaux du ciel
+Les anneaux du ciel=
+Goops a forgé des anneaux merveilleux : voler, résister au feu, respirer sous l'eau, briller… Un anneau se porte comme une armure ; c'est l'Anneau d'activation, tenu en main, qui le réveille pour un temps limité.=
+Des pierres pour un anneau=
+Rubis, saphirs, émeraudes, topazes, améthystes : les gemmes dormant dans les profondeurs sont la matière première de tous les anneaux. Sois-en sûr, il t'en faudra beaucoup !=
+Cinq gemmes quelconques dans la grille donnent cinq gemmes dépareillées, utilisables pour un Anneau aléatoire.=
+L'anneau qui les commande=
+Avant tout autre anneau, il te faut l'Anneau d'activation : c'est lui qui réveille la magie.=
+Recette : 4 pépites d'or aux coins, et une émeraude, un saphir, un rubis, une améthyste et une topaze.=
+Bague au doigt=
+Céleste, infernal, abyssal, lumineux ou durci : forge ton premier anneau magique.=
+5 gemmes du même type (améthyste @= céleste, rubis @= infernal, saphir @= abyssal, topaze @= lumineux, émeraude @= durci), 2 pépites d'argent et 2 pépites d'or.=
+Comme une armure=
+Un anneau ne fait rien dans ta poche : il se porte, comme une pièce d'armure.=
+Équiper un anneau dans l'inventaire d'armure.=
+Clic droit avec l'anneau en main, ou place-le dans l'emplacement d'anneau de l'onglet Armure.=
+Que la magie opère=
+Anneau au doigt, Anneau d'activation en main : un clic, et la magie s'éveille pour un temps.=
+Activer un anneau porté avec l'Anneau d'activation.=
+Tiens l'Anneau d'activation et fais un clic gauche. Clic droit pour désactiver. Accroupi + clic gauche : mode automatique.=
+Un éclat du ciel=
+L'Anneau céleste, serti d'améthystes, renferme le secret du vol.=
+Cinq améthystes, deux pépites d'argent et deux pépites d'or.=
+Les ailes du ciel=
+Porte l'Anneau céleste, active-le… et envole-toi ! Attention, le pouvoir ne dure qu'un temps.=
+Voler grâce à l'Anneau céleste activé.=
+Une fois l'anneau activé, appuie sur la touche de vol (K par défaut). Repose-toi avant la fin du compte à rebours : il retire le vol à la désactivation !=
+Un pouvoir de plus=
+Résister au feu, respirer sous l'eau, briller dans la nuit, frapper comme le fer : un second anneau, un second pouvoir. Les vrais maîtres des anneaux en portent plusieurs.=
+Activer un anneau qui n'est pas l'Anneau céleste (infernal, abyssal, lumineux ou durci).=
+Fabrique un anneau d'un autre type puis active-le avec l'Anneau d'activation.=
+Seigneur des anneaux=
+
+##### Chapitre 6 — La ferme aux animaux
+La ferme aux animaux=
+Vaches, moutons, poules et chevaux n'attendent que ton affection. Apprends à les attirer, à les soigner et à profiter de leurs bienfaits — avec amour, toujours.=
+
+##### Chapitre 7 — Les petits plats dans les grands
+Les petits plats dans les grands=
+Ici, on ne cuisine pas pour survivre, mais pour le plaisir ! Barbecue, conserves, jus de fruits et grands crus : à toi les recettes de Minerland.=
+
+##### Chapitre 8 — L'art de la décoration
+L'art de la décoration=
+Une maison sans meubles, c'est une grotte avec une porte. Scies, tables, lampes et coussins : fais de ton foyer le plus douillet du royaume.=
+
+##### Chapitre 9 — Les affaires sont les affaires
+Les affaires sont les affaires=
+Le Minegeld fait tourner le royaume. Ouvre boutique, propose tes marchandises et découvre les rouages de l'économie de Minerland.=
+
+##### Chapitre 10 — Sur les chapeaux de roues !
+Sur les chapeaux de roues !=
+À bicyclette, en 4L ou en DeLorean : la route est à toi ! Du vélo au carburant vert, apprends à rouler avec style.=
+
+##### Chapitre 11 — Le monde ferroviaire
+Le monde ferroviaire=
+Les rails font la fierté de Minerland. Avant de bâtir une ligne (avec l'accord de l'administration et les conseils du Grand Maître des trains), apprends à fabriquer voies, signaux et matériel roulant.=
+
+##### Chapitre 12 — Métros et tramways
+Métros et tramways=
+Le transport urbain a ses codes : quais, signalétique, tramways qui serpentent entre les maisons. Dessine les stations de demain.=
+
+##### Chapitre 13 — Les fous volants
+Les fous volants=
+Minerland est une terre d'aviateurs ! Deltaplane, Super Cub, PA-28, Ju 52 ou hydravion : fabrique ton appareil… et demande à Luffy de te faire passer ton brevet.=
+
+##### Chapitre 14 — Larguez les amarres !
+Larguez les amarres !=
+Mers, lacs et rivières n'attendent que ta proue. Bateau à moteur, chalutier ou sous-marin Nautilus : hissez haut !=
+
+##### Chapitre 15 — Prenons de la hauteur !
+Prenons de la hauteur !=
+Télésièges, ascenseurs réalistes et cabines de téléportation : grimper n'a jamais été aussi confortable. Les tutoriels de l'Académie t'attendent.=
+
+##### Chapitre 16 — L'électricité pour les nuls
+L'électricité pour les nuls=
+Un générateur, quelques câbles et hop : la lumière fut ! Premiers pas dans Technic, en toute sécurité.=
+
+##### Chapitre 17 — La révolution industrielle
+La révolution industrielle=
+Broyer, fondre, allier, stocker : tes minerais valent bien plus une fois traités. Bienvenue dans l'industrie lourde de Minerland.=
+
+##### Chapitre 18 — L'ère de Techage
+L'ère de Techage=
+Techage raconte l'histoire de la technique, âge après âge : du charbon de bois aux énergies du futur. Un parcours à part, avec ses propres machines.=
+
+##### Chapitre 19 — Les machines intelligentes
+Les machines intelligentes=
+Circuits, câbles de données, tubes pneumatiques et foreuses géantes : quand tes machines se mettent à penser (presque) toutes seules.=
+
+##### Chapitre 20 — Les portes de l'Enfer
+Les portes de l'Enfer=
+Derrière un cadre d'obsidienne s'ouvre un monde de feu. Allume le portail, récolte ses étranges matériaux et forge des objets venus d'ailleurs.=
+
+##### Chapitre 21 — Au plus profond de Minerland
+Au plus profond de Minerland=
+Cristaux luminescents, géodes et champignons géants : les profondeurs cachent des merveilles… et quelques trésors oubliés.=
+
+##### Chapitre 22 — Dragons et autres bestioles
+Dragons et autres bestioles=
+Des dragons dorment dans les cavernes ! Découvre leurs secrets, leurs écailles et les objets qui permettent de vivre à leurs côtés.=
+
+##### Chapitre 23 — Les mystères du passé
+Les mystères du passé=
+Fossiles, ADN et laboratoires : la science de Minerland ressuscite les créatures d'antan. À toi de jouer les paléontologues.=
+
+##### Chapitre 24 — Les grands bâtisseurs
+Les grands bâtisseurs=
+Échafaudages, façades, arches et portes ouvragées : les grands chantiers demandent de grands outils. Prépare-toi à bâtir des merveilles.=
+
+##### Chapitre 25 — Monsieur ou Madame le Maire
+Monsieur ou Madame le Maire=
+Fonder une ville, c'est un rêve et beaucoup de travail. Scelle ta charte, trace les rues, installe la signalisation et les commerces. (La Reine valide toujours les grands projets !)=

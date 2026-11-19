@@ -1,6 +1,7 @@
 -- Compatibilité : détermine, une fois tous les mods chargés, quelles quêtes sont jouables sur ce serveur,
 -- résout les objets cibles (alias, groupes) et filtre les récompenses inexistantes.
 local Q = minerland_quests
+local N = Q.i18n.N
 local U = Q.util
 local C = {}
 Q.compat = C
@@ -128,11 +129,12 @@ local function resolve_targets(q)
 	return targets, missing
 end
 
+-- Vérifie qu'une quête est jouable ici ; sinon la marque indisponible avec une raison traduisible.
 local function check_quest(q)
 	-- 1) mods requis
 	for _, m in ipairs(q.mods) do
 		if not C.mod_present(m) then
-			return ("Le mod « %s » n'est pas activé sur ce serveur."):format(m)
+			return Q.mark_unavailable(q, N("Le mod « @1 » n'est pas activé sur ce serveur."), m)
 		end
 	end
 	-- 2) objets cibles
@@ -140,16 +142,15 @@ local function check_quest(q)
 	q.targets = targets
 	q.targets_missing = missing
 	if q.trigger.type ~= "custom" and next(targets) == nil then
-		return "Objet introuvable sur ce serveur : " .. table.concat(missing, ", ")
+		return Q.mark_unavailable(q, N("Objet introuvable sur ce serveur : @1"), table.concat(missing, ", "))
 	end
 	-- 3) déclencheur custom : l'intégration doit être active
 	if q.trigger.type == "custom" then
 		local prefix = q.trigger.key:match("^([^:]+):")
 		if prefix and not C.integrations[prefix] then
-			return ("L'intégration « %s » n'est pas active sur ce serveur."):format(prefix)
+			return Q.mark_unavailable(q, N("L'intégration « @1 » n'est pas active sur ce serveur."), prefix)
 		end
 	end
-	return nil
 end
 
 local function check_reward(q)
@@ -197,7 +198,7 @@ function C.finalize()
 	C.reward_problems = {}
 	for _, q in ipairs(Q.quest_list) do
 		if not q.unavailable then
-			q.unavailable = check_quest(q)
+			check_quest(q)
 		else
 			q.targets = q.targets or {}
 		end

@@ -1,7 +1,9 @@
 -- Notifications : bandeau HUD discret, message de chat et son, à la réussite d'une quête.
+-- Textes traduits pour le joueur (core/i18n.lua).
 local Q = minerland_quests
 local U = Q.util
 local T = Q.theme
+local tr = Q.i18n.tr
 local N = {}
 Q.notify = N
 
@@ -54,48 +56,68 @@ function N.toast(name, title, subtitle, icon)
 	end)
 end
 
+local function tile_name(tile)
+	if type(tile) == "table" then tile = tile.name or tile.image end
+	if type(tile) ~= "string" or tile == "" then return nil end
+	return (tile:gsub("%^", "&"))   -- « ^ » doit devenir « & » à l'intérieur de [inventorycube
+end
+
+-- Image d'un objet pour le HUD : son image d'inventaire, sinon un cube dessiné à partir des faces du nœud.
 local function inventory_image(item)
 	local def = core.registered_items[item]
 	if not def then return nil end
 	local img = def.inventory_image
 	if img and img ~= "" then return img end
+	local tiles = def.tiles
+	if type(tiles) == "table" and #tiles > 0 then
+		local top = tile_name(tiles[1])
+		local side = tile_name(tiles[3] or tiles[#tiles]) or top
+		local front = tile_name(tiles[6] or tiles[3] or tiles[#tiles]) or side
+		if top and side then return ("[inventorycube{%s{%s{%s"):format(top, front, side) end
+	end
 	return nil
 end
 
 function N.quest_completed(name, q, unlocked, chapter_done)
 	local icon = q.icon_kind == "item" and inventory_image(q.icon_value) or "mlq_badge_done.png"
-	N.toast(name, "Quête accomplie : " .. q.title,
-		chapter_done and ("Chapitre terminé : " .. Q.chapters[q.chapter].title .. " !")
-		or (#unlocked > 0 and ("Nouvelle quête : " .. unlocked[1].title) or "Ouvre le Grand Livre pour la suite."),
-		icon)
+	local title = tr(name, q.title)
+	local subtitle
+	if chapter_done then
+		subtitle = tr(name, "Chapitre terminé : @1 !", tr(name, Q.chapters[q.chapter].title))
+	elseif #unlocked > 0 then
+		subtitle = tr(name, "Nouvelle quête : @1", tr(name, unlocked[1].title))
+	else
+		subtitle = tr(name, "Ouvre le Grand Livre pour la suite.")
+	end
+	N.toast(name, tr(name, "Quête accomplie : @1", title), subtitle, icon)
 	sound(name)
 	if U.setting_bool("notify_chat", true) then
-		local msg = T.colored(T.color.gold, "[Grand Livre] ") .. "Quête accomplie : "
-			.. T.colored(T.color.gold, q.title)
+		local msg = T.colored(T.color.gold, tr(name, "[Grand Livre]")) .. " "
+			.. tr(name, "Quête accomplie : @1", T.colored(T.color.gold, title))
 		if #unlocked > 0 then
 			local names = {}
-			for _, u in ipairs(unlocked) do names[#names + 1] = u.title end
-			msg = msg .. " — débloquée(s) : " .. table.concat(names, ", ")
+			for _, u in ipairs(unlocked) do names[#names + 1] = tr(name, u.title) end
+			msg = msg .. " — " .. tr(name, "débloquée(s) : @1", table.concat(names, ", "))
 		end
 		core.chat_send_player(name, msg)
 		if chapter_done then
-			core.chat_send_player(name, T.colored(T.color.green, "[Grand Livre] Chapitre terminé : "
-				.. Q.chapters[q.chapter].title .. " !"))
+			core.chat_send_player(name, T.colored(T.color.green, tr(name, "[Grand Livre]") .. " "
+				.. tr(name, "Chapitre terminé : @1 !", tr(name, Q.chapters[q.chapter].title))))
 		end
 	end
 end
 
 function N.inventory_full(name, qid)
 	local q = Q.quests[qid]
-	core.chat_send_player(name, T.colored(T.color.brick, "[Grand Livre] ")
-		.. "Inventaire plein : la récompense de « " .. (q and q.title or qid)
-		.. " » est conservée et sera livrée dès qu'il y aura de la place.")
+	core.chat_send_player(name, T.colored(T.color.brick, tr(name, "[Grand Livre]")) .. " "
+		.. tr(name, "Inventaire plein : la récompense de « @1 » est conservée et sera livrée dès qu'il y aura de la place.",
+			q and tr(name, q.title) or qid))
 end
 
 function N.delivered(name, count)
-	core.chat_send_player(name, T.colored(T.color.gold, "[Grand Livre] ")
-		.. (count > 1 and (count .. " récompenses livrées dans ton inventaire.")
-		or "Récompense livrée dans ton inventaire."))
+	core.chat_send_player(name, T.colored(T.color.gold, tr(name, "[Grand Livre]")) .. " "
+		.. (count > 1 and tr(name, "@1 récompenses livrées dans ton inventaire.", count)
+		or tr(name, "Récompense livrée dans ton inventaire.")))
 end
 
 core.register_on_leaveplayer(function(player)

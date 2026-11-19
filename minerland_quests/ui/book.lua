@@ -17,13 +17,14 @@ function B.formspec(name)
 		"no_prepend[]",
 		"bgcolor[#00000088;true]",
 		("background9[0,0;%s,%s;mlq_book_bg.png;false;24]"):format(B.W, B.H),
+		"image[0.5,0.02;0.34,1.75;mlq_ribbon.png]",   -- signet qui descend de la reliure, dans la marge gauche
 		"style_type[textarea;textcolor=" .. T.color.ink .. "]",
 		"listcolors[#00000000;#00000000]",
 		V.build(name, { x = 0.9, y = 0.65, w = B.W - 1.8, h = B.H - 1.3 }, { book = true }),
 		-- sans bordure de bouton standard (drawborder=false), état enfoncé dédié
 		("image_button_exit[%s,0.15;0.5,0.5;mlq_close.png;mlq_close;;false;false;mlq_close_press.png]")
 			:format(T.n(B.W - 0.7)),
-		T.tooltip("mlq_close", "Fermer le livre"),
+		T.tooltip("mlq_close", Q.i18n.tr(name, "Fermer le livre")),
 	})
 end
 
