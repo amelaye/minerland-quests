@@ -92,9 +92,10 @@ function S.get(name)
 	if rec then return rec end
 	local raw = S.backend:get_string("p:" .. name)
 	if raw ~= "" then
-		local parsed = core.parse_json(raw)
+		local parsed, perr = core.parse_json(raw, nil, true)   -- erreur rendue au mod, pas journalisée par le moteur
 		if parsed == nil then
-			U.log("error", "données illisibles pour " .. name .. " : sauvegardées sous p_corrupt:" .. name)
+			local why = tostring(perr):gsub("%s+", " ")   -- message du moteur sur plusieurs lignes
+			U.log("error", ("données illisibles pour %s (%s) : sauvegardées sous p_corrupt:%s"):format(name, why, name))
 			S.backend:set_string("p_corrupt:" .. name, raw)
 		end
 		rec = S.migrate(parsed, name)
@@ -176,7 +177,10 @@ local placed_set, placed_fifo, placed_head, placed_dirty = {}, {}, 1, false
 function S.placed_load()
 	placed_set, placed_fifo, placed_head, placed_dirty = {}, {}, 1, false
 	local raw = S.backend:get_string("placed")
-	local list = raw ~= "" and core.parse_json(raw) or nil
+	local list = raw ~= "" and core.parse_json(raw, nil, true) or nil
+	if raw ~= "" and type(list) ~= "table" then
+		U.log("warning", "mémoire des blocs posés illisible : elle repart de zéro")
+	end
 	if type(list) == "table" then
 		for _, k in ipairs(list) do
 			if type(k) == "string" and not placed_set[k] then

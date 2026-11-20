@@ -11,7 +11,7 @@ Q.register_quest({
 	hint = "Verse de l'eau sur de la lave immobile, puis creuse l'obsidienne avec une pioche en acier ou mieux.",
 	trigger = { type = "dig", items = { "default:obsidian" }, count = 4 },
 	requires = { "ch04.steel_pick" },
-	reward = { items = { "bucket:bucket_empty 2" } },
+	reward = { items = { "bucket:bucket_empty 1" } },
 })
 Q.register_quest({
 	id = "ch20.mese_fragments", title = "Éclats de Mese", difficulty = 2, icon = "default:mese_crystal_fragment",

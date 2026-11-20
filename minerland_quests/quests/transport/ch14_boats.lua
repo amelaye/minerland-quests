@@ -49,7 +49,7 @@ Q.register_quest({
 	hint = "Ses moteurs demandent un diamant et un cristal de Mese.",
 	trigger = { type = "craft", items = { "nautilus:boat_wooden", "nautilus:boat" } },
 	requires = { "ch14.hull" }, mods = { "nautilus" },
-	reward = { items = { "default:glass 6" } },
+	reward = { items = { "default:gold_ingot 2" } },
 })
 Q.register_quest({
 	id = "ch14.board_boat", title = "Capitaine à bord", difficulty = 3, icon = "fishing_boat:boat", final = true,

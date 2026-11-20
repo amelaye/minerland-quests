@@ -67,5 +67,8 @@ Le mock (`tests/mock_core.lua`) fournit : registre d'objets, joueurs et inventai
 4. 2e démarrage : vérifie que la progression et la file de livraison ont survécu.
 5. Le script affiche le résultat de chaque vérification (`[mlq_itest] OK/ÉCHEC …`) et garde les logs dans
    `tests/_tmp/itest/*.log`. Copier les extraits dans `docs/TEST_REPORT.md`.
+6. **Avec les mods du serveur** : `python3 tests/integration/build_allmods.py` prépare `tests/_tmp/itest_allmods/`
+   (sources auditées, dépendances satisfaites), à passer en 3e argument de `run.sh`. `mlq_itest` exige alors que chaque
+   intégration soit branchée sur sa vraie API et qu'aucune quête ne soit indisponible alors que ses mods sont présents.
 Ce test ne simule pas un client : les actions de jeu (creuser, poser) restent couvertes par les tests simulés,
 et par un test manuel en jeu sur une instance de test.

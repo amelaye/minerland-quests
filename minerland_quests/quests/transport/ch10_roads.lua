@@ -45,7 +45,7 @@ Q.register_quest({
 	hint = "Lingots et blocs d'acier, plus un bloc de Mese.",
 	trigger = { type = "craft", items = { "automobiles_lib:engine" } },
 	requires = { "ch10.city_car" }, mods = { "automobiles_lib" },
-	reward = { items = { "default:steelblock 1" } },
+	reward = { items = { "default:steel_ingot 6" } },
 })
 Q.register_quest({
 	id = "ch10.first_car", title = "La doyenne des routes", difficulty = 3, icon = "automobiles_roadster:roadster",
@@ -62,7 +62,7 @@ Q.register_quest({
 	hint = "Seul le propriétaire conduit. Pour faire le plein, frappe la voiture avec le carburant en main.",
 	trigger = { type = "custom", key = "rides:car" },
 	requires = { "ch10.first_car" },
-	reward = { items = { "default:glass 4" } },
+	reward = { items = { "biofuel:bottle_fuel 2" } },
 })
 Q.register_quest({
 	id = "ch10.refinery", title = "L'alambic vert", difficulty = 2, icon = "biofuel:refinery",

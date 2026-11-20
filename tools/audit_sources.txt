@@ -103,3 +103,12 @@ farebox https://github.com/gpcf/farebox
 trainblocks https://github.com/Montandalar/trainblocks
 tfl_s7_stock_modpack https://codeberg.org/advtrains_supplemental/tfl_s7_stock_modpack
 nether_hybriddog https://codeberg.org/HybridDog/nether-pack
+# Bibliothèques installées sur le serveur (docs/audit/server_mods.txt), dépendances obligatoires de mods audités :
+# nécessaires au test réel avec tous les mods. Dépôts relevés sur ContentDB le 20/11/2026.
+xcompat https://github.com/mt-mods/xcompat
+fakelib https://github.com/OgelGames/fakelib
+mobkit https://github.com/mt-mods/mobkit
+geodes_lib https://gitlab.com/alerikaisattera/geodes_lib
+unifieddyes https://github.com/mt-mods/unifieddyes
+adaptation_modpack https://github.com/sfence/adaptation_modpack
+ts_workshop https://github.com/minetest-mods/ts_workshop

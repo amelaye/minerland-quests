@@ -12,7 +12,7 @@ Ce document justifie les récompenses des 193 quêtes (état du 20/11/2026). Le 
   décoration, carburant pour les véhicules, cuivre et acier pour les machines, torches pour l'exploration.
 - **Jamais la machine qu'on vient de fabriquer** : on donne les composants ou consommables du palier suivant.
 - **Pas d'incitation à fabriquer en série** : toute quête de pose de machine se valide avec une seule machine.
-- **Pas de minerais précieux en masse**, pas d'outil en diamant ; la valeur suit la difficulté.
+- **Pas de minerais précieux en masse**, pas d'outil en diamant ; la valeur suit la difficulté (contrôlé, §2).
 - **Monnaie modérée** : le Minegeld n'apparaît qu'au chapitre du commerce, à la gare (guichet) et à la mairie
   (distributeur), pour ne pas concurrencer le revenu de base du serveur.
 - **Titres honorifiques** : chaque quête finale de chapitre donne un titre propre au mod. Ceux des chapitres 6 à 25
@@ -23,27 +23,40 @@ Ce document justifie les récompenses des 193 quêtes (état du 20/11/2026). Le 
 
 ## 2. Barème indicatif par difficulté
 
-| Difficulté | Nombre de quêtes | Valeur visée | Exemples du livre |
-|---|---|---|---|
-| 1 | 46 | petite | torches, planches, 2 à 4 lingots courants, flacons |
-| 2 | 81 | modérée | 3 à 6 lingots d'acier ou de cuivre, bloc de nourriture, fragments de Mese |
-| 3 | 47 | notable | lingot d'or, carburant, composants du chapitre |
-| 4 | 17 | forte | bloc d'acier, bidon de carburant, 2 lingots d'or |
-| 5 | 2 | exceptionnelle | 1 diamant + titre (mithril au chapitre 4, œuf de dragon au chapitre 22) |
+| Difficulté | Nombre de quêtes | Valeur visée | Médiane indicative | Exemples du livre |
+|---|---|---|---|---|
+| 1 | 46 | petite | ~1,2 Mg | torches, planches, 2 à 3 lingots courants, flacons |
+| 2 | 81 | modérée | ~2,4 Mg | lingots d'acier ou de cuivre, nourriture, fragments de Mese |
+| 3 | 47 | notable | ~4,5 Mg | lingot d'or, carburant, composants du chapitre |
+| 4 | 17 | forte | ~6 Mg | bloc d'acier, bidon de carburant, 2 lingots d'or |
+| 5 | 2 | exceptionnelle | ~10 Mg | 1 diamant + titre (mithril au chapitre 4, œuf de dragon au chapitre 22) |
+
+Les valeurs sont **indicatives**, en Minegeld, estimées d'après le coût de fabrication (lingot d'acier = 1,5 Mg ; table
+`VALUES` de `tools/validate_quests.py`). Elles servent à comparer les récompenses entre elles, pas à fixer des prix.
+
+**Règle des deux niveaux**, contrôlée par `make validate` : une quête ne rapporte jamais plus que la médiane de la
+difficulté deux crans au-dessus, ni moins que celle de deux crans en dessous. Seule exception : `ch22.dragon_hoard`
+(§4). Les quêtes payées en Minegeld (commerce, guichet, distributeur) sont comparées à part, car leur valeur en objets
+dépend des prix du serveur. `python3 tools/validate_quests.py --economy` affiche le bilan complet : le livre distribue
+au total environ 590 Mg en objets et 130 Minegeld.
+
+Ce barème est plus modeste que le barème indicatif de la skill `reward-balancing` (environ moitié aux difficultés 2
+et 3), et il le reste : sur Minerland, on s'enrichit en minant et les prix se fixent entre joueurs (§6).
 
 ## 3. Plafonds sur l'ensemble du livre (contrôlés par `tools/validate_quests.py`)
 
 | Objet | Plafond | Distribué |
 |---|---|---|
 | `default:diamond` | 4 | 3 (chapitres 4, 5 et 22) |
-| `default:mese_crystal` | 6 | 2 (chapitre 4) — plus 25 fragments, soit moins de 3 cristaux |
+| Mese en équivalent cristal (cristal ou lampe = 1, éclat = 1/9) | 6 | 5,8 (2 cristaux, 1 lampe, 25 éclats) |
 | `default:mese`, `default:diamondblock` | 0 | 0 |
 | `default:goldblock` | 1 | 0 |
 | `moreores:mithril_*` | 2 | 0 |
 | Minegeld (valeur totale) | 600 | 130 |
 
-Autres totaux notables : 91 lingots d'acier et 2 blocs d'acier, 43 lingots d'or (1 à 2 par quête finale), 26 lingots
-de cuivre, 8 d'étain, 4 de bronze, 90 torches.
+Par quête : au plus 1 diamant, 2 cristaux de Mese et 1 mithril ; aucun outil en diamant ou en mithril avant la
+difficulté 4 (contrôlé). Autres totaux notables : 95 lingots d'acier et 1 bloc d'acier, 48 lingots d'or, 26 lingots de
+cuivre, 8 d'étain, 6 de bronze, 90 torches.
 
 ## 4. Récompenses de difficulté 4 et 5 (justification)
 
@@ -56,10 +69,10 @@ de cuivre, 8 d'étain, 4 de bronze, 90 torches.
 | `ch11.steam_engine` | 2 lingots d'or + « Âme du rail » | locomotive très coûteuse, objet confié à un conducteur agréé |
 | `ch13.first_plane` | 1 bidon de carburant | de quoi faire le premier plein de l'avion |
 | `ch14.motorboat` | 1 bidon de carburant | idem pour le bateau |
-| `ch14.nautilus` | 6 blocs de verre | matériau du hublot, sans valeur rare |
+| `ch14.nautilus` | 2 lingots d'or | ses moteurs demandent un diamant et un cristal de Mese ; au niveau des autres difficultés 4 |
 | `ch17.mv_machine`, `ch17.workshop` | 2 lingots d'or (+ titre) | moyenne tension et atelier : inox, diamant, profondeur |
 | `ch18.ta3_oil`, `ch18.ta3_robot`, `ch18.ta4_solar` | 1 à 2 lingots d'or, 4 d'acier (+ titre) | paliers avancés de Techage |
-| `ch22.dragon_hoard` | 12 torches | le magot du dragon est déjà une récompense en soi |
+| `ch22.dragon_hoard` | 12 torches | exception à la règle des deux niveaux : le bloc d'or ou d'acier creusé dans le magot est la vraie récompense |
 | `ch22.wyvern_ride` | 1 lingot d'or | wyverne rare et dangereuse |
 | `ch22.dragon_scales` | 2 lingots d'or | affronter un dragon est dangereux ; or courant, rien de rare |
 | `ch22.dragon_egg` (5) | 1 diamant + « Fléau des dragons » | œuf d'un dragon sauvage adulte, une chance sur six ; un seul diamant |
@@ -74,3 +87,23 @@ Ticket gagnant, Ailes de Minerland, Pied marin, Tête dans les nuages, Fée éle
 Visionnaire, Esprit logique, Cœur de braise, Cœur de cristal, Souffle de dragon, Mémoire du Jurassique,
 Pierre angulaire, Maire de Minerland, Fléau des dragons (chapitre 22, quête de l'œuf ; « Souffle de dragon » reste la
 récompense de la forge).
+
+## 6. Contrôle d'équilibrage du 20/11/2026
+
+La règle des deux niveaux et le plafond de Mese en équivalent cristal ont fait corriger huit récompenses :
+
+| Quête | Difficulté | Avant | Après | Raison |
+|---|---|---|---|---|
+| `ch11.wheelwright` | 1 | 4 lingots d'acier | 2 lingots d'acier | plus que l'habituel de la difficulté 3 |
+| `ch12.station_hall` | 2 | 2 lampes de Mese | 1 lampe de Mese | plus que l'habituel de la difficulté 4 ; Mese à 6,8 cristaux en équivalent |
+| `ch20.obsidian` | 2 | 2 seaux vides | 1 seau vide | plus que l'habituel de la difficulté 4 |
+| `ch10.engine` | 3 | 1 bloc d'acier | 6 lingots d'acier | plus que les quêtes de difficulté 5 |
+| `ch10.road_trip` | 3 | 4 blocs de verre | 2 bouteilles de carburant | moins qu'une quête de difficulté 1 ; de quoi refaire le plein |
+| `ch21.amethyst_lantern` | 3 | 4 blocs de verre | 2 lingots de bronze | moins qu'une quête de difficulté 1 ; le bronze entre dans la recette |
+| `ch23.dino_egg` | 3 | 10 blés | 10 blés et 1 lingot d'or | moins qu'une quête de difficulté 1 |
+| `ch14.nautilus` | 4 | 6 blocs de verre | 2 lingots d'or | moins qu'une quête de difficulté 2 |
+
+**Monnaie** : il n'y a pas de cours officiel du Minegeld. Réponse de l'administratrice : « c'est le minage qui est
+récompensé, le reste c'est le commerce ». Les prix se fixent entre joueurs ; les récompenses en monnaie (130 Mg en tout)
+restent donc limitées au chapitre du commerce, au guichet de gare et au distributeur de la mairie, et ne sont pas
+comparées aux récompenses en objets.

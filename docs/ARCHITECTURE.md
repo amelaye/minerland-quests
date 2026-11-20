@@ -293,6 +293,9 @@ d'ADN de l'analyseur paleotest, apprivoisement de la wyverne, dépôt au distrib
 | 2026-11-19 | Dragons : cavernes (tas d'os, pierre calcinée, magot), échafaudage écarté | réglage `cavern_spawning` du serveur ; choix de l'administratrice |
 | 2026-11-19 | Protection de commune par `/protect` (areas) | auto-protection active sur Minerland |
 | 2026-11-20 | Abattre un dragon et ramasser son butin valide les quêtes d'écailles et d'œuf (ch22), sans prérequis | choix de l'administratrice : ramasser à la main valide, quelle que soit l'origine de l'objet (tuyau, mort d'un joueur…), sans traçage ; sans prérequis pour qu'un œuf, rare, ramassé tôt ne soit pas perdu |
+| 2026-11-20 | Économie contrôlée par une valeur indicative des récompenses (règle des deux niveaux) et un plafond de Mese en équivalent cristal | compare les récompenses entre elles sans connaître les prix du serveur ; une lampe de Mese contient un cristal |
+| 2026-11-20 | Son de réussite joué seulement si `sounds/mlq_complete.ogg` est présent | aucun son fourni ; rien n'est envoyé aux clients pour un son absent |
+| 2026-11-20 | Test réel avec les mods du serveur : sources auditées et 7 bibliothèques, chargées dans Luanti 5.15.1 | seule façon de vérifier sans le serveur de production que les intégrations se branchent sur les vraies API |
 
 ## 14. Limites connues
 
@@ -300,4 +303,20 @@ d'ADN de l'analyseur paleotest, apprivoisement de la wyverne, dépôt au distrib
   `set_node` sans callback, ouverture d'un coffre au trésor) : non détectables, remplacées par une étape voisine
   (pose, fabrication, consommation) ou écartées. Détail par mod : `docs/MOD_AUDIT.md`.
 - Les versions des mods installés peuvent différer des sources auditées : tout identifiant est revérifié au démarrage.
-- Les tests simulés (`make test`) ne remplacent pas un test dans un vrai moteur Luanti (`tests/integration/`).
+  Une quête dont un objet manque est marquée indisponible et ne bloque pas les suivantes ; un objet de récompense
+  absent est retiré de la récompense, avec un avertissement dans le journal.
+- Tests : les tests simulés (`make test`) ne remplacent pas le moteur. Les essais dans le vrai Luanti 5.15.1 se font
+  sans client : les actions réelles d'un joueur, le rendu à l'écran et plusieurs joueurs connectés restent à vérifier
+  en jeu (`docs/TEST_REPORT.md` §6). Seule la version 5.15.1 a été testée.
+- Ramassage du butin des dragons : tout ramassage à la main par un vrai joueur compte, quelle que soit l'origine de
+  l'objet au sol (choix de l'administratrice) ; seuls un objet jeté par un joueur, un faux joueur et un inventaire
+  plein sont écartés.
+- Mémoire des blocs posés bornée (`placed_cap`, 20 000 positions par défaut) : au-delà, les plus anciennes sont
+  oubliées, et un bloc posé il y a très longtemps puis recreusé compterait comme naturel.
+- Récompenses : le journal est écrit avant la livraison. Un arrêt brutal à cet instant précis peut faire perdre une
+  récompense, jamais la doubler.
+- Illustrations : couverture en français et en anglais, une illustration et un emblème par partie ; les 25 chapitres
+  reprennent l'illustration de leur partie et l'icône d'un objet réel, sans illustration propre.
+- Titres honorifiques des chapitres 1 à 5 au masculin (ceux des chapitres 6 à 25 sont épicènes).
+- 193 quêtes, au-delà de la cible indicative de 80 à 120 du cahier des charges.
+- Aucun son fourni : le son de réussite est joué seulement si `sounds/mlq_complete.ogg` est ajouté au mod.

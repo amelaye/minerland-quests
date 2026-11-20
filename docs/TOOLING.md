@@ -56,7 +56,7 @@ L'agent principal coordonne : il découpe le travail, relit les résultats et ga
 | `audit_mods.py` | Audit statique **en lecture seule** d'un dossier de mods : nom réel (`mod.conf`), dépendances, objets littéraux avec `fichier:ligne`, recettes, alias, recherche de callbacks, index JSON. Utilisable sur le serveur : `python3 tools/audit_mods.py /home/minetest/luanti5_15_1/mods --summary`. |
 | `check_ids.py` | Vérifie une liste d'identifiants contre l'index et les listes vérifiées (`docs/audit/verified_*.txt`). |
 | `dump_quests.lua` | Charge le vrai mod dans le mock et exporte le catalogue en JSON (base de `validate_quests.py` et `gen_docs.py`). |
-| `validate_quests.py` | Voir `make validate`. Code 1 en cas d'erreur ; `--strict` rend les avertissements bloquants. |
+| `validate_quests.py` | Voir `make validate`. Code 1 en cas d'erreur ; `--strict` rend les avertissements bloquants ; `--economy` affiche le bilan économique (médianes par difficulté, valeur par chapitre, Mese en équivalent cristal). Économie contrôlée : plafonds, limites par quête, outils en diamant, règle des deux niveaux (table `VALUES`), justification des difficultés 4 et 5 dans `docs/REWARDS.md`. |
 | `check_textures.py`, `pngkit.py` | Contrôle des PNG ; lecture et écriture PNG en Python pur (Pillow n'est pas requis). |
 | `gen_textures.py` | Textures originales (CC-BY-SA-4.0, `minerland_quests/LICENSE_TEXTURES.txt`) : petite bibliothèque de dessin (formes, polygones, bruit, tramage ordonné, sprites au pixel, police 5×7, capitales à empattements, dorure en relief, arbres feuillus, héraldique) et une fonction par texture. Règles 9-slice : détails dans les coins, bords et centre lisses (Luanti étire bords et centre). |
 | `i18n.py` | Traductions : extraction des appels `S("…")`, `N("…")`, `tr(joueur, "…")` du code Lua (concaténations de littéraux comprises) et des textes de quêtes (via `dump_quests.lua`) ; `locale/template.txt` régénéré ; fusion dans chaque `minerland_quests.<code>.tr` (traductions conservées, nouvelles entrées vides, entrées obsolètes en commentaire) ; `--check` (code 1 si incomplet) ; `--add CODE` pour une nouvelle langue. |
@@ -84,15 +84,27 @@ Les deux familles sont **distinctes** : les tests simulés ne remplacent jamais 
 | `test_storage.lua` | persistance, migration, alias de quêtes, format plus récent (lecture seule), données illisibles, ajout et retrait de quêtes, mod tiers absent puis revenu, mémoire des blocs posés |
 | `test_ui.lua` | ouverture (commande, objet, Unified Inventory, mode lite), navigation, champs de formulaire forgés, prérequis et coches, récompense en attente, quête indisponible, grand arbre, échappement, rafraîchissement, notifications |
 | `test_admin.lua` | commandes joueur, privilège dédié, commandes de test désactivées en production, journal d'administration, aucun privilège accordé |
-| `test_journey.lua` | parcours de bout en bout (arrivée → livre → chapitre 1 → titre → redémarrage) puis les 193 quêtes jouées |
+| `test_journey.lua` | parcours de bout en bout (arrivée → livre → chapitre 1 → titre → redémarrage) puis les 193 quêtes jouées ; taille de la sauvegarde d'un joueur ayant tout terminé (17,5 Ko, borne 32 Kio) |
+| `test_multiplayer.lua` | plusieurs joueurs : compteurs et récompenses séparés, validation simultanée, rafraîchissement et notification chez le seul joueur concerné, navigation indépendante, déconnexion avec récompense en attente, commandes d'administration ciblées, 40 joueurs actifs, arrêt propre et arrêt brutal à plusieurs |
 | `test_i18n.lua`, `test_integration_api.lua`, `test_phase5.lua` | traductions, API des intégrations et chaque adaptateur avec ses faux positifs |
 
 - **Intégration réelle** (`tests/integration/`) : `run.sh <binaire_serveur> <minetest_game> [mods]` démarre deux fois un
   vrai serveur Luanti sur un monde jetable dans `tests/_tmp/itest/` (sans client, aucun monde existant touché). Le mod
   `mlq_itest` vérifie : chargement, boutons et pages Unified Inventory, traductions anglaises chargées par le moteur,
   rendu des 193 fiches en français et en anglais, chaîne de quêtes liées, file de récompenses, puis la persistance après
-  redémarrage. Toute erreur journalisée par le mod ou le serveur fait échouer le script. **Hors de portée sans client** :
-  actions réelles d'un joueur (creuser, fabriquer), rendu graphique, interaction avec les vrais mods tiers.
+  redémarrage, pour plusieurs joueurs. Il vérifie aussi qu'une sauvegarde d'un format plus récent n'est jamais écrasée et
+  qu'une sauvegarde illisible reste en copie de secours. Toute erreur journalisée par le mod ou le serveur fait échouer
+  le script, sauf les erreurs provoquées exprès (joueurs `mlq_itest_attendu_*`).
+- **Avec les mods du serveur** : `python3 tests/integration/build_allmods.py` lie dans `tests/_tmp/itest_allmods/` les
+  sources auditées des mods du serveur (variantes retenues pour l'audit, dépendances obligatoires satisfaites, mods
+  publics qui ne se chargent pas exclus avec leur raison), puis
+  `run.sh <binaire_serveur> .audit_src/minetest_game tests/_tmp/itest_allmods`. Au-delà de 100 mods chargés, `mlq_itest`
+  exige en plus que chaque intégration dont le mod est présent soit branchée sur sa vraie API, et qu'aucune quête ne soit
+  indisponible alors que ses mods sont là. Résultat du 20/11/2026 : 319 mods chargés, 193 quêtes jouables sur 193,
+  9 intégrations branchées, aucun avertissement du mod.
+- **Hors de portée sans client** : actions réelles d'un joueur (creuser, fabriquer, monter à bord), rendu graphique,
+  plusieurs joueurs connectés en même temps. Elles sont couvertes par les tests simulés, et à vérifier en jeu sur une
+  instance de test.
 
 ## 5. Disponibilité des outils sur le poste de développement (relevé du 17/11/2026)
 

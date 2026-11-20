@@ -161,9 +161,9 @@ Le Minegeld fait tourner le royaume. Ouvre boutique, propose tes marchandises et
 | `ch10.first_bike` | Deux roues et un guidon | Fabrication : `bike:bike` | — | `default:tin_ingot 3` | Fabrication | bike |
 | `ch10.bike_ride` | En selle, Marcel ! | Monter sur un vélo. | Deux roues et un guidon (`ch10.first_bike`) | `biofuel:phial_fuel 2` | Intégration `rides:bike` | bike |
 | `ch10.city_car` | Ma première citadine | Fabrication : `vehicles:masda_spawner`, `vehicles:masda2_spawner`, `vehicles:ute_spawner`, `vehicles:ute2_spawner`, `vehicles:nizzan_spawner`, `vehicles:nizzan2_spawner`, `vehicles:astonmaaton_spawner`, `vehicles:pooshe_spawner`, `vehicles:pooshe2_spawner`, `vehicles:lambogoni_spawner`, `vehicles:lambogoni2_spawner`, `vehicles:fewawi_spawner`, `vehicles:fewawi2_spawner`, `vehicles:musting_spawner`, `vehicles:musting2_spawner`, `vehicles:tractor_spawner`, `vehicles:geep_spawner` | Deux roues et un guidon (`ch10.first_bike`) | `default:steel_ingot 4` | Fabrication | vehicles |
-| `ch10.engine` | Le cœur de la machine | Fabrication : `automobiles_lib:engine` | Ma première citadine (`ch10.city_car`) | `default:steelblock 1` | Fabrication | automobiles_lib |
+| `ch10.engine` | Le cœur de la machine | Fabrication : `automobiles_lib:engine` | Ma première citadine (`ch10.city_car`) | `default:steel_ingot 6` | Fabrication | automobiles_lib |
 | `ch10.first_car` | La doyenne des routes | Fabrication : `automobiles_roadster:roadster`, `automobiles_buggy:buggy`, `automobiles_beetle:beetle`, `automobiles_beetle:beetle_conv`, `automobiles_catrelle:catrelle`, `automobiles_coupe:coupe`, `automobiles_delorean:delorean`, `automobiles_trans_am:trans_am`, `automobiles_motorcycle:motorcycle`, `automobiles_vespa:vespa` | Le cœur de la machine (`ch10.engine`) | `biofuel:bottle_fuel 2` | Fabrication | automobiles_lib |
-| `ch10.road_trip` | Plein phares sur la départementale | Conduire une voiture. | La doyenne des routes (`ch10.first_car`) | `default:glass 4` | Intégration `rides:car` | — |
+| `ch10.road_trip` | Plein phares sur la départementale | Conduire une voiture. | La doyenne des routes (`ch10.first_car`) | `biofuel:bottle_fuel 2` | Intégration `rides:car` | — |
 | `ch10.refinery` | L'alambic vert | Pose de bloc : `biofuel:refinery` | — | `default:sapling 10` | Pose de bloc | biofuel |
 | `ch10.fuel_can` | Un bidon pour la route | Fabrication : `biofuel:fuel_can` | L'alambic vert (`ch10.refinery`) | `biofuel:phial_fuel 4` | Fabrication | biofuel |
 | `ch10.delivery_van` | La 4L fourgonnette ★ | Fabrication : `automobiles_catrelle:catrelle_4f` | Plein phares sur la départementale (`ch10.road_trip`), Un bidon pour la route (`ch10.fuel_can`) | `default:steelblock 1`, titre « As du volant » | Fabrication | automobiles_catrelle |
@@ -174,7 +174,7 @@ Les rails font la fierté de Minerland. Avant de bâtir une ligne (avec l'accord
 
 | Identifiant | Titre | Objectif | Prérequis | Récompense | Détection | Mods requis |
 |---|---|---|---|---|---|---|
-| `ch11.wheelwright` | Le charron du rail | Fabrication : `advtrains:wheel` | — | `default:steel_ingot 4` | Fabrication | advtrains |
+| `ch11.wheelwright` | Le charron du rail | Fabrication : `advtrains:wheel` | — | `default:steel_ingot 2` | Fabrication | advtrains |
 | `ch11.rail_forge` | Cinquante rails pour la Compagnie | Fabrication : `advtrains:dtrack_placer`, `advtrains:dtrack_tieless_placer` | Le charron du rail (`ch11.wheelwright`) | `default:steel_ingot 3` | Fabrication | advtrains |
 | `ch11.signalman` | Rouge, vert… en avant ! | Fabrication : `advtrains:signal_wall_l_off`, `advtrains_signals_ks:hs_danger_0` | Le charron du rail (`ch11.wheelwright`) | `default:mese_crystal_fragment 3` | Fabrication | advtrains |
 | `ch11.platform` | Attention à la marche | Pose de bloc : `advtrains:platform_high_stonebrick` | — | `default:stonebrick 16` | Pose de bloc | advtrains |
@@ -192,7 +192,7 @@ Le transport urbain a ses codes : quais, signalétique, tramways qui serpentent 
 | `ch12.subway_sign` | Le M qui brille | Fabrication : `trainblocks:subwayblock` | — | `default:glass 4` | Fabrication | trainblocks |
 | `ch12.line_number` | Ligne 1, direction Minerland | Fabrication : `trainblocks:line1` | Le M qui brille (`ch12.subway_sign`) | `default:stonebrick 8` | Fabrication | trainblocks |
 | `ch12.platform_number` | Quai numéro un | Pose de bloc : `trainblocks:platformsign1` | Ligne 1, direction Minerland (`ch12.line_number`) | `default:torch 6` | Pose de bloc | trainblocks |
-| `ch12.station_hall` | Le hall de la station | Pose de bloc : `trainblocks:station_block` | Le M qui brille (`ch12.subway_sign`) | `default:meselamp 2` | Pose de bloc | trainblocks |
+| `ch12.station_hall` | Le hall de la station | Pose de bloc : `trainblocks:station_block` | Le M qui brille (`ch12.subway_sign`) | `default:meselamp 1` | Pose de bloc | trainblocks |
 | `ch12.sign_writer` | L'imprimerie des panneaux | Fabrication : `metrosigns:sign_writer` | — | `default:steel_ingot 2` | Fabrication | metrosigns |
 | `ch12.tram_template` | Le gabarit du tramway | Fabrication : `minitram_crafting_recipes:minitram_template` | — | `default:steel_ingot 4` | Fabrication | minitram_crafting_recipes |
 | `ch12.metro_ride` | Prendre le métro ★ | Voyager dans un métro, un tramway ou un bus. | Le hall de la station (`ch12.station_hall`), Le gabarit du tramway (`ch12.tram_template`) | `default:gold_ingot 1`, titre « Ticket gagnant » | Intégration `rides:metro` | — |
@@ -223,7 +223,7 @@ Mers, lacs et rivières n'attendent que ta proue. Bateau à moteur, chalutier ou
 | `ch14.ferry_ride` | Passager du ferry | Voyager à bord d'un ferry. | — | `biofuel:phial_fuel 2` | Intégration `rides:ferry` | — |
 | `ch14.motorboat` | Moteur, ça tourne ! | Fabrication : `motorboat:boat` | Une coque qui flotte (`ch14.hull`) | `biofuel:fuel_can 1` | Fabrication | motorboat |
 | `ch14.fishing_boat` | Le chalutier de la baie | Fabrication : `fishing_boat:boat` | Une coque qui flotte (`ch14.hull`) | `default:steel_ingot 4` | Fabrication | fishing_boat |
-| `ch14.nautilus` | Vingt mille lieues sous les blocs | Fabrication : `nautilus:boat_wooden`, `nautilus:boat` | Une coque qui flotte (`ch14.hull`) | `default:glass 6` | Fabrication | nautilus |
+| `ch14.nautilus` | Vingt mille lieues sous les blocs | Fabrication : `nautilus:boat_wooden`, `nautilus:boat` | Une coque qui flotte (`ch14.hull`) | `default:gold_ingot 2` | Fabrication | nautilus |
 | `ch14.board_boat` | Capitaine à bord ★ | Monter à bord d'un bateau ou d'un sous-marin. | Une coque qui flotte (`ch14.hull`), Plein d'essence verte (`ch14.fuel_bottle`) | `default:gold_ingot 2`, titre « Pied marin » | Intégration `rides:boat` | — |
 
 ### Chapitre 15 — Prenons de la hauteur ! (7 quêtes)
@@ -313,7 +313,7 @@ Derrière un cadre d'obsidienne s'ouvre un monde de feu. Allume le portail, réc
 
 | Identifiant | Titre | Objectif | Prérequis | Récompense | Détection | Mods requis |
 |---|---|---|---|---|---|---|
-| `ch20.obsidian` | Le verre des volcans | Minage (creuser) : `default:obsidian` ×4 | Une pioche qui en jette (`ch04.steel_pick`) | `bucket:bucket_empty 2` | Minage (creuser) | — |
+| `ch20.obsidian` | Le verre des volcans | Minage (creuser) : `default:obsidian` ×4 | Une pioche qui en jette (`ch04.steel_pick`) | `bucket:bucket_empty 1` | Minage (creuser) | — |
 | `ch20.mese_fragments` | Éclats de Mese | Fabrication : `default:mese_crystal_fragment` | La pierre qui brille (`ch04.mese`) | `default:obsidian 2` | Fabrication | — |
 | `ch20.frame` | Un cadre d'obsidienne | Pose de bloc : `default:obsidian` ×10 | Le verre des volcans (`ch20.obsidian`) | `default:mese_crystal_fragment 2` | Pose de bloc | — |
 | `ch20.light_portal` | Une étincelle de Mese | Allumer un portail du Nether. | Un cadre d'obsidienne (`ch20.frame`), Éclats de Mese (`ch20.mese_fragments`) | `default:gold_ingot 1` | Intégration `nether:portal_lit` | nether |
@@ -329,7 +329,7 @@ Cristaux luminescents, géodes et champignons géants : les profondeurs cachent 
 | `ch21.amethyst_geode` | La géode d'améthyste | Minage (creuser) : `amethyst_new:amethyst` | Une pioche qui en jette (`ch04.steel_pick`) | `default:bronze_ingot 2` | Minage (creuser) | amethyst_new |
 | `ch21.cave_mushrooms` | Cueillette souterraine | Minage (creuser) : `caverealms:mycena`, `caverealms:fungus` | Lueurs dans la mousse (`ch21.glow_gems`) | `farming:bread 3` | Minage (creuser) | caverealms |
 | `ch21.glow_crystal` | Le cœur des cristaux | Minage (creuser) : `caverealms:glow_crystal`, `caverealms:glow_emerald`, `caverealms:glow_ruby`, `caverealms:glow_amethyst`, `caverealms:glow_mese` | Lueurs dans la mousse (`ch21.glow_gems`) | `default:gold_ingot 1` | Minage (creuser) | caverealms |
-| `ch21.amethyst_lantern` | Lanterne de cristal | Pose de bloc : `amethyst_new:lantern` | La géode d'améthyste (`ch21.amethyst_geode`) | `default:glass 4` | Pose de bloc | amethyst_new |
+| `ch21.amethyst_lantern` | Lanterne de cristal | Pose de bloc : `amethyst_new:lantern` | La géode d'améthyste (`ch21.amethyst_geode`) | `default:bronze_ingot 2` | Pose de bloc | amethyst_new |
 | `ch21.glow_bait` | Appâts luisants | Fabrication : `caverealms:glow_bait` | Cueillette souterraine (`ch21.cave_mushrooms`) | `farming:string 4` | Fabrication | caverealms |
 | `ch21.ancient_chest` | Le coffre oublié ★ | Minage (creuser) : `lootchests_default:stone_chest`, `lootchests_default:urn`, `lootchests_default:basket`, `lootchests_default:ocean_chest` | Le cœur des cristaux (`ch21.glow_crystal`), La géode d'améthyste (`ch21.amethyst_geode`) | `default:gold_ingot 2`, titre « Cœur de cristal » | Minage (creuser) | lootchests_default |
 
@@ -360,7 +360,7 @@ Fossiles, ADN et laboratoires : la science de Minerland ressuscite les créature
 | `ch23.fossil_analyzer` | Monter son labo | Pose de bloc : `paleotest:fossil_analyzer` | Le carnet du paléontologue (`ch23.field_guide`) | `default:bronze_ingot 2` | Pose de bloc | paleotest |
 | `ch23.dna_cultivator` | L'incubateur à ADN | Pose de bloc : `paleotest:dna_cultivator` | Monter son labo (`ch23.fossil_analyzer`) | `default:torch 6` | Pose de bloc | paleotest |
 | `ch23.living_fossil` | Une forêt venue du passé | Pose de bloc : `paleotest:metasequoia_sapling` | L'incubateur à ADN (`ch23.dna_cultivator`) | `default:gold_ingot 1` | Pose de bloc | paleotest |
-| `ch23.dino_egg` | Un œuf bien au chaud | Poser un œuf de dinosaure. | L'incubateur à ADN (`ch23.dna_cultivator`) | `farming:wheat 10` | Intégration `paleotest:egg_placed` | paleotest |
+| `ch23.dino_egg` | Un œuf bien au chaud | Poser un œuf de dinosaure. | L'incubateur à ADN (`ch23.dna_cultivator`) | `farming:wheat 10`, `default:gold_ingot 1` | Intégration `paleotest:egg_placed` | paleotest |
 | `ch23.dino_ride` | En selle sur un tricératops ! ★ | Monter sur un dinosaure. | Un œuf bien au chaud (`ch23.dino_egg`), Le fouet du soigneur (`ch23.whip`) | `default:gold_ingot 2`, titre « Mémoire du Jurassique » | Intégration `rides:dinosaur` | paleotest |
 
 ## Partie VI — Les Grands Projets

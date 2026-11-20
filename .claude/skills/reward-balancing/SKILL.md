@@ -12,6 +12,10 @@ Certains bâtisseurs ont le privilège `give` : les objets courants ont peu de v
 récompenses doivent rester justes pour les joueurs ordinaires.
 
 ## Barème par difficulté (valeur indicative en Minegeld équivalents)
+Barème de départ. Le barème **appliqué**, plus modeste, et la règle des deux niveaux contrôlée par `make validate` sont
+dans `docs/REWARDS.md` §2 : s'y conformer. Pas de prix officiel sur Minerland (on s'enrichit en minant, les prix se
+fixent entre joueurs) : ne pas demander de cours de référence ni relever le barème.
+
 | Difficulté | Valeur cible | Exemples |
 |---|---|---|
 | 1 | 1–3 | torches, pain, planches, 1 Minegeld |

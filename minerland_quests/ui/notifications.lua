@@ -9,10 +9,16 @@ Q.notify = N
 
 local huds = {}   -- [nom] = { ids = {...}, token = n }
 
+-- Son facultatif : déposer sounds/mlq_complete.ogg dans le mod pour l'activer (aucun fichier fourni). Sans ce
+-- fichier, rien n'est envoyé aux clients. Le mod ne dépend d'aucun son d'un autre mod.
+local has_sound = false
+do
+	local f = io.open(core.get_modpath("minerland_quests") .. "/sounds/mlq_complete.ogg", "rb")
+	if f then has_sound = true f:close() end
+end
+
 local function sound(name)
-	-- Son facultatif : sounds/mlq_complete.ogg (aucun fichier fourni par défaut ; un son absent est ignoré
-	-- silencieusement par le client). Le mod ne dépend d'aucun son d'un autre mod.
-	core.sound_play("mlq_complete", { to_player = name, gain = 0.6 }, true)
+	if has_sound then core.sound_play("mlq_complete", { to_player = name, gain = 0.6 }, true) end
 end
 
 local function clear(name)

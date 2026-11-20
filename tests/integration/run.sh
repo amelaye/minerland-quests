@@ -41,9 +41,11 @@ for phase in 1 2; do
 		--logfile "$WORK/phase$phase.log" >/dev/null 2>&1
 	grep -a "\[mlq_itest\]" "$WORK/phase$phase.log" | sed 's/^.*\[mlq_itest\]/  /'
 	grep -aq "\[mlq_itest\] FIN phase $phase : 0 échec" "$WORK/phase$phase.log" || total=$((total + 1))
-	grep -a "ERROR\[Main\]" "$WORK/phase$phase.log" | head -5
-	# une erreur journalisée par le mod (ou une erreur Lua du serveur) fait échouer le test, même si les contrôles passent
-	if grep -aq "ERROR\[.*\]: \(\[minerland_quests\]\|.*attempt to\|.*stack traceback\)" "$WORK/phase$phase.log"; then
+	grep -a "ERROR\[Main\]" "$WORK/phase$phase.log" | grep -v "mlq_itest_attendu" | head -5
+	# une erreur journalisée par le mod (ou une erreur Lua du serveur) fait échouer le test, même si les contrôles passent ;
+	# seules les erreurs provoquées exprès par mlq_itest (joueurs « mlq_itest_attendu_* ») sont tolérées
+	if grep -a "ERROR\[.*\]: \(\[minerland_quests\]\|.*attempt to\|.*stack traceback\)" "$WORK/phase$phase.log" \
+		| grep -vq "mlq_itest_attendu"; then
 		echo "  ERREUR journalisée par le mod ou le serveur (voir $WORK/phase$phase.log)"
 		total=$((total + 1))
 	fi

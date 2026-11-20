@@ -99,6 +99,8 @@ make docs           # régénère docs/QUESTS.md
 make dist           # archive distribuable dans dist/
 python3 tools/check_ids.py <id>...           # vérifier un identifiant d'objet contre l'audit
 tests/integration/run.sh <serveur> <jeu> [mods]   # test réel dans un serveur Luanti isolé
+python3 tests/integration/build_allmods.py        # puis run.sh <serveur> .audit_src/minetest_game tests/_tmp/itest_allmods
+python3 tools/validate_quests.py --economy        # bilan économique des récompenses
 ```
 Détail de tout l'outillage (scripts, hooks, permissions, outils absents) : `docs/TOOLING.md`.
 

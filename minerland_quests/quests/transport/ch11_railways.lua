@@ -10,7 +10,7 @@ Q.register_quest({
 	description = "Avant les locomotives, il y a les roues. Le métier de cheminot commence à l'atelier.",
 	trigger = { type = "craft", items = { "advtrains:wheel" } },
 	mods = { "advtrains" },
-	reward = { items = { "default:steel_ingot 4" } },
+	reward = { items = { "default:steel_ingot 2" } },
 })
 Q.register_quest({
 	id = "ch11.rail_forge", title = "Cinquante rails pour la Compagnie", difficulty = 2, icon = "advtrains:dtrack_placer",

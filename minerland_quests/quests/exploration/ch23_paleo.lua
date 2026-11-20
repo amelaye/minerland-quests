@@ -59,7 +59,7 @@ Q.register_quest({
 	hint = "Pose l'œuf près d'une torche et patiente : le petit sortira bientôt.",
 	trigger = { type = "custom", key = "paleotest:egg_placed" },
 	requires = { "ch23.dna_cultivator" }, mods = { "paleotest" },
-	reward = { items = { "farming:wheat 10" } },
+	reward = { items = { "farming:wheat 10", "default:gold_ingot 1" } },
 })
 Q.register_quest({
 	id = "ch23.dino_ride", title = "En selle sur un tricératops !", difficulty = 4, icon = "paleotest:whip", final = true,

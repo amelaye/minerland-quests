@@ -31,7 +31,7 @@ Q.register_quest({
 	description = "Le grand hall accueille les voyageurs : il doit être clair, propre et bien signalé.",
 	trigger = { type = "place", items = { "trainblocks:station_block" } },
 	requires = { "ch12.subway_sign" }, mods = { "trainblocks" },
-	reward = { items = { "default:meselamp 2" } },
+	reward = { items = { "default:meselamp 1" } },
 })
 Q.register_quest({
 	id = "ch12.sign_writer", title = "L'imprimerie des panneaux", difficulty = 2, icon = "metrosigns:sign_writer",

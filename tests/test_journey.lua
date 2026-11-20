@@ -104,6 +104,9 @@ T.describe("le catalogue entier, du premier au dernier chapitre", function()
 			local finished = select(2, env:chat_log("alice"):gsub("Chapitre terminé", ""))
 			T.eq(finished, #Q.chapter_list, "un message de fin pour chacun des chapitres")
 			for _, l in ipairs(env.mock.log) do T.ok(l.level ~= "error", "erreur journalisée : " .. l.msg) end
+			Q.storage.flush_all()
+			local size = #env.mock.storage_data["p:alice"]
+			T.ok(size < 32768, ("sauvegarde d'un joueur ayant tout terminé : %d octets (borne 32 Kio)"):format(size))
 
 			-- reprise après redémarrage propre : rien n'est perdu, rien n'est redonné
 			local env2 = env:restart()

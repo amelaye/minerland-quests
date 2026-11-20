@@ -41,7 +41,7 @@ Q.register_quest({
 	description = "Du bronze, de l'améthyste et un fil de Mese : une lanterne digne d'un palais souterrain.",
 	trigger = { type = "place", items = { "amethyst_new:lantern" } },
 	requires = { "ch21.amethyst_geode" }, mods = { "amethyst_new" },
-	reward = { items = { "default:glass 4" } },
+	reward = { items = { "default:bronze_ingot 2" } },
 })
 Q.register_quest({
 	id = "ch21.glow_bait", title = "Appâts luisants", difficulty = 2, icon = "caverealms:glow_bait",
