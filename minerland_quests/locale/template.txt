@@ -738,6 +738,15 @@ La forge des dragons=
 Huit pierres de caverne et un fourneau : voici la forge que seuls les dragons savent allumer. Un trophée pour ton atelier !=
 La forge ne fonctionne qu'avec le souffle d'un dragon apprivoisé : ici, elle est surtout décorative.=
 Souffle de dragon=
+Écailles de dragon=
+Affronte un dragon des cavernes et rapporte ses écailles : un trophée que peu de bâtisseurs peuvent exhiber. Prépare une bonne armure et de quoi te soigner !=
+Abattre un dragon et ramasser ses écailles.=
+Fais plusieurs clics droits sur le dragon vaincu pour faire tomber son butin, puis ramasse les écailles. Un objet donné par un autre joueur ne compte pas.=
+L'œuf du dragon=
+Un dragon sauvage adulte garde parfois un œuf. Vaincre le gardien et rapporter son œuf : l'exploit suprême des cavernes de Minerland.=
+Abattre un dragon sauvage adulte et ramasser son œuf.=
+Seul un dragon sauvage adulte laisse un œuf, une fois sur six, avec le reste de son butin (clics droits sur le dragon vaincu). Un œuf donné par un autre joueur ne compte pas.=
+Fléau des dragons=
 
 ##### Chapitre 23 — Les mystères du passé
 Les mystères du passé=

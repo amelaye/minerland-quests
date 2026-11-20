@@ -167,6 +167,7 @@ clés émises et la méthode, test simulé dans `tests/`.
 | `hangglider.lua` | `hangglider:glide` | sonde (1 s) de l'API publique `hangglider.is_gliding` |
 | `nether.lua` | `nether:portal_lit` | enveloppe `on_place` du fragment de cristal de Mese : fragment consommé, ou portail apparu à côté du cadre |
 | `paleotest.lua` | `paleotest:egg_placed` | enveloppe `on_place` des œufs (`paleotest:egg_*`) : œuf consommé |
+| `draconis.lua` | `draconis:scales_pickup`, `draconis:egg_pickup` | callback moteur `core.register_on_item_pickup` : butin d'un dragon abattu (écailles, œuf) ramassé à la main par un vrai joueur, quelle que soit l'origine de l'objet au sol ; seuls un objet jeté par un joueur (`dropped_by`), un faux joueur et un inventaire plein sont exclus |
 | `areas.lua` | `areas:protect` | API publique `areas:registerOnAdd` ; zones principales seulement (`parent == nil`), propriétaire connecté |
 
 Non retenues (coût ou fiabilité insuffisants, documentées dans les fichiers de quêtes et `docs/audit/`) : programmation
@@ -275,7 +276,7 @@ d'ADN de l'analyseur paleotest, apprivoisement de la wyverne, dépôt au distrib
 | 2026-11-18 | `wrap_callback` et `register_poll` dans le cœur | une seule façon sûre d'envelopper et de sonder, testée |
 | 2026-11-18 | « Monter à bord » détecté par un adaptateur générique `rides.lua` | un seul mécanisme moteur (`get_attach`) pour tous les véhicules |
 | 2026-11-18 | Nether (ch20) centré sur la construction et l'allumage du portail | choix de l'administratrice |
-| 2026-11-18 | Dragons (ch22) : cavernes (réglage `cavern_spawning`), aucune quête de combat | serveur pacifique, nids non générés |
+| 2026-11-18 | Dragons (ch22) : cavernes (réglage `cavern_spawning`), nids non générés | on vise les cavernes, pas les nids |
 | 2026-11-18 | Dinosaures (ch23) : fossiles → ADN → œuf, pas de capture | fonctionnement réel du serveur |
 | 2026-11-18 | Textures procédurales en pixel art (~32 texels/unité), 9-slice à détails dans les coins | Luanti copie les coins 1:1 et étire bords et centre |
 | 2026-11-18 | Bouton Unified Inventory lisse en 128 px | cohérent avec les icônes d'Unified Inventory |
@@ -285,12 +286,13 @@ d'ADN de l'analyseur paleotest, apprivoisement de la wyverne, dépôt au distrib
 | 2026-11-19 | Langue : client si traduite, français si non annoncée, sinon réglage de repli (anglais) | un client dans une langue non traduite lit l'anglais plutôt que le français |
 | 2026-11-19 | « @ » interdit dans les textes de quêtes | caractère réservé aux paramètres de traduction Luanti |
 | 2026-11-19 | Couverture déclinée par langue (`I.localized_textures`) | le titre est dessiné dans l'image |
-| 2026-11-19 | Catalogue complet : 191 quêtes vérifiées (5 à 10 par chapitre) | toutes ont une détection réelle ; au-delà de la cible indicative de 80 à 120 |
+| 2026-11-19 | Catalogue complet : 193 quêtes vérifiées (5 à 10 par chapitre) | toutes ont une détection réelle ; au-delà de la cible indicative de 80 à 120 |
 | 2026-11-19 | Aucune dépendance entre chapitres hors tronc commun (chapitres 1 à 4) | carrières indépendantes ; Technic 17 jouable sans le 16 |
 | 2026-11-19 | Adaptateur générique `rides.lua` pour toute montée à bord | une seule sonde `get_attach()` pour chevaux, véhicules, cabines et dinosaures |
 | 2026-11-19 | Ferroviaire sans pose de rail ni de wagon | `track_builder`, `train_operator`, `railway_operator` réservés |
 | 2026-11-19 | Dragons : cavernes (tas d'os, pierre calcinée, magot), échafaudage écarté | réglage `cavern_spawning` du serveur ; choix de l'administratrice |
 | 2026-11-19 | Protection de commune par `/protect` (areas) | auto-protection active sur Minerland |
+| 2026-11-20 | Abattre un dragon et ramasser son butin valide les quêtes d'écailles et d'œuf (ch22), sans prérequis | choix de l'administratrice : ramasser à la main valide, quelle que soit l'origine de l'objet (tuyau, mort d'un joueur…), sans traçage ; sans prérequis pour qu'un œuf, rare, ramassé tôt ne soit pas perdu |
 
 ## 14. Limites connues
 

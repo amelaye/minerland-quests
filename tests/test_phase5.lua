@@ -321,3 +321,42 @@ T.describe("affichage du catalogue complet", function()
 		T.eq(shown, 2 * #env.Q.quest_list)
 	end)
 end)
+
+T.describe("intégration draconis (butin d'un dragon vaincu)", function()
+	local EGG, SCALES = "draconis:egg_fire_red", "draconis:scales_fire_dragon_red"
+	-- objets réels de draconis absents des références du livre (draconis/init.lua:49, craftitems.lua:74)
+	local EXTRA = { { "draconis:egg_ice_light_blue", "node" }, { "draconis:dragon_bone", "craft" } }
+
+	T.it("écailles et œuf du même butin valident leurs quêtes, dans n'importe quel ordre", function()
+		local env = all_env({ items = EXTRA })
+		env:join("alice") env:join("bob")
+		T.eq(env:state("alice", "ch22.dragon_scales"), "available", "ouverte d'emblée, comme la wyverne")
+		T.eq(env:state("alice", "ch22.dragon_egg"), "available")
+		env:pickup("alice", EGG)   -- l'œuf ramassé avant les écailles compte aussi
+		T.eq(env:state("alice", "ch22.dragon_egg"), "done")
+		env:pickup("alice", SCALES .. " 12")
+		T.eq(env:state("alice", "ch22.dragon_scales"), "done")
+		T.eq(env:count("alice", SCALES), 12, "le butin est bien dans l'inventaire")
+		env:pickup("bob", "draconis:egg_ice_light_blue")   -- dragon de glace, autre couleur
+		T.eq(env:state("bob", "ch22.dragon_egg"), "done")
+		T.eq(env:state("bob", "ch22.dragon_scales"), "available", "l'œuf ne vaut pas les écailles")
+	end)
+
+	T.it("objet jeté, faux joueur, autre objet ou inventaire plein : rien ; ramassage partiel : validé", function()
+		local env = all_env({ items = EXTRA })
+		env:join("alice")
+		env:pickup("alice", SCALES, "bob")
+		T.eq(env:state("alice", "ch22.dragon_scales"), "available", "écailles jetées par bob")
+		env:pickup(env:fake_player("alice"), SCALES)
+		T.eq(env:state("alice", "ch22.dragon_scales"), "available", "faux joueur au nom d'alice")
+		env:pickup("alice", "draconis:dragon_bone 3")
+		env:pickup("alice", "default:stick")
+		T.eq(env:state("alice", "ch22.dragon_scales"), "available", "autres objets ignorés")
+		env:fill_inventory("alice", "default:cobble")
+		env:pickup("alice", SCALES)
+		T.eq(env:state("alice", "ch22.dragon_scales"), "available", "inventaire plein : l'objet reste au sol")
+		env:player("alice"):get_inventory():set_stack("main", 1, SCALES .. " 98")   -- place pour une écaille
+		env:pickup("alice", SCALES .. " 12")
+		T.eq(env:state("alice", "ch22.dragon_scales"), "done", "ramassage partiel : il compte")
+	end)
+end)

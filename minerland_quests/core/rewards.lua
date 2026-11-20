@@ -36,8 +36,8 @@ end
 
 function R.grant(name, q)
 	local rec = Q.storage.get(name)
-	if rec.rewarded[q.id] then return false end       -- journal : jamais deux fois
 	if Q.storage.is_readonly(name) then return false end
+	if rec.rewarded[q.id] then return false end       -- journal : jamais deux fois
 	rec.rewarded[q.id] = os.time()
 	if q.reward.title then rec.titles[q.id] = q.reward.title end
 	local items = {}

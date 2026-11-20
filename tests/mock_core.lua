@@ -518,6 +518,9 @@ function M.new(opts)
 	core.register_on_dignode = function(f) table.insert(core.registered_on_dignodes, f) end
 	core.register_on_craft = function(f) table.insert(cb.craft, f) end
 	core.register_on_item_eat = function(f) table.insert(cb.eat, f) end
+	-- Ramassage d'un objet au sol (builtin/game/item.lua : core.item_pickup) : callbacks globaux, puis inventaire.
+	core.registered_on_item_pickups = {}
+	core.register_on_item_pickup = function(f) table.insert(core.registered_on_item_pickups, f) end
 	core.register_on_joinplayer = function(f) table.insert(cb.join, f) end
 	core.register_on_leaveplayer = function(f) table.insert(cb.leave, f) end
 	core.register_on_newplayer = function(f) table.insert(cb.newplayer, f) end

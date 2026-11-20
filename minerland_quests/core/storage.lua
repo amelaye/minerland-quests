@@ -67,6 +67,10 @@ function S.migrate(rec, name)
 		readonly[name] = true
 		U.log("error", ("données de %s au format v%d plus récent que ce mod (v%d) : lecture seule, rien ne sera écrasé")
 			:format(name, v, S.VERSION))
+		-- champs manquants complétés EN MÉMOIRE seulement (un enregistrement en lecture seule n'est jamais réécrit)
+		for k, def in pairs(empty_record()) do
+			if type(rec[k]) ~= type(def) then rec[k] = def end
+		end
 		return rec
 	end
 	while v < S.VERSION do

@@ -69,11 +69,30 @@ ils sont vérifiés à la lecture du code et consignés avec leur source dans `d
 
 ## 4. Tests
 
-- **Simulés** (`tests/`) : `mock_core.lua` (mock de l'API Luanti), `harness.lua` (charge le vrai mod, actions de
-  jeu de haut niveau, redémarrages simulés, mini-framework d'assertions), `run.lua` (lanceur), `test_*.lua`.
-- **Intégration réelle** (`tests/integration/`) : `run.sh <binaire_serveur> <minetest_game> [mods]` démarre deux fois un vrai
-  serveur Luanti sur un monde jetable dans `tests/_tmp/itest/`. Le mod `mlq_itest` vérifie le chargement, Unified Inventory,
-  les formspecs puis la persistance après redémarrage.
+Les deux familles sont **distinctes** : les tests simulés ne remplacent jamais ceux du vrai moteur.
+
+- **Simulés** (`tests/`, `make test`) : `mock_core.lua` (mock de l'API Luanti : nœuds, inventaires, entités, attache,
+  ramassage, traductions fidèles au moteur), `harness.lua` (charge le vrai mod, actions de haut niveau, redémarrages
+  propres ou brutaux, mini-framework d'assertions), `third_party_apis.lua` (API publiques simulées de smartshop,
+  hangglider et areas), `run.lua` (lanceur : `luajit tests/run.lua events ui` pour des fichiers précis).
+
+| Fichier | Couvre |
+|---|---|
+| `test_engine.lua` | enregistrement et validation des définitions, prérequis simples/multiples/parallèles, déblocage, compteurs, validation unique, cycles, quête ou objet absent, catalogue réel sans problème de graphe |
+| `test_rewards.lua` | attribution et unicité, inventaire plein, file d'attente et ordre, livraison ultérieure, reconnexion, redémarrage, arrêt brutal, objet inexistant |
+| `test_events.lua` | minage, fabrication, pose, récolte, manger ; objet reçu d'un autre joueur, bloc posé puis recreusé, faux joueur, hors ligne, créatif, positions distinctes |
+| `test_storage.lua` | persistance, migration, alias de quêtes, format plus récent (lecture seule), données illisibles, ajout et retrait de quêtes, mod tiers absent puis revenu, mémoire des blocs posés |
+| `test_ui.lua` | ouverture (commande, objet, Unified Inventory, mode lite), navigation, champs de formulaire forgés, prérequis et coches, récompense en attente, quête indisponible, grand arbre, échappement, rafraîchissement, notifications |
+| `test_admin.lua` | commandes joueur, privilège dédié, commandes de test désactivées en production, journal d'administration, aucun privilège accordé |
+| `test_journey.lua` | parcours de bout en bout (arrivée → livre → chapitre 1 → titre → redémarrage) puis les 193 quêtes jouées |
+| `test_i18n.lua`, `test_integration_api.lua`, `test_phase5.lua` | traductions, API des intégrations et chaque adaptateur avec ses faux positifs |
+
+- **Intégration réelle** (`tests/integration/`) : `run.sh <binaire_serveur> <minetest_game> [mods]` démarre deux fois un
+  vrai serveur Luanti sur un monde jetable dans `tests/_tmp/itest/` (sans client, aucun monde existant touché). Le mod
+  `mlq_itest` vérifie : chargement, boutons et pages Unified Inventory, traductions anglaises chargées par le moteur,
+  rendu des 193 fiches en français et en anglais, chaîne de quêtes liées, file de récompenses, puis la persistance après
+  redémarrage. Toute erreur journalisée par le mod ou le serveur fait échouer le script. **Hors de portée sans client** :
+  actions réelles d'un joueur (creuser, fabriquer), rendu graphique, interaction avec les vrais mods tiers.
 
 ## 5. Disponibilité des outils sur le poste de développement (relevé du 17/11/2026)
 

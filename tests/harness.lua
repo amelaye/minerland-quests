@@ -106,6 +106,7 @@ end
 --   items      = { {name, kind, def} } objets supplémentaires enregistrés avant le chargement du mod
 --   ui         = true                 simule unified_inventory
 --   settings   = { ["minerland_quests.x"] = v }
+--   before_load     = function(core) appelé avant le chargement du mod (commandes ou objets d'autres mods)
 --   before_finalize = function(Q, core) appelé après le chargement, avant on_mods_loaded
 --   storage_data = table              backend de mod storage (pour simuler un redémarrage)
 function M.env(opts)
@@ -143,6 +144,7 @@ function M.env(opts)
 		else core.register_craftitem(name, def) end
 	end
 
+	if opts.before_load then opts.before_load(core) end   -- état d'un autre mod à poser AVANT le chargement
 	dofile(M.MODPATH .. "/init.lua")
 	local Q = _G.minerland_quests
 	if opts.all_items then register_referenced_items(core, Q) end
@@ -216,6 +218,19 @@ end
 function Env:eat(who, item)
 	local player = type(who) == "string" and self:player(who) or who
 	for _, f in ipairs(self.mock.cb.eat) do f(2, nil, self.mock.ItemStack(item), player, nil) end
+end
+
+-- Un joueur clique sur un objet au sol (entité d'objet ; dropped_by = nom du joueur qui l'a lâché, sinon nil).
+function Env:pickup(who, item, dropped_by)
+	local p = self:player(who)
+	local stack = ItemStack(item)
+	local ent = { dropped_by = dropped_by }
+	local ref = { get_luaentity = function() return ent end }
+	for _, f in ipairs(self.core.registered_on_item_pickups) do
+		local r = f(stack, p, { type = "object", ref = ref })
+		if r then return r end
+	end
+	return p:get_inventory():add_item("main", stack)
 end
 
 function Env:give(from, to, item)

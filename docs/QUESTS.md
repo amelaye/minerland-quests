@@ -2,7 +2,7 @@
 
 > Fichier **généré** par `python3 tools/gen_docs.py` (ou `make docs`). Ne pas modifier à la main.
 
-Version du mod : 1.0.0 — 191 quêtes, 25 chapitres.
+Version du mod : 1.0.0 — 193 quêtes, 25 chapitres.
 
 ## Partie I — Les Fondamentaux
 
@@ -333,7 +333,7 @@ Cristaux luminescents, géodes et champignons géants : les profondeurs cachent 
 | `ch21.glow_bait` | Appâts luisants | Fabrication : `caverealms:glow_bait` | Cueillette souterraine (`ch21.cave_mushrooms`) | `farming:string 4` | Fabrication | caverealms |
 | `ch21.ancient_chest` | Le coffre oublié ★ | Minage (creuser) : `lootchests_default:stone_chest`, `lootchests_default:urn`, `lootchests_default:basket`, `lootchests_default:ocean_chest` | Le cœur des cristaux (`ch21.glow_crystal`), La géode d'améthyste (`ch21.amethyst_geode`) | `default:gold_ingot 2`, titre « Cœur de cristal » | Minage (creuser) | lootchests_default |
 
-### Chapitre 22 — Dragons et autres bestioles (6 quêtes)
+### Chapitre 22 — Dragons et autres bestioles (8 quêtes)
 
 Des dragons dorment dans les cavernes ! Découvre leurs secrets, leurs écailles et les objets qui permettent de vivre à leurs côtés.
 
@@ -344,7 +344,9 @@ Des dragons dorment dans les cavernes ! Découvre leurs secrets, leurs écailles
 | `ch22.dragon_hoard` | Le magot du dragon | Minage (creuser) : `default:goldblock`, `default:steelblock` | Un tas d'os bien suspect (`ch22.bone_pile`) | `default:torch 12` | Minage (creuser) | draconis |
 | `ch22.scorched_bricks` | Maçon des cendres | Fabrication : `draconis:stone_bricks_scorched`, `draconis:stone_bricks_frozen` | La roche a pris un coup de chaud (`ch22.scorched_stone`) | `default:steel_ingot 2` | Fabrication | draconis |
 | `ch22.wyvern_ride` | Rodéo dans la canopée | Monter sur une wyverne de la jungle. | — | `default:gold_ingot 1` | Intégration `rides:wyvern` | draconis |
-| `ch22.draconic_forge` | La forge des dragons ★ | Pose de bloc : `draconis:draconic_forge_fire`, `draconis:draconic_forge_ice` | Maçon des cendres (`ch22.scorched_bricks`) | `default:gold_ingot 2`, titre « Souffle de dragon » | Pose de bloc | draconis |
+| `ch22.draconic_forge` | La forge des dragons | Pose de bloc : `draconis:draconic_forge_fire`, `draconis:draconic_forge_ice` | Maçon des cendres (`ch22.scorched_bricks`) | `default:gold_ingot 2`, titre « Souffle de dragon » | Pose de bloc | draconis |
+| `ch22.dragon_scales` | Écailles de dragon | Abattre un dragon et ramasser ses écailles. | — | `default:gold_ingot 2` | Intégration `draconis:scales_pickup` | draconis |
+| `ch22.dragon_egg` | L'œuf du dragon ★ | Abattre un dragon sauvage adulte et ramasser son œuf. | — | `default:diamond 1`, titre « Fléau des dragons » | Intégration `draconis:egg_pickup` | draconis |
 
 ### Chapitre 23 — Les mystères du passé (8 quêtes)
 

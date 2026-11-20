@@ -37,16 +37,62 @@ core.register_on_mods_loaded(function()
 		ok, fs = pcall(Q.book.formspec, name)
 		check(ok and fs:find("mlq_q_", 1, true) ~= nil, "formspec du livre (arbre du chapitre 1)")
 
+		-- Traductions : le VRAI moteur charge locale/minerland_quests.en.tr (le mock ne fait que l'imiter)
+		local en_title = core.get_translated_string("en", Q.i18n.S("Le Grand Livre des Quêtes de Minerland"))
+		check(en_title == "The Great Book of Quests of Minerland", "traduction anglaise chargée par le moteur : " .. en_title)
+		local changed, total = 0, 0
+		for _, qq in ipairs(Q.quest_list) do
+			total = total + 1
+			if core.get_translated_string("en", Q.i18n.S(qq.title)) ~= qq.title then changed = changed + 1 end
+		end
+		check(changed >= total * 0.9, ("titres de quêtes traduits en anglais : %d/%d"):format(changed, total))
+		check(core.get_translated_string("en", Q.i18n.S("@1/@2/@3", "19", "11", "2026")) == "11/19/2026",
+			"paramètres réordonnés (date anglaise)")
+
+		-- Rendu de TOUTES les vues dans les deux langues (fiche de chaque quête comprise), sans client
+		local real_lang = Q.i18n.lang
+		for _, lang in ipairs({ "fr", "en" }) do
+			Q.i18n.lang = function() return lang end
+			local errors, markup, count = 0, 0, 0
+			for _, c in ipairs(Q.chapter_list) do
+				for _, qq in ipairs(Q.get_chapter_quests(c.id)) do
+					local sv = Q.views.state(name)
+					sv.view, sv.chapter, sv.part, sv.quest, sv.detail = "chapter", c.id, c.part, qq.id, true
+					local ok2, out = pcall(Q.book.formspec, name)
+					count = count + 1
+					if not ok2 or type(out) ~= "string" then errors = errors + 1
+					elseif out:find("\27(T@", 1, true) then markup = markup + 1 end
+				end
+			end
+			check(errors == 0 and count == #Q.quest_list, ("fiches de toutes les quêtes (%s) : %d, %d erreur(s)")
+				:format(lang, count, errors))
+			check(markup == 0, "aucun balisage de traduction dans les formspecs (" .. lang .. ")")
+		end
+		Q.i18n.lang = real_lang
+		Q.views.state(name).view = "home"
+
+		-- Intégrations déclarées dans le vrai moteur (rides ne dépend que de l'API moteur)
+		check(Q.compat.integrations.rides ~= nil, "intégration rides déclarée")
+
 		local q = Q.get_quest("ch01.first_log")
 		if phase == 1 then
 			check(Q.progress.state(name, q) == "available", "ch01.first_log disponible au départ")
 			Q.progress.complete(name, q, "test d'intégration")
 			check(Q.progress.state(name, q) == "done", "ch01.first_log terminée")
 			check(Q.rewards.pending_count(name) == 1, "récompense en attente (joueur hors ligne)")
+			local chain = { "ch01.planks", "ch01.sticks", "ch01.first_tool" }
+			check(Q.progress.state(name, "ch01.planks") == "available", "quête suivante débloquée")
+			check(Q.progress.state(name, "ch01.first_tool") == "locked", "quête lointaine encore verrouillée")
+			for _, id in ipairs(chain) do Q.progress.complete(name, Q.get_quest(id), "test d'intégration") end
+			check(Q.progress.state(name, "ch01.first_tool") == "done", "chaîne de quêtes liées terminée")
+			check(Q.progress.state(name, "ch01.chest_craft") == "available", "embranchement débloqué")
+			check(Q.rewards.pending_count(name) == 4, "quatre récompenses en file (joueur hors ligne)")
 			storage:set_string("phase", "1")
 		else
 			check(Q.progress.state(name, q) == "done", "progression conservée après redémarrage")
-			check(Q.rewards.pending_count(name) == 1, "file de livraison conservée après redémarrage")
+			check(Q.rewards.pending_count(name) == 4, "file de livraison conservée après redémarrage")
+			check(Q.progress.state(name, "ch01.first_tool") == "done", "chaîne de quêtes conservée après redémarrage")
+			check(Q.progress.state(name, "ch01.chest_craft") == "available", "embranchement conservé après redémarrage")
 			check(Q.rewards.grant(name, q) == false, "pas de seconde attribution après redémarrage")
 			storage:set_string("phase", "")
 		end

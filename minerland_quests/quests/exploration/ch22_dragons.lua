@@ -1,8 +1,10 @@
 -- Chapitre 22 — Dragons et autres bestioles (draconis). Audit : docs/audit/ch22_ch23.md.
--- Serveur pacifique : aucune quête ne demande de tuer. Écailles, os, œufs, bestiaire, acier draconique et monture de
--- dragon exigent un dragon mort ou un œuf obtenu au combat : écartés. Sur Minerland, les cavernes à dragons sont
--- actives (réglage cavern_spawning) : parois calcinées ou gelées, tas d'os et magots y sont générés. La wyverne de la
--- jungle se monte sauvage (integrations/rides.lua). Tout ce qui est creusé doit être naturel.
+-- Sur Minerland, les cavernes à dragons sont actives (réglage cavern_spawning) : parois calcinées ou gelées, tas d'os
+-- et magots y sont générés. Choix de l'administratrice : abattre un dragon et ramasser son butin valide la quête
+-- (integrations/draconis.lua : écailles, œuf). Ces deux quêtes n'ont aucun prérequis : un butin ramassé avant
+-- l'ouverture de la quête ne compterait pas, et l'œuf est rare. Tout ce qui est creusé doit être naturel. La
+-- wyverne de la jungle se monte sauvage (integrations/rides.lua). Écartés (aucun événement) : bestiaire, acier
+-- draconique, monture de dragon.
 local Q = minerland_quests
 
 Q.register_quest({
@@ -50,11 +52,32 @@ Q.register_quest({
 })
 Q.register_quest({
 	id = "ch22.draconic_forge", title = "La forge des dragons", difficulty = 3, icon = "draconis:draconic_forge_fire",
-	final = true,
 	description = "Huit pierres de caverne et un fourneau : voici la forge que seuls les dragons savent allumer. "
 		.. "Un trophée pour ton atelier !",
 	hint = "La forge ne fonctionne qu'avec le souffle d'un dragon apprivoisé : ici, elle est surtout décorative.",
 	trigger = { type = "place", items = { "draconis:draconic_forge_fire", "draconis:draconic_forge_ice" } },
 	requires = { "ch22.scorched_bricks" }, mods = { "draconis" },
 	reward = { items = { "default:gold_ingot 2" }, title = "Souffle de dragon" },
+})
+Q.register_quest({
+	id = "ch22.dragon_scales", title = "Écailles de dragon", difficulty = 4, icon = "draconis:scales_fire_dragon_red",
+	description = "Affronte un dragon des cavernes et rapporte ses écailles : un trophée que peu de bâtisseurs peuvent "
+		.. "exhiber. Prépare une bonne armure et de quoi te soigner !",
+	objective = "Abattre un dragon et ramasser ses écailles.",
+	hint = "Fais plusieurs clics droits sur le dragon vaincu pour faire tomber son butin, puis ramasse "
+		.. "les écailles. Un objet donné par un autre joueur ne compte pas.",
+	trigger = { type = "custom", key = "draconis:scales_pickup" },
+	mods = { "draconis" },
+	reward = { items = { "default:gold_ingot 2" } },
+})
+Q.register_quest({
+	id = "ch22.dragon_egg", title = "L'œuf du dragon", difficulty = 5, icon = "draconis:egg_fire_red", final = true,
+	description = "Un dragon sauvage adulte garde parfois un œuf. Vaincre le gardien et rapporter son œuf : l'exploit "
+		.. "suprême des cavernes de Minerland.",
+	objective = "Abattre un dragon sauvage adulte et ramasser son œuf.",
+	hint = "Seul un dragon sauvage adulte laisse un œuf, une fois sur six, avec le reste de son butin "
+		.. "(clics droits sur le dragon vaincu). Un œuf donné par un autre joueur ne compte pas.",
+	trigger = { type = "custom", key = "draconis:egg_pickup" },
+	mods = { "draconis" },
+	reward = { items = { "default:diamond 1" }, title = "Fléau des dragons" },
 })
